@@ -1,5 +1,5 @@
 //import {UserProps} from 'src/model/experiment.entity';
-import {IsNotEmpty, IsString} from 'class-validator';
+import {IsNotEmpty, IsOptional, IsString} from 'class-validator';
 import {TaskProps} from '../entity/experiment.entity';
 import {CreateSurveyDto} from 'src/modules/survey2/dto/create-survey.dto';
 import {ApiProperty} from '@nestjs/swagger';
@@ -16,7 +16,7 @@ export class CreateExperimentDto {
   ownerId: string;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   summary: string;
 

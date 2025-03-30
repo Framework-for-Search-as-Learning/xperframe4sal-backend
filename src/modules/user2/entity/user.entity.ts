@@ -20,8 +20,8 @@ export class User extends BaseEntity {
   recoveryPasswordToken: string;
   @Column({nullable: true})
   recoveryPasswordTokenExpirationDate: Date;
-  @Column({nullable: true})
-  researcher: boolean = true;
+  @Column()
+  researcher: boolean;
   @OneToMany(() => UserExperiment, (userExperiment) => userExperiment.user)
   userExperiments: UserExperiment[];
   @OneToMany(() => UserTask, (userTask) => userTask.user)

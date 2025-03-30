@@ -73,13 +73,14 @@ export class User2Service {
   }
   async create(createUserDto: CreateUserDto): Promise<User> {
     try {
-      const {name, lastName, email, password} = createUserDto;
+      const {name, lastName, email, password, researcher} = createUserDto;
       const hashedPassword = await bcrypt.hash(password, 10);
       const userSaved = await this.userRepository.save({
         name,
         lastName,
         email,
         password: hashedPassword,
+        researcher: researcher,
       });
       return userSaved;
     } catch (error) {

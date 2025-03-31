@@ -4,11 +4,13 @@ import {Task2Controller} from './task2.controller';
 import {TypeOrmModule} from '@nestjs/typeorm';
 import {Task} from './entities/task.entity';
 import {Experiments2Module} from '../experiments2/experiments2.module';
+import {Survey2Module} from '../survey2/survey2.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Task]),
     forwardRef(() => Experiments2Module),
+    Survey2Module,
   ],
   providers: [Task2Service],
   controllers: [Task2Controller],

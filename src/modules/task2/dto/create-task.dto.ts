@@ -23,6 +23,10 @@ export class CreateTaskDto {
   experimentId: string;
 
   @IsOptional()
+  @IsString()
+  surveyId?: string;
+
+  @IsOptional()
   @IsNumber()
   minScore?: number;
 

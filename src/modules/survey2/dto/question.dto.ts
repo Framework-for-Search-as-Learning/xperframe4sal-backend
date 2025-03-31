@@ -38,9 +38,11 @@ export class QuestionDTO {
 
   @ApiProperty()
   @IsString()
-  otherStatement: string;
+  @IsOptional()
+  otherStatement?: string;
 
   @ApiProperty()
   @IsString()
-  helperText: string;
+  @IsOptional()
+  helperText?: string;
 }

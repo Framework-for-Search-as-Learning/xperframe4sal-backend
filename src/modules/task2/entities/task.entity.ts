@@ -1,6 +1,7 @@
 import {BaseEntity} from 'src/model/base_entity2';
 import {Experiment} from 'src/modules/experiments2/entity/experiment.entity';
 import {Survey} from 'src/modules/survey2/entity/survey.entity';
+import {TaskQuestionMap} from 'src/modules/task-question-map/entity/taskQuestionMap.entity';
 import {UserTask} from 'src/modules/user-task2/entities/user-tasks.entity';
 import {Column, Entity, ManyToOne, OneToMany} from 'typeorm';
 
@@ -25,6 +26,12 @@ export class Task extends BaseEntity {
   survey: Survey;
   @Column({nullable: true})
   survey_id: string;
+
+  @OneToMany(() => TaskQuestionMap, (taskQuestionMap) => taskQuestionMap.task)
+  taskQuestionsMap: TaskQuestionMap[];
+
+  @Column({nullable: true})
+  rule_type: string;
 
   @Column({nullable: true})
   max_score: number;

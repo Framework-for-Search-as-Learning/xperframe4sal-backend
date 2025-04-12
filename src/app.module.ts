@@ -31,6 +31,8 @@ import {Survey2Module} from './modules/survey2/survey2.module';
 import {Survey} from './modules/survey2/entity/survey.entity';
 import {SurveyAnswer2Module} from './modules/survey-answer2/survey-answer2.module';
 import {SurveyAnswer} from './modules/survey-answer2/entity/survey-answer.entity';
+import {TaskQuestionMapModule} from './modules/task-question-map/task-question-map.module';
+import {TaskQuestionMap} from './modules/task-question-map/entity/taskQuestionMap.entity';
 @Module({
   imports: [
     ExperimentsModule,
@@ -71,6 +73,7 @@ import {SurveyAnswer} from './modules/survey-answer2/entity/survey-answer.entity
         UserExperiment,
         UserTask,
         SurveyAnswer,
+        TaskQuestionMap,
       ],
       synchronize: true,
     }),
@@ -89,6 +92,7 @@ import {SurveyAnswer} from './modules/survey-answer2/entity/survey-answer.entity
     UserTask2Module,
     Survey2Module,
     SurveyAnswer2Module,
+    TaskQuestionMapModule,
   ],
   controllers: [AppController],
   providers: [],

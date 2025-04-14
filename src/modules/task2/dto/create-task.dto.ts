@@ -27,6 +27,10 @@ export class CreateTaskDto {
   surveyId?: string;
 
   @IsOptional()
+  @IsString()
+  rule_type?: string; //survey_score || question_score
+
+  @IsOptional()
   @IsNumber()
   minScore?: number;
 

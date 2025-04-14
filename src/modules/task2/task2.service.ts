@@ -83,6 +83,14 @@ export class Task2Service {
     });
   }
 
+  async findBySurveyId(surveyId: string): Promise<Task[]> {
+    return await this.taskRepository.find({
+      where: {
+        survey_id: surveyId,
+      },
+    });
+  }
+
   async update(id: string, updateTaskDto: UpdateTaskDto): Promise<Task> {
     await this.taskRepository.update({_id: id}, updateTaskDto);
     return await this.findOne(id);

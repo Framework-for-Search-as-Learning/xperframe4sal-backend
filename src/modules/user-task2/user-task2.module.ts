@@ -6,6 +6,7 @@ import {UserTask} from './entities/user-tasks.entity';
 import {User2Module} from '../user2/user2.module';
 import {Task2Module} from '../task2/task2.module';
 import {SurveyAnswer2Module} from '../survey-answer2/survey-answer2.module';
+import {TaskQuestionMapModule} from '../task-question-map/task-question-map.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import {SurveyAnswer2Module} from '../survey-answer2/survey-answer2.module';
     Task2Module,
     User2Module,
     SurveyAnswer2Module,
+    TaskQuestionMapModule,
   ],
   providers: [UserTask2Service],
   controllers: [UserTask2Controller],

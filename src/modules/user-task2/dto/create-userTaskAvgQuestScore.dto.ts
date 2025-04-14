@@ -16,6 +16,5 @@ export class CreateUserTaskAvgQuestScoreDto {
 
   @IsNotEmpty()
   @IsArray()
-  @IsString({each: true})
-  questionStatements: string[];
+  questionsIds: number[];
 }

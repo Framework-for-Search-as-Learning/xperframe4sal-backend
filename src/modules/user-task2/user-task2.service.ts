@@ -12,6 +12,7 @@ import {CreateUserTaskRandomDto} from './dto/create-userTaskRandom.dto';
 import {CreateUserTaskScoreDto} from './dto/create-userTaskScore.dto';
 import {CreateUserTaskQuestScoreDto} from './dto/create-userTaskQuestionScore';
 import {CreateUserTaskAvgQuestScoreDto} from './dto/create-userTaskAvgQuestScore.dto';
+import {TaskQuestionMapService} from '../task-question-map/task-question-map.service';
 
 @Injectable()
 export class UserTask2Service {
@@ -22,6 +23,7 @@ export class UserTask2Service {
     private readonly userService: User2Service,
     private readonly taskService: Task2Service,
     private readonly surveyAnswerService: SurveyAnswer2Service,
+    private readonly taskQuestionMapService: TaskQuestionMapService,
   ) {}
   async findOne(id: string): Promise<UserTask> {
     try {
@@ -132,7 +134,7 @@ export class UserTask2Service {
     createUserTaskAvgQuestScore: CreateUserTaskAvgQuestScoreDto,
   ): Promise<UserTask> {
     try {
-      const {userId, surveyId, taskIds, questionStatements} =
+      const {userId, surveyId, taskIds, questionsIds} =
         createUserTaskAvgQuestScore;
       const surveyAnswer =
         await this.surveyAnswerService.findByUserIdAndSurveyId(
@@ -144,7 +146,7 @@ export class UserTask2Service {
       }
 
       const selectedQuestion = surveyAnswer.answers.filter((answer) =>
-        questionStatements.includes(answer.questionStatement),
+        questionsIds.includes(answer.id),
       );
       if (selectedQuestion.length === 0) {
         throw new Error('Nenhuma das questoes foram encontradas.');
@@ -172,6 +174,55 @@ export class UserTask2Service {
     }
   }
 
+  async createBySurvey(userId: string, surveyId: string): Promise<void> {
+    const tasks = await this.taskService.findBySurveyId(surveyId);
+    const surveyScoreTasks = tasks.filter(
+      (task) => task.rule_type === 'survey_score',
+    );
+    //TODO ao inves de passar para Id passar o objeto Task na funcao de criacao de userTask
+    const surveyScoreTasksIds = surveyScoreTasks.map((task) => task._id);
+    const questionScoreTasks = tasks.filter(
+      (task) => task.rule_type === 'question_score',
+    );
+    const questionScoreTasksIds = questionScoreTasks.map((task) => task._id);
+
+    if (surveyScoreTasks.length > 0) {
+      await this.createBySurveyScore({
+        userId,
+        surveyId,
+        taskIds: surveyScoreTasksIds,
+      });
+    }
+
+    if (questionScoreTasks.length > 0) {
+      const tasksGroupedByQuestions = new Map<
+        string,
+        {taskIds: string[]; questionIds: number[]}
+      >();
+      for (const taskId of questionScoreTasksIds) {
+        const questionsId =
+          await this.taskQuestionMapService.findQuestionsByTask(taskId);
+        const questionKey = questionsId.sort().join(',');
+        if (!tasksGroupedByQuestions.has(questionKey)) {
+          tasksGroupedByQuestions.set(questionKey, {
+            taskIds: [],
+            questionIds: questionsId,
+          });
+        }
+        tasksGroupedByQuestions.get(questionKey).taskIds.push(taskId);
+      }
+      const groupedTask = Array.from(tasksGroupedByQuestions.values());
+      for (const group of groupedTask) {
+        await this.createByAverageQuestionsScore({
+          userId,
+          surveyId,
+          questionsIds: group.questionIds,
+          taskIds: group.taskIds,
+        });
+      }
+    }
+  }
+
   //TODO Fazer destribuicao de carga
   async createRandom2(userId: string, taskIds: string[]): Promise<UserTask> {
     const randomIndex = Math.floor(Math.random() * taskIds.length);
@@ -184,7 +235,10 @@ export class UserTask2Service {
     createUserTaskRandomDto: CreateUserTaskRandomDto,
   ): Promise<UserTask> {
     try {
-      const {userId, taskIds} = createUserTaskRandomDto;
+      const {userId, surveyId} = createUserTaskRandomDto;
+
+      const tasks = await this.taskService.findBySurveyId(surveyId);
+      const taskIds = tasks.map((task) => task._id);
       const taskCounts = await this.getTaskCounts(taskIds);
 
       const weights = taskIds.map((taskId) => {

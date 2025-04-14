@@ -22,10 +22,11 @@ export class TaskProps {
   title: string;
   summary: string;
   description: string;
+  SelectedSurvey: string;
   RulesExperiment: string; //score || question
   ScoreThreshold: number;
   ScoreThresholdmx: number;
-  questionsId: number[];
+  selectedQuestionIds: number[];
 }
 
 export class UserProps {

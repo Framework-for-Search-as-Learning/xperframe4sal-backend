@@ -57,6 +57,7 @@ export class Experiments2Service {
         questions: survey.questions,
         type: survey.type,
         experimentId: survey.experimentId,
+        uuid: survey.uuid,
       });
     });
     await Promise.all(SurveysPromises);
@@ -67,10 +68,11 @@ export class Experiments2Service {
         title: task.title,
         summary: task.summary,
         description: task.description,
+        surveyId: task.SelectedSurvey,
         rule_type: task.RulesExperiment,
         minScore: task.ScoreThreshold,
         maxScore: task.ScoreThresholdmx,
-        questionsId: task.questionsId,
+        questionsId: task.selectedQuestionIds,
         experimentId: savedExperiment._id,
       });
     });

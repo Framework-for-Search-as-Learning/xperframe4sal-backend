@@ -2,6 +2,7 @@ import {
   IsArray,
   IsEnum,
   IsNotEmpty,
+  IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
@@ -11,6 +12,11 @@ import {ApiProperty} from '@nestjs/swagger';
 import {QuestionDTO} from './question.dto';
 
 export class CreateSurveyDto {
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  uuid: string;
+
   @ApiProperty()
   @IsNotEmpty()
   @IsString()

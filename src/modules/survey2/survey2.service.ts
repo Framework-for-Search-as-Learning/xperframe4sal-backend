@@ -2,6 +2,7 @@ import {
   forwardRef,
   Inject,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
@@ -22,26 +23,38 @@ export class Survey2Service {
 
   async create(createSurveyDto: CreateSurveyDto): Promise<Survey> {
     try {
-      console.log('passou por aqui 1');
-      const {name, title, description, type, questions, experimentId} =
+      const {name, title, description, type, questions, experimentId, uuid} =
         createSurveyDto;
       const experiment = await this.experimentService.find(experimentId);
       if (!experiment) {
         throw new NotFoundException('Experimento não encontrado');
       }
-      console.log('passou por aqui 2');
-      const newSurvey = await this.surveyRepository.create({
-        name,
-        title,
-        description,
-        type,
-        questions,
-        experiment,
-      });
-      console.log('passou por aqui 3');
+      let newSurvey: Survey;
+      console.log('uuid gerada: ', uuid);
+      if (uuid) {
+        newSurvey = await this.surveyRepository.create({
+          _id: uuid,
+          name,
+          title,
+          description,
+          type,
+          questions,
+          experiment,
+        });
+      } else {
+        newSurvey = await this.surveyRepository.create({
+          name,
+          title,
+          description,
+          type,
+          questions,
+          experiment,
+        });
+      }
       return await this.surveyRepository.save(newSurvey);
     } catch (error) {
-      throw error;
+      console.error('Erro ao criar survey:', error);
+      throw new InternalServerErrorException('Erro ao criar survey');
     }
   }
 

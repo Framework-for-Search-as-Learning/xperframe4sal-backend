@@ -1,4 +1,9 @@
-import {forwardRef, Inject, Injectable} from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {Survey} from './entity/survey.entity';
 import {Repository} from 'typeorm';
@@ -21,6 +26,9 @@ export class Survey2Service {
       const {name, title, description, type, questions, experimentId} =
         createSurveyDto;
       const experiment = await this.experimentService.find(experimentId);
+      if (!experiment) {
+        throw new NotFoundException('Experimento não encontrado');
+      }
       console.log('passou por aqui 2');
       const newSurvey = await this.surveyRepository.create({
         name,

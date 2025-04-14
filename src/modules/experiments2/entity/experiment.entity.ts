@@ -18,12 +18,14 @@ export class SurveyProps {
   required: boolean = false;
 }
 export class TaskProps {
-  id: string;
+  //id: string;
   title: string;
   summary: string;
   description: string;
-  toWhom: string = 'all';
-  required: boolean = true;
+  RulesExperiment: string; //score || question
+  ScoreThreshold: number;
+  ScoreThresholdmx: number;
+  questionsId: number[];
 }
 
 export class UserProps {

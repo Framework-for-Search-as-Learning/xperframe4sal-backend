@@ -174,18 +174,17 @@ export class UserTask2Service {
     }
   }
 
-  async createBySurvey(userId: string, surveyId: string): Promise<void> {
+  async createBySurveyRule(userId: string, surveyId: string): Promise<void> {
     const tasks = await this.taskService.findBySurveyId(surveyId);
-    const surveyScoreTasks = tasks.filter(
-      (task) => task.rule_type === 'survey_score',
-    );
+    const surveyScoreTasks = tasks.filter((task) => task.rule_type === 'score');
     //TODO ao inves de passar para Id passar o objeto Task na funcao de criacao de userTask
     const surveyScoreTasksIds = surveyScoreTasks.map((task) => task._id);
+    console.log('SurveyScore: ' + surveyScoreTasksIds);
     const questionScoreTasks = tasks.filter(
-      (task) => task.rule_type === 'question_score',
+      (task) => task.rule_type === 'question',
     );
     const questionScoreTasksIds = questionScoreTasks.map((task) => task._id);
-
+    console.log('QuestionScore: ' + questionScoreTasksIds);
     if (surveyScoreTasks.length > 0) {
       await this.createBySurveyScore({
         userId,
@@ -195,6 +194,7 @@ export class UserTask2Service {
     }
 
     if (questionScoreTasks.length > 0) {
+      console.log('passou aqui');
       const tasksGroupedByQuestions = new Map<
         string,
         {taskIds: string[]; questionIds: number[]}
@@ -212,6 +212,8 @@ export class UserTask2Service {
         tasksGroupedByQuestions.get(questionKey).taskIds.push(taskId);
       }
       const groupedTask = Array.from(tasksGroupedByQuestions.values());
+
+      console.log('Matriz: ' + JSON.stringify(groupedTask, null, 2));
       for (const group of groupedTask) {
         await this.createByAverageQuestionsScore({
           userId,

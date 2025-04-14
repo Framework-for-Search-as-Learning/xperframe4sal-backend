@@ -48,17 +48,6 @@ export class Experiments2Service {
     });
     const savedExperiment = await this.experimentRepository.save(experiment);
 
-    //Create Task
-    const TasksPromises = tasksProps.map((task) => {
-      return this.taskService.create({
-        title: task.title,
-        summary: task.summary,
-        description: task.description,
-        experimentId: savedExperiment._id,
-      });
-    });
-    await Promise.all(TasksPromises);
-
     //Create Surveys
     const SurveysPromises = surveysProps.map((survey) => {
       return this.surveyService.create({
@@ -71,6 +60,22 @@ export class Experiments2Service {
       });
     });
     await Promise.all(SurveysPromises);
+
+    //Create Task
+    const TasksPromises = tasksProps.map((task) => {
+      return this.taskService.create({
+        title: task.title,
+        summary: task.summary,
+        description: task.description,
+        rule_type: task.RulesExperiment,
+        minScore: task.ScoreThreshold,
+        maxScore: task.ScoreThresholdmx,
+        questionsId: task.questionsId,
+        experimentId: savedExperiment._id,
+      });
+    });
+    await Promise.all(TasksPromises);
+
     return savedExperiment;
   }
 

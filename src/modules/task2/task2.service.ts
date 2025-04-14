@@ -11,6 +11,7 @@ import {CreateTaskDto} from './dto/create-task.dto';
 import {Experiments2Service} from '../experiments2/experiments2.service';
 import {UpdateTaskDto} from './dto/update-task.dto';
 import {Survey2Service} from '../survey2/survey2.service';
+import {TaskQuestionMapService} from '../task-question-map/task-question-map.service';
 
 @Injectable()
 export class Task2Service {
@@ -20,6 +21,8 @@ export class Task2Service {
     @Inject(forwardRef(() => Experiments2Service))
     private readonly experimentService: Experiments2Service,
     private readonly surveyService: Survey2Service,
+    @Inject(forwardRef(() => TaskQuestionMapService))
+    private readonly taskQuestionMapService: TaskQuestionMapService,
   ) {}
   async create(createTaskDto: CreateTaskDto): Promise<Task> {
     try {
@@ -29,8 +32,10 @@ export class Task2Service {
         description,
         experimentId,
         surveyId,
+        rule_type,
         minScore,
         maxScore,
+        questionsId,
       } = createTaskDto;
 
       const experiment = await this.experimentService.find(experimentId);
@@ -44,16 +49,25 @@ export class Task2Service {
           throw new NotFoundException('Survey não encontrado');
         }
       }
-      const newTask = await this.taskRepository.create({
+      const newTask = await this.taskRepository.save({
         title,
         summary,
         description,
         experiment,
         survey,
+        rule_type,
         min_score: minScore || 0,
         max_score: maxScore || 0,
       });
-      return await this.taskRepository.save(newTask);
+      console.log(newTask);
+      if (questionsId?.length > 0) {
+        await Promise.all(
+          questionsId.map((questionId) =>
+            this.taskQuestionMapService.create(newTask._id, questionId),
+          ),
+        );
+      }
+      return await newTask;
     } catch (error) {
       throw error;
     }

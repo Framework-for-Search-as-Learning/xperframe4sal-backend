@@ -1,5 +1,11 @@
 import {ApiProperty} from '@nestjs/swagger';
-import {IsNotEmpty, IsNumber, IsOptional, IsString} from 'class-validator';
+import {
+  IsArray,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class CreateTaskDto {
   @ApiProperty()
@@ -28,7 +34,11 @@ export class CreateTaskDto {
 
   @IsOptional()
   @IsString()
-  rule_type?: string; //survey_score || question_score
+  rule_type?: string; //score || question
+
+  @IsOptional()
+  @IsArray()
+  questionsId?: number[];
 
   @IsOptional()
   @IsNumber()

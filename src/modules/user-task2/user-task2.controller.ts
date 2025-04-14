@@ -104,6 +104,14 @@ export class UserTask2Controller {
     );
   }
 
+  @Post('/surveyRule')
+  @ApiOperation({summary: 'Create a new user task using rules based on Survey'})
+  async createBySurveyRule(
+    @Body() body: {userId: string; surveyId: string},
+  ): Promise<void> {
+    await this.userTaskService.createBySurveyRule(body.userId, body.surveyId);
+  }
+
   @Delete()
   @ApiOperation({summary: 'Remove a user task by userId and taskId'})
   @ApiQuery({

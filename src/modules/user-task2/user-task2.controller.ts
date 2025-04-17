@@ -17,6 +17,7 @@ import {CreateUserTaskRandomDto} from './dto/create-userTaskRandom.dto';
 import {CreateUserTaskScoreDto} from './dto/create-userTaskScore.dto';
 import {CreateUserTaskQuestScoreDto} from './dto/create-userTaskQuestionScore';
 import {CreateUserTaskAvgQuestScoreDto} from './dto/create-userTaskAvgQuestScore.dto';
+import {User} from '../user2/entity/user.entity';
 
 @ApiTags('user-task2')
 @Controller('user-task2')
@@ -54,6 +55,12 @@ export class UserTask2Controller {
       return await this.userTaskService.findByUserId(userId);
     }
     return await this.userTaskService.findAll();
+  }
+
+  @Get('task/:taskId/users')
+  @ApiOperation({summary: 'Get all users associated with a specific task'})
+  async findUsersByTaskId(taskId: string): Promise<User[]> {
+    return await this.userTaskService.findUsersByTaskId(taskId);
   }
 
   @Post()

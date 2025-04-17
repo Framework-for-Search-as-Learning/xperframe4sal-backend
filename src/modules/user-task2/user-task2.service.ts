@@ -13,6 +13,7 @@ import {CreateUserTaskScoreDto} from './dto/create-userTaskScore.dto';
 import {CreateUserTaskQuestScoreDto} from './dto/create-userTaskQuestionScore';
 import {CreateUserTaskAvgQuestScoreDto} from './dto/create-userTaskAvgQuestScore.dto';
 import {TaskQuestionMapService} from '../task-question-map/task-question-map.service';
+import {User} from '../user2/entity/user.entity';
 
 @Injectable()
 export class UserTask2Service {
@@ -307,6 +308,15 @@ export class UserTask2Service {
         task: {_id: taskId},
       },
     });
+  }
+
+  async findUsersByTaskId(taskId: string): Promise<User[]> {
+    const userTasks = await this.userTaskRepository.find({
+      relations: ['user'],
+      where: {task_id: taskId},
+    });
+    const users = userTasks.map((userTasks) => userTasks.user);
+    return users;
   }
 
   async removeByUserIdAndTaskId(

@@ -59,7 +59,7 @@ export class UserTask2Controller {
 
   @Get('task/:taskId/users')
   @ApiOperation({summary: 'Get all users associated with a specific task'})
-  async findUsersByTaskId(taskId: string): Promise<User[]> {
+  async findUsersByTaskId(@Param('taskId') taskId: string): Promise<User[]> {
     return await this.userTaskService.findUsersByTaskId(taskId);
   }
 

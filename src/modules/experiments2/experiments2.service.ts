@@ -89,6 +89,13 @@ export class Experiments2Service {
     return await this.experimentRepository.findOneBy({_id: id});
   }
 
+  async findWithTasks(id: string): Promise<Experiment> {
+    return await this.experimentRepository.findOne({
+      where: {_id: id},
+      relations: ['tasks'],
+    });
+  }
+
   async findOneByName(name: string): Promise<Experiment> {
     return await this.experimentRepository.findOneBy({name});
   }

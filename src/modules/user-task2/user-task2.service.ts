@@ -22,7 +22,6 @@ export class UserTask2Service {
 
     private readonly userService: User2Service,
     private readonly taskService: Task2Service,
-    //private readonly surveyAnswerService: SurveyAnswer2Service,
     private readonly taskQuestionMapService: TaskQuestionMapService,
   ) {}
   async findOne(id: string): Promise<UserTask> {
@@ -226,9 +225,7 @@ export class UserTask2Service {
     createUserTaskRandomDto: CreateUserTaskRandomDto,
   ): Promise<UserTask> {
     try {
-      const {userId, surveyId} = createUserTaskRandomDto;
-
-      const tasks = await this.taskService.findBySurveyId(surveyId);
+      const {userId, tasks} = createUserTaskRandomDto;
       const taskIds = tasks.map((task) => task._id);
       const taskCounts = await this.getTaskCounts(taskIds);
 

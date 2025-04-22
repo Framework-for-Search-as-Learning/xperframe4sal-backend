@@ -1,16 +1,13 @@
-import {ApiProperty} from '@nestjs/swagger';
 import {IsNotEmpty, IsString} from 'class-validator';
+import {Task} from 'src/modules/task2/entities/task.entity';
 
 export class CreateUserTaskRandomDto {
-  @ApiProperty()
   @IsNotEmpty()
   @IsString()
   userId: string;
 
-  @ApiProperty()
   @IsNotEmpty()
-  @IsString()
-  surveyId: string;
+  tasks: Task[];
 
   /*
   @ApiProperty({type: [String]})

@@ -27,7 +27,8 @@ export class UserExperiments2Service {
     try {
       const {userId, experimentId} = createUserExperimentDto;
       const user = await this.userService.findOne(userId);
-      const experiment = await this.experimentService.find(experimentId);
+      const experiment =
+        await this.experimentService.findWithTasks(experimentId);
       const newUserExperiment = this.userExperimentRepository.create({
         user,
         experiment,
@@ -48,6 +49,13 @@ export class UserExperiments2Service {
             this.userTask2Service.create({taskId: task._id, userId: userId});
           }),
         );
+      } else {
+        if (experiment.betweenExperimentType === 'random') {
+          await this.userTask2Service.createRandom({
+            userId,
+            tasks: experiment.tasks,
+          });
+        }
       }
       return savedUserExperiment;
     } catch (error) {

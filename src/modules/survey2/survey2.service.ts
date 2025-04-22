@@ -66,6 +66,14 @@ export class Survey2Service {
       where: {_id: id},
     });
   }
+
+  async findOneWithExperiment(id: string): Promise<Survey> {
+    return await this.surveyRepository.findOne({
+      where: {_id: id},
+      relations: ['experiment'],
+    });
+  }
+
   async findByExperimentId(experimentId: string): Promise<Survey[]> {
     return await this.surveyRepository.find({
       where: {

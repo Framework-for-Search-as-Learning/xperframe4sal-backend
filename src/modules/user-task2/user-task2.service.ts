@@ -213,14 +213,6 @@ export class UserTask2Service {
     }
   }
 
-  //TODO Fazer destribuicao de carga
-  async createRandom2(userId: string, taskIds: string[]): Promise<UserTask> {
-    const randomIndex = Math.floor(Math.random() * taskIds.length);
-    const selectTaskId = taskIds[randomIndex];
-
-    return await this.create({userId: userId, taskId: selectTaskId});
-  }
-
   async createRandom(
     createUserTaskRandomDto: CreateUserTaskRandomDto,
   ): Promise<UserTask> {

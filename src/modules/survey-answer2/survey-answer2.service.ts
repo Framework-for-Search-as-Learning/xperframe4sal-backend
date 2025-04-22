@@ -28,7 +28,7 @@ export class SurveyAnswer2Service {
       if (!user) {
         throw new NotFoundException('Usuario não encontrado.');
       }
-      const survey = await this.surveyService.findOne(surveyId);
+      const survey = await this.surveyService.findOneWithExperiment(surveyId);
       if (!survey) {
         throw new NotFoundException('Survey não encontrado.');
       }
@@ -58,13 +58,14 @@ export class SurveyAnswer2Service {
         answers: answers,
         score: totalScore,
       });
-      const experiment = newSurveyAnswer.survey.experiment;
-      if (experiment?.betweenExperimentType === 'rule') {
+      const experiment = survey.experiment;
+      if (experiment?.betweenExperimentType === 'rules_based') {
         await this.userTask2Service.createBySurveyRule({
           userId,
           surveyId: newSurveyAnswer.survey_id,
           surveyAnswer: newSurveyAnswer,
         });
+        console.log('teste666');
       }
       return newSurveyAnswer;
     } catch (error) {

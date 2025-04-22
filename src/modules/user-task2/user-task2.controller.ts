@@ -8,7 +8,13 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import {ApiOperation, ApiTags, ApiBody, ApiQuery} from '@nestjs/swagger';
+import {
+  ApiOperation,
+  ApiTags,
+  ApiBody,
+  ApiQuery,
+  ApiExcludeEndpoint,
+} from '@nestjs/swagger';
 import {UserTask2Service} from './user-task2.service';
 import {UserTask} from './entities/user-tasks.entity';
 import {CreateUserTaskDto} from './dto/create-userTask.dto';
@@ -81,8 +87,8 @@ export class UserTask2Controller {
     return await this.userTaskService.createRandom(createUserTaskRandomDto);
   }
 
+  @ApiExcludeEndpoint()
   @Post('/surveyScore')
-  @ApiOperation({summary: 'Create a new user task using score method'})
   async createBySurveyScore(
     @Body() createUserTaskScoreDto: CreateUserTaskScoreDto,
   ): Promise<UserTask> {
@@ -91,8 +97,8 @@ export class UserTask2Controller {
     );
   }
 
+  @ApiExcludeEndpoint()
   @Post('/questionScore')
-  @ApiOperation({summary: 'Create a new user task using question score method'})
   async createByQuestionScore(
     @Body() createUserTaskQuestScoreDto: CreateUserTaskQuestScoreDto,
   ): Promise<UserTask> {
@@ -102,7 +108,7 @@ export class UserTask2Controller {
   }
 
   @Post('/avgQuestionScore')
-  @ApiOperation({summary: 'Create a new user task using question score method'})
+  @ApiExcludeEndpoint()
   async createByAvgQuestionScore(
     @Body() createUserTaskAvgQuestScoreDto: CreateUserTaskAvgQuestScoreDto,
   ): Promise<UserTask> {

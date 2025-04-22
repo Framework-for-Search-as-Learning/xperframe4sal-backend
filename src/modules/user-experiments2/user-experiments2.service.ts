@@ -8,6 +8,7 @@ import {Experiments2Service} from '../experiments2/experiments2.service';
 import {UpdateUserExperimentDto} from './dto/update-userExperiment.dto';
 import {User} from '../user2/entity/user.entity';
 import {Experiment} from '../experiments2/entity/experiment.entity';
+import {UserTask2Service} from '../user-task2/user-task2.service';
 
 @Injectable()
 export class UserExperiments2Service {
@@ -17,6 +18,7 @@ export class UserExperiments2Service {
     private readonly userService: User2Service,
     @Inject(forwardRef(() => Experiments2Service))
     private readonly experimentService: Experiments2Service,
+    private readonly userTask2Service: UserTask2Service,
   ) {}
 
   async create(
@@ -38,6 +40,15 @@ export class UserExperiments2Service {
       };
       const savedUserExperiment =
         await this.userExperimentRepository.save(newUserExperiment);
+
+      if (experiment.typeExperiment === 'within-subject') {
+        const tasks = experiment.tasks;
+        await Promise.all(
+          tasks.map((task) => {
+            this.userTask2Service.create({taskId: task._id, userId: userId});
+          }),
+        );
+      }
       return savedUserExperiment;
     } catch (error) {
       throw error;

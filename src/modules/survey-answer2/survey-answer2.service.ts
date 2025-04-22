@@ -7,6 +7,7 @@ import {User2Service} from '../user2/user2.service';
 import {Survey2Service} from '../survey2/survey2.service';
 import {UpdateSurveyAnswerDto} from './dto/update-surveyAnswer.dto';
 import {QuestionType} from '../survey2/dto/question.dto';
+import {UserTask2Service} from '../user-task2/user-task2.service';
 
 @Injectable()
 export class SurveyAnswer2Service {
@@ -15,6 +16,7 @@ export class SurveyAnswer2Service {
     private readonly surveyAnswerRepository: Repository<SurveyAnswer>,
     private readonly userService: User2Service,
     private readonly surveyService: Survey2Service,
+    private readonly userTask2Service: UserTask2Service,
   ) {}
 
   async create(
@@ -50,12 +52,21 @@ export class SurveyAnswer2Service {
         answer.score = questionScore;
         totalScore += questionScore;
       }
-      return await this.surveyAnswerRepository.save({
+      const newSurveyAnswer = await this.surveyAnswerRepository.save({
         user: user,
         survey: survey,
         answers: answers,
         score: totalScore,
       });
+      const experiment = newSurveyAnswer.survey.experiment;
+      if (experiment?.betweenExperimentType === 'rule') {
+        await this.userTask2Service.createBySurveyRule({
+          userId,
+          surveyId: newSurveyAnswer.survey_id,
+          surveyAnswer: newSurveyAnswer,
+        });
+      }
+      return newSurveyAnswer;
     } catch (error) {
       throw error;
     }

@@ -1,14 +1,15 @@
-import {ApiProperty} from '@nestjs/swagger';
 import {IsNotEmpty, IsString} from 'class-validator';
+import {SurveyAnswer} from 'src/modules/survey-answer2/entity/survey-answer.entity';
 
 export class CreateUserTaskByRule {
-  @ApiProperty()
   @IsNotEmpty()
   @IsString()
   userId: string;
 
-  @ApiProperty()
   @IsNotEmpty()
   @IsString()
   surveyId: string;
+
+  @IsNotEmpty()
+  surveyAnswer: SurveyAnswer;
 }

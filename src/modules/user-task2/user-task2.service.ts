@@ -63,16 +63,8 @@ export class UserTask2Service {
     createUserTaskScoreDto: CreateUserTaskScoreDto,
   ): Promise<UserTask> {
     try {
-      const {userId, surveyId, taskIds} = createUserTaskScoreDto;
+      const {userId, taskIds, surveyAnswer} = createUserTaskScoreDto;
       console.log(taskIds);
-      const surveyAnswer =
-        await this.surveyAnswerService.findByUserIdAndSurveyId(
-          userId,
-          surveyId,
-        );
-      if (!surveyAnswer) {
-        throw new NotFoundException('SurveyAnswer nao encontrado.');
-      }
       const score = surveyAnswer.score;
       const taskList = await this.taskService.findMany(taskIds);
       let selectedTaskId;
@@ -136,16 +128,8 @@ export class UserTask2Service {
     createUserTaskAvgQuestScore: CreateUserTaskAvgQuestScoreDto,
   ): Promise<UserTask> {
     try {
-      const {userId, surveyId, taskIds, questionsIds} =
+      const {userId, taskIds, questionsIds, surveyAnswer} =
         createUserTaskAvgQuestScore;
-      const surveyAnswer =
-        await this.surveyAnswerService.findByUserIdAndSurveyId(
-          userId,
-          surveyId,
-        );
-      if (!surveyAnswer) {
-        throw new NotFoundException('SurveyAnswer nao foi encontrado');
-      }
 
       const selectedQuestion = surveyAnswer.answers.filter((answer) =>
         questionsIds.includes(answer.id),
@@ -179,7 +163,7 @@ export class UserTask2Service {
   async createBySurveyRule(
     createUserTaskByRule: CreateUserTaskByRule,
   ): Promise<void> {
-    const {userId, surveyId} = createUserTaskByRule;
+    const {userId, surveyId, surveyAnswer} = createUserTaskByRule;
     const tasks = await this.taskService.findBySurveyId(surveyId);
     const surveyScoreTasks = tasks.filter((task) => task.rule_type === 'score');
     //TODO ao inves de passar para Id passar o objeto Task na funcao de criacao de userTask
@@ -193,7 +177,7 @@ export class UserTask2Service {
     if (surveyScoreTasks.length > 0) {
       await this.createBySurveyScore({
         userId,
-        surveyId,
+        surveyAnswer,
         taskIds: surveyScoreTasksIds,
       });
     }
@@ -222,7 +206,7 @@ export class UserTask2Service {
       for (const group of groupedTask) {
         await this.createByAverageQuestionsScore({
           userId,
-          surveyId,
+          surveyAnswer,
           questionsIds: group.questionIds,
           taskIds: group.taskIds,
         });

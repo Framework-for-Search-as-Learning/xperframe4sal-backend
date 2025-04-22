@@ -5,12 +5,14 @@ import {TypeOrmModule} from '@nestjs/typeorm';
 import {SurveyAnswer} from './entity/survey-answer.entity';
 import {User2Module} from '../user2/user2.module';
 import {Survey2Module} from '../survey2/survey2.module';
+import {UserTask2Module} from '../user-task2/user-task2.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([SurveyAnswer]),
     User2Module,
     Survey2Module,
+    UserTask2Module,
   ],
   providers: [SurveyAnswer2Service],
   controllers: [SurveyAnswer2Controller],

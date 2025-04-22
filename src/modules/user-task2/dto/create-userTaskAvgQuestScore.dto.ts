@@ -1,4 +1,5 @@
 import {IsArray, IsNotEmpty, IsString} from 'class-validator';
+import {SurveyAnswer} from 'src/modules/survey-answer2/entity/survey-answer.entity';
 
 export class CreateUserTaskAvgQuestScoreDto {
   @IsNotEmpty()
@@ -6,8 +7,7 @@ export class CreateUserTaskAvgQuestScoreDto {
   userId: string;
 
   @IsNotEmpty()
-  @IsString()
-  surveyId: string;
+  surveyAnswer: SurveyAnswer;
 
   @IsNotEmpty()
   @IsArray()

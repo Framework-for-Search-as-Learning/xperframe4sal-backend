@@ -8,23 +8,13 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import {
-  ApiOperation,
-  ApiTags,
-  ApiBody,
-  ApiQuery,
-  ApiExcludeEndpoint,
-} from '@nestjs/swagger';
+import {ApiOperation, ApiTags, ApiBody, ApiQuery} from '@nestjs/swagger';
 import {UserTask2Service} from './user-task2.service';
 import {UserTask} from './entities/user-tasks.entity';
 import {CreateUserTaskDto} from './dto/create-userTask.dto';
 import {UpdateUserTaskDto} from './dto/update-userTask.dto';
 import {CreateUserTaskRandomDto} from './dto/create-userTaskRandom.dto';
-import {CreateUserTaskScoreDto} from './dto/create-userTaskScore.dto';
-import {CreateUserTaskQuestScoreDto} from './dto/create-userTaskQuestionScore';
-import {CreateUserTaskAvgQuestScoreDto} from './dto/create-userTaskAvgQuestScore.dto';
 import {User} from '../user2/entity/user.entity';
-import {CreateUserTaskByRule} from './dto/create-userTaskByRule.dto';
 
 @ApiTags('user-task2')
 @Controller('user-task2')
@@ -86,44 +76,6 @@ export class UserTask2Controller {
     @Body() createUserTaskRandomDto: CreateUserTaskRandomDto,
   ): Promise<UserTask> {
     return await this.userTaskService.createRandom(createUserTaskRandomDto);
-  }
-
-  @ApiExcludeEndpoint()
-  @Post('/surveyScore')
-  async createBySurveyScore(
-    @Body() createUserTaskScoreDto: CreateUserTaskScoreDto,
-  ): Promise<UserTask> {
-    return await this.userTaskService.createBySurveyScore(
-      createUserTaskScoreDto,
-    );
-  }
-
-  @ApiExcludeEndpoint()
-  @Post('/questionScore')
-  async createByQuestionScore(
-    @Body() createUserTaskQuestScoreDto: CreateUserTaskQuestScoreDto,
-  ): Promise<UserTask> {
-    return await this.userTaskService.createByQuestionScore(
-      createUserTaskQuestScoreDto,
-    );
-  }
-
-  @ApiExcludeEndpoint()
-  @Post('/avgQuestionScore')
-  async createByAvgQuestionScore(
-    @Body() createUserTaskAvgQuestScoreDto: CreateUserTaskAvgQuestScoreDto,
-  ): Promise<UserTask> {
-    return await this.userTaskService.createByAverageQuestionsScore(
-      createUserTaskAvgQuestScoreDto,
-    );
-  }
-
-  @Post('/surveyRule')
-  @ApiOperation({summary: 'Create a new user task using rules based on Survey'})
-  async createBySurveyRule(
-    @Body() createUserTaskByRule: CreateUserTaskByRule,
-  ): Promise<void> {
-    await this.userTaskService.createBySurveyRule(createUserTaskByRule);
   }
 
   @Delete()

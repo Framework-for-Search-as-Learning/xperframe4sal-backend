@@ -2,8 +2,8 @@ import {Injectable} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {Icf} from './entity/icf.entity';
 import {Repository} from 'typeorm';
-import {CreateIcfDto} from './dto/create-survey.dto';
-import {UpdateIcfDto} from './dto/update-survey.dto';
+import {CreateIcfDto} from './dto/create-icf.dto';
+import {UpdateIcfDto} from './dto/update-icf.dto';
 
 @Injectable()
 export class Icf2Service {

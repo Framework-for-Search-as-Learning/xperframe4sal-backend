@@ -8,9 +8,9 @@ import {
   Post,
 } from '@nestjs/common';
 import {Icf2Service} from './icf2.service';
-import {CreateIcfDto} from './dto/create-survey.dto';
+import {CreateIcfDto} from './dto/create-icf.dto';
 import {Icf} from './entity/icf.entity';
-import {UpdateIcfDto} from './dto/update-survey.dto';
+import {UpdateIcfDto} from './dto/update-icf.dto';
 import {ApiBody, ApiOperation} from '@nestjs/swagger';
 
 @Controller('icf2')

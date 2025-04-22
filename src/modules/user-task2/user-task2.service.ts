@@ -7,10 +7,8 @@ import {User2Service} from '../user2/user2.service';
 import {Task2Service} from '../task2/task2.service';
 import {UpdateUserTaskDto} from './dto/update-userTask.dto';
 import {TimeEditUserTaskDto} from './dto/timeEditUserTaskDTO';
-import {SurveyAnswer2Service} from '../survey-answer2/survey-answer2.service';
 import {CreateUserTaskRandomDto} from './dto/create-userTaskRandom.dto';
 import {CreateUserTaskScoreDto} from './dto/create-userTaskScore.dto';
-import {CreateUserTaskQuestScoreDto} from './dto/create-userTaskQuestionScore';
 import {CreateUserTaskAvgQuestScoreDto} from './dto/create-userTaskAvgQuestScore.dto';
 import {TaskQuestionMapService} from '../task-question-map/task-question-map.service';
 import {User} from '../user2/entity/user.entity';
@@ -24,7 +22,7 @@ export class UserTask2Service {
 
     private readonly userService: User2Service,
     private readonly taskService: Task2Service,
-    private readonly surveyAnswerService: SurveyAnswer2Service,
+    //private readonly surveyAnswerService: SurveyAnswer2Service,
     private readonly taskQuestionMapService: TaskQuestionMapService,
   ) {}
   async findOne(id: string): Promise<UserTask> {
@@ -83,6 +81,7 @@ export class UserTask2Service {
     }
   }
 
+  /*
   async createByQuestionScore(
     createUserTaskQuestScore: CreateUserTaskQuestScoreDto,
   ): Promise<UserTask> {
@@ -123,6 +122,7 @@ export class UserTask2Service {
       throw error;
     }
   }
+  */
 
   async createByAverageQuestionsScore(
     createUserTaskAvgQuestScore: CreateUserTaskAvgQuestScoreDto,

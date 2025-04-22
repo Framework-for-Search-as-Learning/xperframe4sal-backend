@@ -7,20 +7,21 @@ export class Icf extends BaseEntity {
   @Column()
   title: string;
   @Column()
+  icfText: string;
+
+  /* 
+  @Column()
   researchTitle: string;
   @Column()
   agreementStatement: string;
   @Column()
   description: string;
-  @Column()
-  icfText: string;
-
   //TODO ver como fazer no postgres
   //@Column()
   //researchers: string[];
   @Column()
   contact: string;
-
+  */
   @OneToMany(() => Experiment, (experiment) => experiment.icf)
   experiments: Experiment[];
 }

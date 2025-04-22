@@ -65,10 +65,10 @@ export class Experiment extends BaseEntity {
   userExperiments: UserExperiment[];
   @OneToMany(() => Survey, (survey) => survey.experiment)
   surveys: Survey[];
-  //TODO icfID
   @ManyToOne(() => Icf, (icf) => icf.experiments)
   icf: Icf;
-  @Column()
+  //TODO remover nullable depois
+  @Column({nullable: true})
   icf_id: string;
   //TODO steps
 }

@@ -10,6 +10,11 @@ export class CreateIcfDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
+  icfText: string;
+  /*
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
   researchTitle: string;
 
   @ApiProperty()
@@ -22,11 +27,6 @@ export class CreateIcfDto {
   @IsString()
   description: string;
 
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  icfText: string;
-
   //TODO esperar resolver no banco
   //researchers
 
@@ -34,4 +34,5 @@ export class CreateIcfDto {
   @IsNotEmpty()
   @IsString()
   contact: string;
+  */
 }

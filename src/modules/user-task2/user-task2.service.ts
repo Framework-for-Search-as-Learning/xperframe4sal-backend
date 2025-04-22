@@ -14,6 +14,7 @@ import {CreateUserTaskQuestScoreDto} from './dto/create-userTaskQuestionScore';
 import {CreateUserTaskAvgQuestScoreDto} from './dto/create-userTaskAvgQuestScore.dto';
 import {TaskQuestionMapService} from '../task-question-map/task-question-map.service';
 import {User} from '../user2/entity/user.entity';
+import {CreateUserTaskByRule} from './dto/create-userTaskByRule.dto';
 
 @Injectable()
 export class UserTask2Service {
@@ -175,7 +176,10 @@ export class UserTask2Service {
     }
   }
 
-  async createBySurveyRule(userId: string, surveyId: string): Promise<void> {
+  async createBySurveyRule(
+    createUserTaskByRule: CreateUserTaskByRule,
+  ): Promise<void> {
+    const {userId, surveyId} = createUserTaskByRule;
     const tasks = await this.taskService.findBySurveyId(surveyId);
     const surveyScoreTasks = tasks.filter((task) => task.rule_type === 'score');
     //TODO ao inves de passar para Id passar o objeto Task na funcao de criacao de userTask

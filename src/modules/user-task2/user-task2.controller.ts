@@ -24,6 +24,7 @@ import {CreateUserTaskScoreDto} from './dto/create-userTaskScore.dto';
 import {CreateUserTaskQuestScoreDto} from './dto/create-userTaskQuestionScore';
 import {CreateUserTaskAvgQuestScoreDto} from './dto/create-userTaskAvgQuestScore.dto';
 import {User} from '../user2/entity/user.entity';
+import {CreateUserTaskByRule} from './dto/create-userTaskByRule.dto';
 
 @ApiTags('user-task2')
 @Controller('user-task2')
@@ -107,8 +108,8 @@ export class UserTask2Controller {
     );
   }
 
-  @Post('/avgQuestionScore')
   @ApiExcludeEndpoint()
+  @Post('/avgQuestionScore')
   async createByAvgQuestionScore(
     @Body() createUserTaskAvgQuestScoreDto: CreateUserTaskAvgQuestScoreDto,
   ): Promise<UserTask> {
@@ -120,9 +121,9 @@ export class UserTask2Controller {
   @Post('/surveyRule')
   @ApiOperation({summary: 'Create a new user task using rules based on Survey'})
   async createBySurveyRule(
-    @Body() body: {userId: string; surveyId: string},
+    @Body() createUserTaskByRule: CreateUserTaskByRule,
   ): Promise<void> {
-    await this.userTaskService.createBySurveyRule(body.userId, body.surveyId);
+    await this.userTaskService.createBySurveyRule(createUserTaskByRule);
   }
 
   @Delete()

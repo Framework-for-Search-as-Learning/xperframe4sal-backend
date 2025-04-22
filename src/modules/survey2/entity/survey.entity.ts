@@ -7,7 +7,7 @@ import {Column, Entity, ManyToOne, OneToMany} from 'typeorm';
 export enum SurveyType {
   PRE = 'pre',
   POST = 'post',
-  OTHER = 'other',
+  DEMO = 'demo',
 }
 
 @Entity()
@@ -24,7 +24,7 @@ export class Survey extends BaseEntity {
     type: 'enum',
     enum: SurveyType,
   })
-  type: SurveyType = SurveyType.OTHER;
+  type: SurveyType = SurveyType.DEMO;
   @Column()
   experiment_id: string;
   @ManyToOne(() => Experiment, (experiment) => experiment.surveys)

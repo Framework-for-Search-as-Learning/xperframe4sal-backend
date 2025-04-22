@@ -33,6 +33,8 @@ import {SurveyAnswer2Module} from './modules/survey-answer2/survey-answer2.modul
 import {SurveyAnswer} from './modules/survey-answer2/entity/survey-answer.entity';
 import {TaskQuestionMapModule} from './modules/task-question-map/task-question-map.module';
 import {TaskQuestionMap} from './modules/task-question-map/entity/taskQuestionMap.entity';
+import {Icf2Module} from './modules/icf2/icf2.module';
+import {Icf} from './modules/icf2/entity/icf.entity';
 @Module({
   imports: [
     ExperimentsModule,
@@ -74,6 +76,7 @@ import {TaskQuestionMap} from './modules/task-question-map/entity/taskQuestionMa
         UserTask,
         SurveyAnswer,
         TaskQuestionMap,
+        Icf,
       ],
       synchronize: true,
     }),
@@ -93,6 +96,7 @@ import {TaskQuestionMap} from './modules/task-question-map/entity/taskQuestionMa
     Survey2Module,
     SurveyAnswer2Module,
     TaskQuestionMapModule,
+    Icf2Module,
   ],
   controllers: [AppController],
   providers: [],

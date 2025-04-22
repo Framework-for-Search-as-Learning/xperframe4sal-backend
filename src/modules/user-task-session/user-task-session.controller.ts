@@ -1,12 +1,28 @@
-import { Controller, Get, Post, Body, Patch, Delete, UseGuards, Query, Param } from '@nestjs/common';
-import { UserTaskSessionService } from './user-task-session.service';
-import { HandlePageDto, UserTaskSession } from 'src/model/user-task-session.entity';
-import { AuthGuard } from '@nestjs/passport';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Delete,
+  UseGuards,
+  Query,
+  Param,
+} from '@nestjs/common';
+import {UserTaskSessionService} from './user-task-session.service';
+import {
+  HandlePageDto,
+  UserTaskSession,
+} from 'src/model/user-task-session.entity';
+import {AuthGuard} from '@nestjs/passport';
+import {ApiExcludeController} from '@nestjs/swagger';
 
-
+@ApiExcludeController()
 @Controller('user-task-session')
 export class UserTaskSessionController {
-  constructor(private readonly userTaskSessionService: UserTaskSessionService) { }
+  constructor(
+    private readonly userTaskSessionService: UserTaskSessionService,
+  ) {}
 
   @Get()
   async findAll(
@@ -15,16 +31,17 @@ export class UserTaskSessionController {
   ): Promise<UserTaskSession[]> {
     if (userId) {
       if (taskId) {
-        return await this.userTaskSessionService.findByUserIdAndTaskId(userId, taskId);
+        return await this.userTaskSessionService.findByUserIdAndTaskId(
+          userId,
+          taskId,
+        );
       }
       return await this.userTaskSessionService.findByUserId(userId);
     }
     return await this.userTaskSessionService.findAll();
   }
   @Get()
-  async findOne(
-    @Param('id') id: string,
-  ): Promise<UserTaskSession> {
+  async findOne(@Param('id') id: string): Promise<UserTaskSession> {
     return await this.userTaskSessionService.findOne(id);
   }
 
@@ -38,11 +55,14 @@ export class UserTaskSessionController {
   @Delete()
   async removeByUserIdAndTaskId(
     @Query('userId') userId: string,
-    @Query('taskId') taskId: string
+    @Query('taskId') taskId: string,
   ) {
     if (userId) {
       if (taskId) {
-        return await this.userTaskSessionService.removeByUserIdAndTaskId(userId, taskId);
+        return await this.userTaskSessionService.removeByUserIdAndTaskId(
+          userId,
+          taskId,
+        );
       }
     }
     return null;
@@ -63,11 +83,16 @@ export class UserTaskSessionController {
   async closePage(
     @Param('id') id: string,
     @Param('rank') rank: number,
-    @Body() closePageDto: HandlePageDto
+    @Body() closePageDto: HandlePageDto,
   ): Promise<UserTaskSession> {
     try {
       const userTaskSession = await this.findOne(id);
-      return await this.userTaskSessionService.closePage(id, rank, userTaskSession, closePageDto);
+      return await this.userTaskSessionService.closePage(
+        id,
+        rank,
+        userTaskSession,
+        closePageDto,
+      );
     } catch (error) {
       throw error;
     }
@@ -78,11 +103,16 @@ export class UserTaskSessionController {
   async openPage(
     @Param('id') id: string,
     @Param('rank') rank: number,
-    @Body() openPageDto: HandlePageDto
+    @Body() openPageDto: HandlePageDto,
   ): Promise<UserTaskSession> {
     try {
       const userTaskSession = await this.findOne(id);
-      return await this.userTaskSessionService.openPage(id, rank, userTaskSession, openPageDto);
+      return await this.userTaskSessionService.openPage(
+        id,
+        rank,
+        userTaskSession,
+        openPageDto,
+      );
     } catch (error) {
       throw error;
     }

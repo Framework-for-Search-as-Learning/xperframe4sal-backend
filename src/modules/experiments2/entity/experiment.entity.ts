@@ -1,4 +1,5 @@
 import {BaseEntity} from 'src/model/base_entity2';
+import {Icf} from 'src/modules/icf2/entity/icf.entity';
 import {Survey} from 'src/modules/survey2/entity/survey.entity';
 import {Task} from 'src/modules/task2/entities/task.entity';
 import {UserExperiment} from 'src/modules/user-experiments2/entities/user-experiments.entity';
@@ -65,5 +66,9 @@ export class Experiment extends BaseEntity {
   @OneToMany(() => Survey, (survey) => survey.experiment)
   surveys: Survey[];
   //TODO icfID
+  @ManyToOne(() => Icf, (icf) => icf.experiments)
+  icf: Icf;
+  @Column()
+  icf_id: string;
   //TODO steps
 }

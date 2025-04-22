@@ -1,11 +1,23 @@
-import { Controller, Get, Post, Body, Delete, Query, Patch, Param, UseGuards } from '@nestjs/common';
-import { UserSurveysService } from './survey-answers.service';
-import { SurveyAnswers } from 'src/model/survey-answer.entity';
-import { AuthGuard } from '@nestjs/passport';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Delete,
+  Query,
+  Patch,
+  Param,
+  UseGuards,
+} from '@nestjs/common';
+import {UserSurveysService} from './survey-answers.service';
+import {SurveyAnswers} from 'src/model/survey-answer.entity';
+import {AuthGuard} from '@nestjs/passport';
+import {ApiExcludeController} from '@nestjs/swagger';
 
+@ApiExcludeController()
 @Controller('survey-answers')
 export class UserSurveysController {
-  constructor(private readonly surveyAnswersService: UserSurveysService) { }
+  constructor(private readonly surveyAnswersService: UserSurveysService) {}
 
   @UseGuards(AuthGuard('jwt'))
   @Post()
@@ -21,7 +33,10 @@ export class UserSurveysController {
   ): Promise<SurveyAnswers[]> {
     if (userId) {
       if (surveyId) {
-        return await this.surveyAnswersService.findByUserIdAndSurveyId(userId, surveyId);
+        return await this.surveyAnswersService.findByUserIdAndSurveyId(
+          userId,
+          surveyId,
+        );
       }
       return await this.surveyAnswersService.findByUserId(userId);
     }
@@ -42,11 +57,14 @@ export class UserSurveysController {
   @Delete()
   async removeByUserIdAndSurveyId(
     @Query('userId') userId: string,
-    @Query('surveyId') surveyId: string
+    @Query('surveyId') surveyId: string,
   ) {
     if (userId) {
       if (surveyId) {
-        return await this.surveyAnswersService.removeByUserIdAndSurveyId(userId, surveyId);
+        return await this.surveyAnswersService.removeByUserIdAndSurveyId(
+          userId,
+          surveyId,
+        );
       }
     }
     return null;
@@ -54,9 +72,7 @@ export class UserSurveysController {
 
   @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
-  async remove(
-    @Param('id') id: string,
-  ) {
+  async remove(@Param('id') id: string) {
     return await this.surveyAnswersService.remove(id);
   }
 }

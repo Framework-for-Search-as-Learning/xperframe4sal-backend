@@ -1,12 +1,13 @@
-import { Controller, Get, Query } from '@nestjs/common';
-import { GoogleService } from './google.service';
+import {Controller, Get, Query} from '@nestjs/common';
+import {GoogleService} from './google.service';
+import {ApiExcludeController} from '@nestjs/swagger';
 
+@ApiExcludeController()
 @Controller('search-engine')
 export class GoogleController {
-
   private cache: Record<string, any> = {};
 
-  constructor(private readonly googleService: GoogleService) { }
+  constructor(private readonly googleService: GoogleService) {}
 
   @Get('google')
   async query(
@@ -17,7 +18,11 @@ export class GoogleController {
     query = query.trim();
 
     try {
-      return await this.googleService.query(query, Number(startIndex), Number(resultsPerPage));
+      return await this.googleService.query(
+        query,
+        Number(startIndex),
+        Number(resultsPerPage),
+      );
     } catch (error: any) {
       throw error;
     }

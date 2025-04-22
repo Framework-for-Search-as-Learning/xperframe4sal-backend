@@ -8,13 +8,15 @@ import {
   Delete,
   UseGuards,
 } from '@nestjs/common';
-import { ICFService } from './icf.service';
-import { ICF } from '../../model/icf.entity';
-import { AuthGuard } from '@nestjs/passport';
+import {ICFService} from './icf.service';
+import {ICF} from '../../model/icf.entity';
+import {AuthGuard} from '@nestjs/passport';
+import {ApiExcludeController} from '@nestjs/swagger';
 
+@ApiExcludeController()
 @Controller('icf')
 export class ICFController {
-  constructor(private readonly icfService: ICFService) { }
+  constructor(private readonly icfService: ICFService) {}
 
   @UseGuards(AuthGuard('jwt'))
   @Post()

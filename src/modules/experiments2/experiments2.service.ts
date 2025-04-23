@@ -11,6 +11,7 @@ import {UpdateExperimentDto} from './dto/update-experiment.dto';
 import {User2Service} from '../user2/user2.service';
 import {Task2Service} from '../task2/task2.service';
 import {Survey2Service} from '../survey2/survey2.service';
+import {Icf2Service} from '../icf2/icf2.service';
 
 @Injectable()
 export class Experiments2Service {
@@ -23,6 +24,7 @@ export class Experiments2Service {
     private readonly userService: User2Service,
     private readonly taskService: Task2Service,
     private readonly surveyService: Survey2Service,
+    private readonly icfService: Icf2Service,
   ) {}
 
   async create(createExperimentDto: CreateExperimentDto): Promise<any> {
@@ -34,6 +36,7 @@ export class Experiments2Service {
       surveysProps,
       typeExperiment,
       betweenExperimentType,
+      icf,
     } = createExperimentDto;
     console.log('Survey Props:');
     console.log(surveysProps);
@@ -78,6 +81,11 @@ export class Experiments2Service {
     });
     await Promise.all(TasksPromises);
 
+    //Create Icf
+    await this.icfService.create({
+      title: icf.title,
+      description: icf.description,
+    });
     return savedExperiment;
   }
 

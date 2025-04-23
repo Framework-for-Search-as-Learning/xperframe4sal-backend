@@ -10,7 +10,7 @@ export class CreateIcfDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  icfText: string;
+  description: string;
   /*
   @ApiProperty()
   @IsNotEmpty()

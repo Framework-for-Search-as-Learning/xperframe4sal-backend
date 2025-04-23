@@ -8,6 +8,7 @@ import {UserTask2Module} from '../user-task2/user-task2.module';
 import {User2Module} from '../user2/user2.module';
 import {Task2Module} from '../task2/task2.module';
 import {Survey2Module} from '../survey2/survey2.module';
+import {Icf2Module} from '../icf2/icf2.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import {Survey2Module} from '../survey2/survey2.module';
     User2Module,
     Task2Module,
     Survey2Module,
+    Icf2Module,
   ],
   providers: [Experiments2Service],
   controllers: [Experiments2Controller],

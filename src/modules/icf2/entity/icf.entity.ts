@@ -7,8 +7,7 @@ export class Icf extends BaseEntity {
   @Column()
   title: string;
   @Column()
-  icfText: string;
-
+  description: string;
   /* 
   @Column()
   researchTitle: string;

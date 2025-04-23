@@ -8,5 +8,6 @@ import {Icf} from './entity/icf.entity';
   imports: [TypeOrmModule.forFeature([Icf])],
   providers: [Icf2Service],
   controllers: [Icf2Controller],
+  exports: [Icf2Service],
 })
 export class Icf2Module {}

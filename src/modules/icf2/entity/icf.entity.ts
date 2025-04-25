@@ -21,6 +21,6 @@ export class Icf extends BaseEntity {
   @Column()
   contact: string;
   */
-  @OneToMany(() => Experiment, (experiment) => experiment.icf)
+  @OneToMany(() => Experiment, (experiment) => experiment.icf, {cascade: true})
   experiments: Experiment[];
 }

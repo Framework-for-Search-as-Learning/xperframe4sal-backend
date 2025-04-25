@@ -9,7 +9,7 @@ export class UserTask extends BaseEntity {
   user: User;
   @Column()
   user_id: string;
-  @ManyToOne(() => Task, (task) => task.userTasks)
+  @ManyToOne(() => Task, (task) => task.userTasks, {onDelete: 'CASCADE'})
   task: Task;
   @Column()
   task_id: string;

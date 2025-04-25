@@ -108,6 +108,10 @@ export class Experiments2Service {
     return await this.experimentRepository.findOneBy({name});
   }
 
+  async findByOwnerId(ownerId: string): Promise<Experiment[]> {
+    return await this.experimentRepository.find({where: {owner_id: ownerId}});
+  }
+
   async update(
     id: string,
     updateExperimentDto: UpdateExperimentDto,

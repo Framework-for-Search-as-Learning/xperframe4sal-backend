@@ -27,7 +27,9 @@ export class Survey extends BaseEntity {
   type: SurveyType = SurveyType.DEMO;
   @Column()
   experiment_id: string;
-  @ManyToOne(() => Experiment, (experiment) => experiment.surveys)
+  @ManyToOne(() => Experiment, (experiment) => experiment.surveys, {
+    onDelete: 'CASCADE',
+  })
   experiment: Experiment;
   @OneToMany(() => SurveyAnswer, (surveyAnswer) => surveyAnswer.survey)
   surveyAnswers: SurveyAnswer[];

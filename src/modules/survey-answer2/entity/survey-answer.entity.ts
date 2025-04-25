@@ -11,7 +11,9 @@ export class SurveyAnswer extends BaseEntity {
   @Column()
   user_id: string;
 
-  @ManyToOne(() => Survey, (survey) => survey.surveyAnswers)
+  @ManyToOne(() => Survey, (survey) => survey.surveyAnswers, {
+    onDelete: 'CASCADE',
+  })
   survey: Survey;
   @Column()
   survey_id: string;

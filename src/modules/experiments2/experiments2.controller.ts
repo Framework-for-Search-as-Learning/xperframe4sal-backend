@@ -39,6 +39,14 @@ export class Experiments2Controller {
     return await this.experimentService.find(id);
   }
 
+  @Get('owner/:ownerId')
+  @ApiOperation({summary: 'Get experiments by ownerId'})
+  async findByOwenerId(
+    @Param('ownerId') ownerId: string,
+  ): Promise<Experiment[]> {
+    return await this.experimentService.findByOwnerId(ownerId);
+  }
+
   @Patch(':id')
   @ApiOperation({summary: 'Update an experiment by id'})
   @ApiBody({type: UpdateExperimentDto})

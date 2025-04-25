@@ -15,6 +15,7 @@ export class Task extends BaseEntity {
   description: string;
   @ManyToOne(() => Experiment, (experiment) => experiment.tasks, {
     nullable: true,
+    onDelete: 'CASCADE',
   })
   experiment: Experiment;
   @Column()

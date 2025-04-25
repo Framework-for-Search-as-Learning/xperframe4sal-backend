@@ -56,16 +56,17 @@ export class Experiment extends BaseEntity {
   typeExperiment: string;
   @Column()
   betweenExperimentType: string;
-  @OneToMany(() => Task, (task) => task.experiment)
+  @OneToMany(() => Task, (task) => task.experiment, {cascade: true})
   tasks: Task[];
   @OneToMany(
     () => UserExperiment,
     (userExperiment) => userExperiment.experiment,
+    {cascade: true},
   )
   userExperiments: UserExperiment[];
-  @OneToMany(() => Survey, (survey) => survey.experiment)
+  @OneToMany(() => Survey, (survey) => survey.experiment, {cascade: true})
   surveys: Survey[];
-  @ManyToOne(() => Icf, (icf) => icf.experiments)
+  @ManyToOne(() => Icf, (icf) => icf.experiments, {onDelete: 'CASCADE'})
   icf: Icf;
   //TODO remover nullable depois
   @Column({nullable: true})

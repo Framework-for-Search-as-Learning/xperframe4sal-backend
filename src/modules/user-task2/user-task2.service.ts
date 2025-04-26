@@ -185,7 +185,7 @@ export class UserTask2Service {
       console.log('passou aqui');
       const tasksGroupedByQuestions = new Map<
         string,
-        {taskIds: string[]; questionIds: number[]}
+        {taskIds: string[]; questionIds: string[]}
       >();
       for (const taskId of questionScoreTasksIds) {
         const questionsId =

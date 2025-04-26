@@ -19,7 +19,7 @@ export class AnswerOptionsDTO {
 
 export class AnswerDTO {
   @IsNumber()
-  id: number;
+  id: string;
 
   @IsString()
   questionStatement: string;

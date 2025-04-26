@@ -36,6 +36,14 @@ export class Icf2Controller {
     return await this.icfService.find(id);
   }
 
+  @Get('experiment/:experimentId')
+  @ApiOperation({summary: 'Get a icf by experimentId'})
+  async findOneByExperimentId(
+    @Param('experimentId') experimentId: string,
+  ): Promise<Icf> {
+    return await this.icfService.findOneByExperimentId(experimentId);
+  }
+
   @Patch(':id')
   @ApiOperation({summary: 'Update a icf by id'})
   @ApiBody({type: UpdateIcfDto})

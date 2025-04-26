@@ -22,8 +22,13 @@ export class Icf2Service {
     return await this.icfRepository.findOne({where: {_id: id}});
   }
 
-  //TODO ver oque fazer
-  //async findOneByExperimentId
+  async findOneByExperimentId(experimentId: string): Promise<Icf> {
+    try {
+      return await this.icfRepository.findOne({
+        where: {experiment_id: experimentId},
+      });
+    } catch (error) {}
+  }
 
   async update(id: string, updateIcfDto: UpdateIcfDto): Promise<Icf> {
     try {

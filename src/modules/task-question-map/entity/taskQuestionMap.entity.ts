@@ -6,7 +6,7 @@ export class TaskQuestionMap {
   @PrimaryGeneratedColumn('uuid')
   _id: string;
 
-  @ManyToOne(() => Task, (task) => task.taskQuestionsMap)
+  @ManyToOne(() => Task, (task) => task.taskQuestionsMap, {onDelete: 'CASCADE'})
   task: Task;
   @Column()
   task_id: string;

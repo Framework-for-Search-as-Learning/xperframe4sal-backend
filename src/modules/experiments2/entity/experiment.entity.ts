@@ -66,10 +66,7 @@ export class Experiment extends BaseEntity {
   userExperiments: UserExperiment[];
   @OneToMany(() => Survey, (survey) => survey.experiment, {cascade: true})
   surveys: Survey[];
-  @ManyToOne(() => Icf, (icf) => icf.experiments, {onDelete: 'CASCADE'})
-  icf: Icf;
-  //TODO remover nullable depois
-  @Column({nullable: true})
-  icf_id: string;
+  @OneToMany(() => Icf, (icf) => icf.experiment, {cascade: true})
+  icfs: Icf[];
   //TODO steps
 }

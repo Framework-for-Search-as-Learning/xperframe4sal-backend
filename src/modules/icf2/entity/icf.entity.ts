@@ -1,6 +1,6 @@
 import {BaseEntity} from 'src/model/base_entity2';
 import {Experiment} from 'src/modules/experiments2/entity/experiment.entity';
-import {Column, Entity, OneToMany} from 'typeorm';
+import {Column, Entity, ManyToOne} from 'typeorm';
 
 @Entity()
 export class Icf extends BaseEntity {
@@ -21,6 +21,10 @@ export class Icf extends BaseEntity {
   @Column()
   contact: string;
   */
-  @OneToMany(() => Experiment, (experiment) => experiment.icf, {cascade: true})
-  experiments: Experiment[];
+  @ManyToOne(() => Experiment, (experiment) => experiment.icfs, {
+    onDelete: 'CASCADE',
+  })
+  experiment: Experiment;
+  @Column()
+  experiment_id: string;
 }

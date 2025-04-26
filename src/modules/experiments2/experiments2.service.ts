@@ -85,6 +85,7 @@ export class Experiments2Service {
     await this.icfService.create({
       title: icf.title,
       description: icf.description,
+      experimentId: savedExperiment._id,
     });
     return savedExperiment;
   }

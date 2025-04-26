@@ -11,6 +11,11 @@ export class CreateIcfDto {
   @IsNotEmpty()
   @IsString()
   description: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  experimentId: string;
   /*
   @ApiProperty()
   @IsNotEmpty()

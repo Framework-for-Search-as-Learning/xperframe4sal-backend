@@ -3,7 +3,6 @@ import {IsNotEmpty, IsOptional, IsString} from 'class-validator';
 import {TaskProps} from '../entity/experiment.entity';
 import {CreateSurveyDto} from 'src/modules/survey2/dto/create-survey.dto';
 import {ApiProperty} from '@nestjs/swagger';
-import {CreateIcfDto} from 'src/modules/icf2/dto/create-icf.dto';
 
 export class CreateExperimentDto {
   @ApiProperty()
@@ -36,5 +35,5 @@ export class CreateExperimentDto {
   //;userProps: string[];
   surveysProps: CreateSurveyDto[];
 
-  icf: CreateIcfDto;
+  icf: {title: string; description: string};
 }

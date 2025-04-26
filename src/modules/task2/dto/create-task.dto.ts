@@ -38,7 +38,7 @@ export class CreateTaskDto {
 
   @IsOptional()
   @IsArray()
-  questionsId?: number[];
+  questionsId?: string[];
 
   @IsOptional()
   @IsNumber()

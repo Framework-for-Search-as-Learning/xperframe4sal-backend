@@ -27,7 +27,7 @@ export class TaskProps {
   RulesExperiment: string; //score || question
   ScoreThreshold: number;
   ScoreThresholdmx: number;
-  selectedQuestionIds: number[];
+  selectedQuestionIds: string[];
 }
 
 export class UserProps {
@@ -66,7 +66,9 @@ export class Experiment extends BaseEntity {
   userExperiments: UserExperiment[];
   @OneToMany(() => Survey, (survey) => survey.experiment, {cascade: true})
   surveys: Survey[];
-  @OneToMany(() => Icf, (icf) => icf.experiment, {cascade: true})
+
+  @OneToMany(() => Icf, (icf) => icf.experiment)
   icfs: Icf[];
+
   //TODO steps
 }

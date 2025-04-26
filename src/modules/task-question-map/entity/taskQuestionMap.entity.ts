@@ -11,5 +11,5 @@ export class TaskQuestionMap {
   @Column()
   task_id: string;
   @Column()
-  question_id: number;
+  question_id: string;
 }

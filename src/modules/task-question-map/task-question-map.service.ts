@@ -18,7 +18,7 @@ export class TaskQuestionMapService {
     private readonly taskService: Task2Service,
   ) {}
 
-  async create(taskId: string, questionId: number): Promise<TaskQuestionMap> {
+  async create(taskId: string, questionId: string): Promise<TaskQuestionMap> {
     const task = await this.taskService.findOne(taskId);
     if (!task) {
       throw new NotFoundException('Task não encontrada.');
@@ -29,7 +29,7 @@ export class TaskQuestionMapService {
     });
   }
 
-  async findQuestionsByTask(taskId: string): Promise<number[]> {
+  async findQuestionsByTask(taskId: string): Promise<string[]> {
     const taskquestions = await this.taskQuestionMapRepository.find({
       where: {task_id: taskId},
     });

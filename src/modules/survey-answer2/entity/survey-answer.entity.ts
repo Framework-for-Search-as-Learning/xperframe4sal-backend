@@ -6,7 +6,7 @@ import {AnswerDTO} from '../dto/answers.dto';
 
 @Entity()
 export class SurveyAnswer extends BaseEntity {
-  @ManyToOne(() => User, (user) => user.surveyAnswers)
+  @ManyToOne(() => User, (user) => user.surveyAnswers, {onDelete: 'CASCADE'})
   user: User;
   @Column()
   user_id: string;

@@ -67,7 +67,7 @@ export class Experiment extends BaseEntity {
   @OneToMany(() => Survey, (survey) => survey.experiment, {cascade: true})
   surveys: Survey[];
 
-  @OneToMany(() => Icf, (icf) => icf.experiment)
+  @OneToMany(() => Icf, (icf) => icf.experiment, {cascade: true})
   icfs: Icf[];
 
   //TODO steps

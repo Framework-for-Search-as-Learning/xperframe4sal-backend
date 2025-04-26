@@ -5,7 +5,7 @@ import {Column, Entity, ManyToOne} from 'typeorm';
 
 @Entity()
 export class UserTask extends BaseEntity {
-  @ManyToOne(() => User, (user) => user.userTasks)
+  @ManyToOne(() => User, (user) => user.userTasks, {onDelete: 'CASCADE'})
   user: User;
   @Column()
   user_id: string;

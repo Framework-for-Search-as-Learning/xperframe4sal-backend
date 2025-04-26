@@ -14,7 +14,7 @@ export class UserExperiment extends BaseEntity {
   @Column()
   experimentId: string;*/
 
-  @ManyToOne(() => User, (user) => user.userExperiments)
+  @ManyToOne(() => User, (user) => user.userExperiments, {onDelete: 'CASCADE'})
   user: User;
   @Column()
   user_id: string;

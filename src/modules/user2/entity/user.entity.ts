@@ -22,11 +22,15 @@ export class User extends BaseEntity {
   recoveryPasswordTokenExpirationDate: Date;
   @Column()
   researcher: boolean;
-  @OneToMany(() => UserExperiment, (userExperiment) => userExperiment.user)
+  @OneToMany(() => UserExperiment, (userExperiment) => userExperiment.user, {
+    cascade: true,
+  })
   userExperiments: UserExperiment[];
-  @OneToMany(() => UserTask, (userTask) => userTask.user)
+  @OneToMany(() => UserTask, (userTask) => userTask.user, {cascade: true})
   userTasks: UserTask[];
-  @OneToMany(() => SurveyAnswer, (surveyAnswer) => surveyAnswer.user)
+  @OneToMany(() => SurveyAnswer, (surveyAnswer) => surveyAnswer.user, {
+    cascade: true,
+  })
   surveyAnswers: SurveyAnswer[];
 
   //TODO role

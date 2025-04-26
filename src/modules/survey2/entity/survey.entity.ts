@@ -31,9 +31,11 @@ export class Survey extends BaseEntity {
     onDelete: 'CASCADE',
   })
   experiment: Experiment;
-  @OneToMany(() => SurveyAnswer, (surveyAnswer) => surveyAnswer.survey)
+  @OneToMany(() => SurveyAnswer, (surveyAnswer) => surveyAnswer.survey, {
+    cascade: true,
+  })
   surveyAnswers: SurveyAnswer[];
 
-  @OneToMany(() => Task, (task) => task.survey)
+  @OneToMany(() => Task, (task) => task.survey, {cascade: true})
   tasks: Task[];
 }

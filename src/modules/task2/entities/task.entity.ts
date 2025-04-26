@@ -23,12 +23,15 @@ export class Task extends BaseEntity {
 
   @ManyToOne(() => Survey, (survey) => survey.tasks, {
     nullable: true,
+    onDelete: 'CASCADE',
   })
   survey: Survey;
   @Column({nullable: true})
   survey_id: string;
 
-  @OneToMany(() => TaskQuestionMap, (taskQuestionMap) => taskQuestionMap.task)
+  @OneToMany(() => TaskQuestionMap, (taskQuestionMap) => taskQuestionMap.task, {
+    cascade: true,
+  })
   taskQuestionsMap: TaskQuestionMap[];
 
   @Column({nullable: true})
@@ -39,6 +42,6 @@ export class Task extends BaseEntity {
   @Column({nullable: true})
   min_score: number;
 
-  @OneToMany(() => UserTask, (userTask) => userTask.task)
+  @OneToMany(() => UserTask, (userTask) => userTask.task, {cascade: true})
   userTasks: UserTask[];
 }

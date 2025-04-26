@@ -24,6 +24,7 @@ export class Experiments2Service {
     private readonly userService: User2Service,
     private readonly taskService: Task2Service,
     private readonly surveyService: Survey2Service,
+    @Inject(forwardRef(() => Icf2Service))
     private readonly icfService: Icf2Service,
   ) {}
 

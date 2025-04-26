@@ -18,7 +18,7 @@ import {Icf2Module} from '../icf2/icf2.module';
     User2Module,
     Task2Module,
     Survey2Module,
-    Icf2Module,
+    forwardRef(() => Icf2Module),
   ],
   providers: [Experiments2Service],
   controllers: [Experiments2Controller],

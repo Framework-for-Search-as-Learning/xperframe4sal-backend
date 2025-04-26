@@ -1,19 +1,37 @@
-import {Injectable} from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {Icf} from './entity/icf.entity';
 import {Repository} from 'typeorm';
 import {CreateIcfDto} from './dto/create-icf.dto';
 import {UpdateIcfDto} from './dto/update-icf.dto';
+import {Experiments2Service} from '../experiments2/experiments2.service';
 
 @Injectable()
 export class Icf2Service {
   constructor(
     @InjectRepository(Icf)
     private readonly icfRepository: Repository<Icf>,
+    @Inject(forwardRef(() => Experiments2Service))
+    private readonly experimentService: Experiments2Service,
   ) {}
 
   async create(createIcfDto: CreateIcfDto): Promise<Icf> {
-    return await this.icfRepository.save(createIcfDto);
+    const experiment = await this.experimentService.find(
+      createIcfDto.experimentId,
+    );
+    if (!experiment) {
+      throw new NotFoundException('Experimento não encontrado');
+    }
+    return await this.icfRepository.save({
+      title: createIcfDto.title,
+      description: createIcfDto.description,
+      experiment,
+    });
   }
   async findAll(): Promise<Icf[]> {
     return await this.icfRepository.find();

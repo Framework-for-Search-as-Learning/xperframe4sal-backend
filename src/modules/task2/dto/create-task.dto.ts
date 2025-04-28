@@ -1,11 +1,5 @@
 import {ApiProperty} from '@nestjs/swagger';
-import {
-  IsArray,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import {IsArray, IsNotEmpty, IsOptional, IsString} from 'class-validator';
 
 export class CreateTaskDto {
   @ApiProperty()
@@ -19,7 +13,7 @@ export class CreateTaskDto {
   summary: string;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   description: string;
 
@@ -28,23 +22,27 @@ export class CreateTaskDto {
   @IsString()
   experimentId: string;
 
+  @ApiProperty()
   @IsOptional()
   @IsString()
   surveyId?: string;
 
+  @ApiProperty()
   @IsOptional()
   @IsString()
   rule_type?: string; //score || question
 
+  @ApiProperty()
   @IsOptional()
   @IsArray()
   questionsId?: string[];
 
+  //TODO Voltar com @IsNumber apos corrigir no front
+  @ApiProperty()
   @IsOptional()
-  @IsNumber()
   minScore?: number;
 
+  @ApiProperty()
   @IsOptional()
-  @IsNumber()
   maxScore?: number;
 }

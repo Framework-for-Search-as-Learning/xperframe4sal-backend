@@ -31,7 +31,7 @@ export class Task2Service {
         summary,
         description,
         experimentId,
-        surveyId,
+        survey_id,
         rule_type,
         minScore,
         maxScore,
@@ -43,8 +43,8 @@ export class Task2Service {
         throw new NotFoundException('Experimento não encontrado');
       }
       let survey = null;
-      if (surveyId) {
-        survey = await this.surveyService.findOne(surveyId);
+      if (survey_id) {
+        survey = await this.surveyService.findOne(survey_id);
         if (!survey) {
           throw new NotFoundException('Survey não encontrado');
         }
@@ -106,6 +106,16 @@ export class Task2Service {
   }
 
   async update(id: string, updateTaskDto: UpdateTaskDto): Promise<Task> {
+    const oldTask = await this.findOne(id);
+    if (
+      updateTaskDto.survey_id &&
+      updateTaskDto?.survey_id !== oldTask.survey_id
+    ) {
+      const survey = await this.surveyService.findOne(updateTaskDto.survey_id);
+      if (!survey) {
+        throw new NotFoundException('Survey não encontrado');
+      }
+    }
     await this.taskRepository.update({_id: id}, updateTaskDto);
     return await this.findOne(id);
   }

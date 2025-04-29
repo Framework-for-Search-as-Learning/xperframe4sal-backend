@@ -25,7 +25,7 @@ export class CreateTaskDto {
   @ApiProperty()
   @IsOptional()
   @IsString()
-  surveyId?: string;
+  survey_id?: string;
 
   @ApiProperty()
   @IsOptional()

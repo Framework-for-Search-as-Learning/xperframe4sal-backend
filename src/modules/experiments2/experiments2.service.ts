@@ -72,7 +72,7 @@ export class Experiments2Service {
         title: task.title,
         summary: task.summary,
         description: task.description,
-        surveyId: task.SelectedSurvey,
+        survey_id: task.SelectedSurvey,
         rule_type: task.RulesExperiment,
         minScore: task.ScoreThreshold,
         maxScore: task.ScoreThresholdmx,

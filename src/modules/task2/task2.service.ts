@@ -105,6 +105,7 @@ export class Task2Service {
     });
   }
 
+  //TODO fazer atualização na relação com Survey e suas questions
   async update(id: string, updateTaskDto: UpdateTaskDto): Promise<Task> {
     const oldTask = await this.findOne(id);
     if (
@@ -116,6 +117,9 @@ export class Task2Service {
         throw new NotFoundException('Survey não encontrado');
       }
     }
+
+    //TODO remover isso depois, quando estiver funcionando
+    delete updateTaskDto.questionsId;
     await this.taskRepository.update({_id: id}, updateTaskDto);
     return await this.findOne(id);
   }

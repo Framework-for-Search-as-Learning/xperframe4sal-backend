@@ -1,7 +1,7 @@
 import {Injectable, NotFoundException} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {UserTask} from './entities/user-tasks.entity';
-import {Repository} from 'typeorm';
+import {In, Repository} from 'typeorm';
 import {CreateUserTaskDto} from './dto/create-userTask.dto';
 import {User2Service} from '../user2/user2.service';
 import {Task2Service} from '../task2/task2.service';
@@ -329,6 +329,16 @@ export class UserTask2Service {
       task: {_id: taskId},
     });
     return result;
+  }
+
+  async removeUsersFromTask(
+    taskIds: string[],
+    userIds: string[],
+  ): Promise<void> {
+    await this.userTaskRepository.delete({
+      task_id: In(taskIds),
+      user_id: In(userIds),
+    });
   }
 
   async remove(id: string) {

@@ -9,6 +9,7 @@ import {UpdateUserExperimentDto} from './dto/update-userExperiment.dto';
 import {User} from '../user2/entity/user.entity';
 import {Experiment} from '../experiments2/entity/experiment.entity';
 import {UserTask2Service} from '../user-task2/user-task2.service';
+import {Task2Service} from '../task2/task2.service';
 
 @Injectable()
 export class UserExperiments2Service {
@@ -19,6 +20,7 @@ export class UserExperiments2Service {
     @Inject(forwardRef(() => Experiments2Service))
     private readonly experimentService: Experiments2Service,
     private readonly userTask2Service: UserTask2Service,
+    private readonly taskService: Task2Service,
   ) {}
 
   async create(
@@ -156,10 +158,7 @@ export class UserExperiments2Service {
     );
 
     if (usersToRemove.length !== 0) {
-      await this.userExperimentRepository.delete({
-        experiment_id: experimentId,
-        user_id: In(usersToRemove),
-      });
+      await this.removeUsersFromExperiment(experimentId, usersToRemove);
     }
 
     if (userToAdd.length !== 0) {
@@ -177,6 +176,24 @@ export class UserExperiments2Service {
     return currentUsersInExperiment.filter((user) =>
       newUsersId.includes(user._id),
     );
+  }
+
+  async removeUsersFromExperiment(
+    experimentId: string,
+    userIds: string[],
+  ): Promise<void> {
+    try {
+      const tasksFromExperiment =
+        await this.taskService.findByExperimentId(experimentId);
+      const taskIds = tasksFromExperiment.map((task) => task._id);
+      await this.userTask2Service.removeUsersFromTask(taskIds, userIds);
+      await this.userExperimentRepository.delete({
+        experiment_id: experimentId,
+        user_id: In(userIds),
+      });
+    } catch (error) {
+      throw error;
+    }
   }
 
   async removeByUserIdAndExperimentId(userId: string, experimentId: string) {

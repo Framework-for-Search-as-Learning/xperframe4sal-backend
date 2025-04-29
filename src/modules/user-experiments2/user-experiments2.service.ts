@@ -55,6 +55,11 @@ export class UserExperiments2Service {
             userId,
             tasks: experiment.tasks,
           });
+
+          //TODO retirar apos teste
+          const taskIds = await experiment.tasks.map((task) => task._id);
+          const counts = await this.userTask2Service.getTaskCounts(taskIds);
+          console.log(counts);
         }
       }
       return savedUserExperiment;

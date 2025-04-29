@@ -213,7 +213,8 @@ export class UserTask2Service {
     }
   }
 
-  async createRandom(
+  /*
+  async createRandom2(
     createUserTaskRandomDto: CreateUserTaskRandomDto,
   ): Promise<UserTask> {
     try {
@@ -243,6 +244,28 @@ export class UserTask2Service {
       }
       return await this.create({userId: userId, taskId: selectTaskId});
     } catch (error) {
+      throw error;
+    }
+  }*/
+
+  async createRandom(
+    createUserTaksRandomDto: CreateUserTaskRandomDto,
+  ): Promise<UserTask> {
+    try {
+      const {userId, tasks} = createUserTaksRandomDto;
+      const taskIds = tasks.map((task) => task._id);
+      const taskCounts = await this.getTaskCounts(taskIds);
+      //const taskCountList = Object.entries(taskCounts);
+      //const sortedTaskCount = taskCountList.sort((a, b) => a[1] - b[1]);
+      const minTaskCount = Math.min(...Object.values(taskCounts));
+      const tasksWithMinCount = Object.keys(taskCounts).filter(
+        (taskId) => taskCounts[taskId] === minTaskCount,
+      );
+      const randomIndex = Math.floor(Math.random() * tasksWithMinCount.length);
+      const selectedTaskId = tasksWithMinCount[randomIndex];
+      return await this.create({userId: userId, taskId: selectedTaskId});
+    } catch (error) {
+      console.error('Error ao criar tarefa aleatória', error);
       throw error;
     }
   }
@@ -374,7 +397,7 @@ export class UserTask2Service {
     return await this.userTaskRepository.findOne({where: {_id: id}});
   }
 
-  private async getTaskCounts(
+  public async getTaskCounts(
     taskIds: string[],
   ): Promise<Record<string, number>> {
     const counts: Record<string, number> = {};

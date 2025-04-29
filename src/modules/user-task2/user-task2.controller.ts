@@ -13,7 +13,6 @@ import {UserTask2Service} from './user-task2.service';
 import {UserTask} from './entities/user-tasks.entity';
 import {CreateUserTaskDto} from './dto/create-userTask.dto';
 import {UpdateUserTaskDto} from './dto/update-userTask.dto';
-import {CreateUserTaskRandomDto} from './dto/create-userTaskRandom.dto';
 import {User} from '../user2/entity/user.entity';
 
 @ApiTags('user-task2')
@@ -69,6 +68,7 @@ export class UserTask2Controller {
     return await this.userTaskService.create(createUserTaskDto);
   }
 
+  /*
   @Post('/random')
   @ApiOperation({summary: 'Create a new user task using random method'})
   //@ApiBody({type: CreateUserTaskDto})
@@ -77,6 +77,7 @@ export class UserTask2Controller {
   ): Promise<UserTask> {
     return await this.userTaskService.createRandom(createUserTaskRandomDto);
   }
+  */
 
   @Delete()
   @ApiOperation({summary: 'Remove a user task by userId and taskId'})

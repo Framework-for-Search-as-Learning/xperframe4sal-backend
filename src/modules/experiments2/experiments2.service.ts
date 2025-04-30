@@ -74,10 +74,10 @@ export class Experiments2Service {
         description: task.description,
         survey_id: task.SelectedSurvey,
         rule_type: task.RulesExperiment,
-        minScore: task.ScoreThreshold,
-        maxScore: task.ScoreThresholdmx,
+        min_score: task.ScoreThreshold,
+        max_score: task.ScoreThresholdmx,
         questionsId: task.selectedQuestionIds,
-        experimentId: savedExperiment._id,
+        experiment_id: savedExperiment._id,
       });
     });
     await Promise.all(TasksPromises);

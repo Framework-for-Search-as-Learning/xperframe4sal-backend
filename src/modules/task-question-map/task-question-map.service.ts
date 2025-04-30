@@ -4,7 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import {Repository} from 'typeorm';
+import {In, Repository} from 'typeorm';
 import {TaskQuestionMap} from './entity/taskQuestionMap.entity';
 import {Task2Service} from '../task2/task2.service';
 import {InjectRepository} from '@nestjs/typeorm';
@@ -37,5 +37,45 @@ export class TaskQuestionMapService {
       (taskQuestion) => taskQuestion.question_id,
     );
     return questionsIds;
+  }
+
+  async updateTaskQuestionMap(
+    taskId: string,
+    newQuestionsId: string[],
+  ): Promise<void> {
+    console.log('newQuestionsid:', newQuestionsId);
+    const currentQuestionsInTask = await this.findQuestionsByTask(taskId);
+
+    const questionsToRemove = currentQuestionsInTask.filter(
+      (question) => !newQuestionsId.includes(question),
+    );
+
+    console.log('questionsToRemove: ', questionsToRemove);
+    const questionsToAdd = newQuestionsId.filter(
+      (question) => !currentQuestionsInTask.includes(question),
+    );
+    console.log('questionsToAdd: ', questionsToAdd);
+
+    if (questionsToRemove.length !== 0) {
+      await this.removeQuestionsFromTask(taskId, questionsToRemove);
+    }
+
+    if (questionsToAdd.length !== 0) {
+      await Promise.all(
+        questionsToAdd.map((questionsId) => {
+          this.create(taskId, questionsId);
+        }),
+      );
+    }
+  }
+  async removeQuestionsFromTask(taskId, questionIds): Promise<void> {
+    try {
+      await this.taskQuestionMapRepository.delete({
+        task_id: taskId,
+        question_id: In(questionIds),
+      });
+    } catch (error) {
+      throw error;
+    }
   }
 }

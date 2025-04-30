@@ -20,7 +20,7 @@ export class CreateTaskDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  experimentId: string;
+  experiment_id: string;
 
   @ApiProperty()
   @IsOptional()
@@ -40,9 +40,9 @@ export class CreateTaskDto {
   //TODO Voltar com @IsNumber apos corrigir no front
   @ApiProperty()
   @IsOptional()
-  minScore?: number;
+  min_score?: number;
 
   @ApiProperty()
   @IsOptional()
-  maxScore?: number;
+  max_score?: number;
 }

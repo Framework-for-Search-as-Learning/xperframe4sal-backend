@@ -19,53 +19,65 @@ export class TaskQuestionMapService {
   ) {}
 
   async create(taskId: string, questionId: string): Promise<TaskQuestionMap> {
-    const task = await this.taskService.findOne(taskId);
-    if (!task) {
-      throw new NotFoundException('Task não encontrada.');
+    try {
+      const task = await this.taskService.findOne(taskId);
+      if (!task) {
+        throw new NotFoundException('Task não encontrada.');
+      }
+      return await this.taskQuestionMapRepository.save({
+        task,
+        question_id: questionId,
+      });
+    } catch (error) {
+      throw error;
     }
-    return await this.taskQuestionMapRepository.save({
-      task,
-      question_id: questionId,
-    });
   }
 
   async findQuestionsByTask(taskId: string): Promise<string[]> {
-    const taskquestions = await this.taskQuestionMapRepository.find({
-      where: {task_id: taskId},
-    });
-    const questionsIds = taskquestions.map(
-      (taskQuestion) => taskQuestion.question_id,
-    );
-    return questionsIds;
+    try {
+      const taskquestions = await this.taskQuestionMapRepository.find({
+        where: {task_id: taskId},
+      });
+      const questionsIds = taskquestions.map(
+        (taskQuestion) => taskQuestion.question_id,
+      );
+      return questionsIds;
+    } catch (error) {
+      throw error;
+    }
   }
 
   async updateTaskQuestionMap(
     taskId: string,
     newQuestionsId: string[],
   ): Promise<void> {
-    console.log('newQuestionsid:', newQuestionsId);
-    const currentQuestionsInTask = await this.findQuestionsByTask(taskId);
+    try {
+      console.log('newQuestionsid:', newQuestionsId);
+      const currentQuestionsInTask = await this.findQuestionsByTask(taskId);
 
-    const questionsToRemove = currentQuestionsInTask.filter(
-      (question) => !newQuestionsId.includes(question),
-    );
-
-    console.log('questionsToRemove: ', questionsToRemove);
-    const questionsToAdd = newQuestionsId.filter(
-      (question) => !currentQuestionsInTask.includes(question),
-    );
-    console.log('questionsToAdd: ', questionsToAdd);
-
-    if (questionsToRemove.length !== 0) {
-      await this.removeQuestionsFromTask(taskId, questionsToRemove);
-    }
-
-    if (questionsToAdd.length !== 0) {
-      await Promise.all(
-        questionsToAdd.map((questionsId) => {
-          this.create(taskId, questionsId);
-        }),
+      const questionsToRemove = currentQuestionsInTask.filter(
+        (question) => !newQuestionsId.includes(question),
       );
+
+      console.log('questionsToRemove: ', questionsToRemove);
+      const questionsToAdd = newQuestionsId.filter(
+        (question) => !currentQuestionsInTask.includes(question),
+      );
+      console.log('questionsToAdd: ', questionsToAdd);
+
+      if (questionsToRemove.length !== 0) {
+        await this.removeQuestionsFromTask(taskId, questionsToRemove);
+      }
+
+      if (questionsToAdd.length !== 0) {
+        await Promise.all(
+          questionsToAdd.map((questionsId) => {
+            this.create(taskId, questionsId);
+          }),
+        );
+      }
+    } catch (error) {
+      throw error;
     }
   }
   async removeQuestionsFromTask(taskId, questionIds): Promise<void> {

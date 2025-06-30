@@ -39,7 +39,7 @@ Start the server:
 pnpm start
 ```
 
-The API will be available at [http://localhost:3000](http://localhost:3000).
+The API will be available at [http://localhost:3000/searching-as-learning](http://localhost:3000/searching-as-learning).
 
 ---
 For more details, see the code and comments in

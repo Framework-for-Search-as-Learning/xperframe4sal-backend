@@ -6,6 +6,15 @@ import {User} from 'src/modules/user2/entity/user.entity';
 
 @Entity()
 export class UserTaskSession extends BaseEntity {
+  @Column()
+  timestamp: Date;
+
+  @Column({default: 1})
+  serpNumber: number;
+
+  @Column()
+  query: string;
+
   @ManyToOne(() => Task, (task) => task.sessions)
   task: Task;
   @Column()
@@ -18,12 +27,4 @@ export class UserTaskSession extends BaseEntity {
 
   @OneToMany(() => Page, (page) => page.session)
   pages: Page[];
-  @Column()
-  query: string;
-
-  @Column()
-  timestamp: Date;
-
-  @Column({default: 1})
-  serpNumber: number;
 }

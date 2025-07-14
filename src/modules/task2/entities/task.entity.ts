@@ -2,6 +2,7 @@ import {BaseEntity} from 'src/model/base_entity2';
 import {Experiment} from 'src/modules/experiments2/entity/experiment.entity';
 import {Survey} from 'src/modules/survey2/entity/survey.entity';
 import {TaskQuestionMap} from 'src/modules/task-question-map/entity/taskQuestionMap.entity';
+import {UserTaskSession} from 'src/modules/user-task-session2/entities/user-task-session.entity';
 import {UserTask} from 'src/modules/user-task2/entities/user-tasks.entity';
 import {Column, Entity, ManyToOne, OneToMany} from 'typeorm';
 
@@ -44,4 +45,8 @@ export class Task extends BaseEntity {
 
   @OneToMany(() => UserTask, (userTask) => userTask.task, {cascade: true})
   userTasks: UserTask[];
+
+  //TODO verificar a utilidade de colocar isso
+  @OneToMany(() => UserTaskSession, (session) => session.task)
+  sessions: UserTaskSession[];
 }

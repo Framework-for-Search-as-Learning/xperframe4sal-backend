@@ -37,6 +37,7 @@ import {Icf2Module} from './modules/icf2/icf2.module';
 import {Icf} from './modules/icf2/entity/icf.entity';
 import {UserTaskSession2Module} from './modules/user-task-session2/user-task-session2.module';
 import {UserTaskSession} from './modules/user-task-session2/entities/user-task-session.entity';
+import {Page} from './modules/user-task-session2/entities/page.entity';
 @Module({
   imports: [
     ExperimentsModule,
@@ -80,6 +81,7 @@ import {UserTaskSession} from './modules/user-task-session2/entities/user-task-s
         TaskQuestionMap,
         Icf,
         UserTaskSession,
+        Page,
       ],
       synchronize: true,
     }),

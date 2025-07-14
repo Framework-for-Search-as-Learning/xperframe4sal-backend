@@ -1,6 +1,7 @@
 import {BaseEntity} from 'src/model/base_entity2';
 import {SurveyAnswer} from 'src/modules/survey-answer2/entity/survey-answer.entity';
 import {UserExperiment} from 'src/modules/user-experiments2/entities/user-experiments.entity';
+import {UserTaskSession} from 'src/modules/user-task-session2/entities/user-task-session.entity';
 import {UserTask} from 'src/modules/user-task2/entities/user-tasks.entity';
 import {Column, Entity, OneToMany} from 'typeorm';
 
@@ -32,6 +33,9 @@ export class User extends BaseEntity {
     cascade: true,
   })
   surveyAnswers: SurveyAnswer[];
+
+  @OneToMany(() => UserTaskSession, (session) => session.user)
+  sessions: UserTaskSession[];
 
   //TODO role
 }

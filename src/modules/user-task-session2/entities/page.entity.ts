@@ -14,7 +14,7 @@ export class Page extends BaseEntity {
   url: string;
   @Column()
   startTime: Date;
-  @Column()
+  @Column({nullable: true})
   endTime: Date;
 
   @Column()

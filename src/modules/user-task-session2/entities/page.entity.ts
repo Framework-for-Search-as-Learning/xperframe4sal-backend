@@ -17,5 +17,6 @@ export class Page extends BaseEntity {
   @Column()
   endTime: Date;
 
-  //Position || SerpNumber
+  @Column()
+  rank: number;
 }

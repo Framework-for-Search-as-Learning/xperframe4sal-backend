@@ -1,21 +1,29 @@
-import {Injectable} from '@nestjs/common';
+import {Injectable, NotFoundException} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {UserTaskSession} from './entities/user-task-session.entity';
 import {Repository} from 'typeorm';
 import {CreateUserTaskSessionDto} from './dto/create-userTaskSession.dto';
+import {HandlePageDto} from './dto/handlePage.dto';
+import {Page} from './entities/page.entity';
 
 @Injectable()
 export class UserTaskSession2Service {
   constructor(
     @InjectRepository(UserTaskSession)
     private readonly userTaskSessionRepository: Repository<UserTaskSession>,
+
+    @InjectRepository(Page)
+    private readonly pageRepository: Repository<Page>,
   ) {}
 
   async create(
-    createUserTaskSession: CreateUserTaskSessionDto,
+    createUserTaskSessionDto: CreateUserTaskSessionDto,
   ): Promise<UserTaskSession> {
-    createUserTaskSession.timestamp = new Date();
-    return await this.userTaskSessionRepository.save(createUserTaskSession);
+    const dataToSave = {
+      ...createUserTaskSessionDto,
+      timestamp: new Date(),
+    };
+    return await this.userTaskSessionRepository.save(dataToSave);
   }
 
   async findAll(): Promise<UserTaskSession[]> {
@@ -50,22 +58,36 @@ export class UserTaskSession2Service {
 
   //TODO update
 
-  /*
-  async openPage(openPageDto: OpenPageDto): Promise<UserTaskSession>{
-    const {id, rank, userTaskSession, handlePage} = openPageDto
-    let attempt = 0
-    while (attempt < 2){
-        try{
-            if(userTaskSession){
-                //TODO verificar como lidar com pages na nova versao
-                if(!userTaskSession.pages){
-                    
-                }
-                
-            
-            }
-        }catch
+  async openPage(
+    id: string,
+    rank: number,
+    openPageDto: HandlePageDto,
+  ): Promise<UserTaskSession> {
+    const userTaskSession = await this.userTaskSessionRepository.findOne({
+      where: {_id: id},
+      relations: ['pages'],
+    });
+    console.log('UserTaskSession: ', userTaskSession);
+    if (!userTaskSession) {
+      throw new NotFoundException('Session not found');
     }
-  };
-  */
+    //TODO verificar necessidade do attempt
+    //let attempt = 0
+    try {
+      const page = this.pageRepository.create({
+        title: openPageDto.title,
+        url: openPageDto.url,
+        startTime: new Date(),
+        rank: rank,
+        session: userTaskSession,
+      });
+      await this.pageRepository.save(page);
+      return await this.userTaskSessionRepository.findOne({
+        where: {_id: id},
+        relations: ['pages'],
+      });
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
 }

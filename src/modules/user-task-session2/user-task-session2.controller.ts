@@ -1,7 +1,8 @@
-import {Body, Controller, Get, Param, Post, Query} from '@nestjs/common';
+import {Body, Controller, Get, Param, Patch, Post, Query} from '@nestjs/common';
 import {UserTaskSession2Service} from './user-task-session2.service';
 import {UserTaskSession} from './entities/user-task-session.entity';
 import {CreateUserTaskSessionDto} from './dto/create-userTaskSession.dto';
+import {HandlePageDto} from './dto/handlePage.dto';
 
 @Controller('user-task-session2')
 export class UserTaskSession2Controller {
@@ -47,4 +48,12 @@ export class UserTaskSession2Controller {
   //TODO closePage
 
   //TODO openPage
+  @Patch(':id/open-page/:rank')
+  async openPage(
+    @Param('id') id: string,
+    @Param('rank') rank: number,
+    @Body() openPageDto: HandlePageDto,
+  ): Promise<UserTaskSession> {
+    return await this.userTaskSessionService.openPage(id, rank, openPageDto);
+  }
 }

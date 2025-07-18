@@ -63,17 +63,18 @@ export class UserTaskSession2Service {
     rank: number,
     openPageDto: HandlePageDto,
   ): Promise<UserTaskSession> {
-    const userTaskSession = await this.userTaskSessionRepository.findOne({
-      where: {_id: id},
-      relations: ['pages'],
-    });
-    console.log('UserTaskSession: ', userTaskSession);
-    if (!userTaskSession) {
-      throw new NotFoundException('Session not found');
-    }
-    //TODO verificar necessidade do attempt
-    //let attempt = 0
     try {
+      const userTaskSession = await this.userTaskSessionRepository.findOne({
+        where: {_id: id},
+        relations: ['pages'],
+      });
+      console.log('UserTaskSession: ', userTaskSession);
+      if (!userTaskSession) {
+        throw new NotFoundException('Session not found');
+      }
+      //TODO verificar necessidade do attempt
+      //let attempt = 0
+
       const page = this.pageRepository.create({
         title: openPageDto.title,
         url: openPageDto.url,
@@ -87,6 +88,50 @@ export class UserTaskSession2Service {
         relations: ['pages'],
       });
     } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  async closePage(
+    id: string,
+    rank: number,
+    closePageDto: HandlePageDto,
+  ): Promise<UserTaskSession> {
+    //TODO verificar necessidade do attempt
+    //let attempt = 0
+    try {
+      const userTaskSession = await this.userTaskSessionRepository.findOne({
+        where: {_id: id},
+        relations: ['pages'],
+      });
+      if (!userTaskSession) {
+        throw new NotFoundException('Session not found');
+      }
+      const pagesWithRank = userTaskSession.pages.filter(
+        (page) => page.rank == rank && !page.endTime,
+      );
+      if (pagesWithRank.length === 0) {
+        throw new NotFoundException('No open page found for this rank');
+      }
+      let pageToClose = null;
+      for (const page of pagesWithRank) {
+        if (!pageToClose || page.startTime > pageToClose.startTime) {
+          pageToClose = page;
+        }
+      }
+
+      pageToClose.endTime = new Date();
+      await this.pageRepository.save(pageToClose);
+      return await this.userTaskSessionRepository.findOne({
+        where: {_id: id},
+        relations: ['pages'],
+      });
+    } catch (error) {
+      console.error(
+        `Error closing modal ${rank}: ${closePageDto.title}: ${
+          closePageDto.url
+        } ${new Date()}`,
+      );
       throw new Error(error.message);
     }
   }

@@ -45,9 +45,6 @@ export class UserTaskSession2Controller {
 
   //TODO update
 
-  //TODO closePage
-
-  //TODO openPage
   @Patch(':id/open-page/:rank')
   async openPage(
     @Param('id') id: string,
@@ -55,5 +52,14 @@ export class UserTaskSession2Controller {
     @Body() openPageDto: HandlePageDto,
   ): Promise<UserTaskSession> {
     return await this.userTaskSessionService.openPage(id, rank, openPageDto);
+  }
+
+  @Patch(':id/close-page/:rank')
+  async closePage(
+    @Param('id') id: string,
+    @Param('rank') rank: number,
+    @Body() closePageDto: HandlePageDto,
+  ): Promise<UserTaskSession> {
+    return await this.userTaskSessionService.closePage(id, rank, closePageDto);
   }
 }

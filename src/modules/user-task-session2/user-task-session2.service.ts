@@ -23,6 +23,7 @@ export class UserTaskSession2Service {
       ...createUserTaskSessionDto,
       timestamp: new Date(),
     };
+    //TODO fazer verificação de userId e taskId
     return await this.userTaskSessionRepository.save(dataToSave);
   }
 

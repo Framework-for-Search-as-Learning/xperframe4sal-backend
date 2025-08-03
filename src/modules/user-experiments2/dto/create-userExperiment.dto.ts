@@ -1,7 +1,8 @@
 //import {StepsType} from 'src/modules/experiments2/entity/experiment.entity';
 
 import {ApiProperty} from '@nestjs/swagger';
-import {IsNotEmpty, IsString} from 'class-validator';
+import {IsNotEmpty, IsObject, IsOptional, IsString} from 'class-validator';
+import {StepsType} from 'src/modules/experiments2/entity/experiment.entity';
 
 export class CreateUserExperimentDto {
   @ApiProperty()
@@ -13,5 +14,9 @@ export class CreateUserExperimentDto {
   @IsNotEmpty()
   @IsString()
   experimentId: string;
-  //stepsCompleted: Record<StepsType, boolean>;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsObject()
+  stepsCompleted: Record<StepsType, boolean>;
 }

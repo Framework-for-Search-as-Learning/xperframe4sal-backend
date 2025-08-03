@@ -124,7 +124,7 @@ export class UserExperiments2Service {
     id: string,
     updateUserExperimentDto: UpdateUserExperimentDto,
   ): Promise<UserExperiment> {
-    const {userId, experimentId} = updateUserExperimentDto;
+    const {userId, experimentId, stepsCompleted} = updateUserExperimentDto;
     let user, experiment;
     if (userId) {
       user = await this.userService.findOne(userId);
@@ -135,7 +135,10 @@ export class UserExperiments2Service {
       experiment = await this.experimentService.find(experimentId);
       if (!experiment) throw new Error('Experiment not found');
     }
-    await this.userExperimentRepository.update({_id: id}, {user, experiment});
+    await this.userExperimentRepository.update(
+      {_id: id},
+      {user, experiment, stepsCompleted},
+    );
     return await this.userExperimentRepository.findOne({
       where: {
         _id: id,

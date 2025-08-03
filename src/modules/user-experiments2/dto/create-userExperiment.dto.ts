@@ -18,5 +18,5 @@ export class CreateUserExperimentDto {
   @ApiProperty()
   @IsOptional()
   @IsObject()
-  stepsCompleted: Record<StepsType, boolean>;
+  stepsCompleted?: Record<StepsType, boolean>;
 }

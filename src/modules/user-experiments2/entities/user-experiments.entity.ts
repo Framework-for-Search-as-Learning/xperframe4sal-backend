@@ -8,12 +8,6 @@ import {Column, Entity, ManyToOne} from 'typeorm';
 
 @Entity()
 export class UserExperiment extends BaseEntity {
-  /* Na documentacao existia essas colunas, porem não acho necessario
-  @Column()
-  userId: string;
-  @Column()
-  experimentId: string;*/
-
   @ManyToOne(() => User, (user) => user.userExperiments, {onDelete: 'CASCADE'})
   user: User;
   @Column()

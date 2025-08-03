@@ -38,4 +38,8 @@ export class Survey extends BaseEntity {
 
   @OneToMany(() => Task, (task) => task.survey, {cascade: true})
   tasks: Task[];
+
+  //TODO temporario (TESTE)
+  @Column({default: false})
+  uniqueAnswer: boolean;
 }

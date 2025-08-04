@@ -4,7 +4,9 @@ import {UserTaskSession} from './user-task-session.entity';
 
 @Entity()
 export class Page extends BaseEntity {
-  @ManyToOne(() => UserTaskSession, (session) => session.pages)
+  @ManyToOne(() => UserTaskSession, (session) => session.pages, {
+    onDelete: 'CASCADE',
+  })
   session: UserTaskSession;
   @Column()
   session_id: string;

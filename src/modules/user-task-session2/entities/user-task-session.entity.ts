@@ -15,16 +15,16 @@ export class UserTaskSession extends BaseEntity {
   @Column()
   query: string;
 
-  @ManyToOne(() => Task, (task) => task.sessions)
+  @ManyToOne(() => Task, (task) => task.sessions, {onDelete: 'CASCADE'})
   task: Task;
   @Column()
   task_id: string;
 
-  @ManyToOne(() => User, (user) => user.sessions)
+  @ManyToOne(() => User, (user) => user.sessions, {onDelete: 'CASCADE'})
   user: User;
   @Column()
   user_id: string;
 
-  @OneToMany(() => Page, (page) => page.session)
+  @OneToMany(() => Page, (page) => page.session, {cascade: true})
   pages: Page[];
 }

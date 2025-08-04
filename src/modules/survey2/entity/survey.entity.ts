@@ -42,4 +42,7 @@ export class Survey extends BaseEntity {
   //TODO temporario (TESTE)
   @Column({default: false})
   uniqueAnswer: boolean;
+
+  @Column({default: false})
+  required: boolean;
 }

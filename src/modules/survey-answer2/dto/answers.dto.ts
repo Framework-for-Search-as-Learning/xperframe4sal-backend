@@ -18,7 +18,7 @@ export class AnswerOptionsDTO {
 }
 
 export class AnswerDTO {
-  @IsNumber()
+  @IsString()
   id: string;
 
   @IsString()

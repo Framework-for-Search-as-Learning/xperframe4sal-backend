@@ -29,6 +29,7 @@ export class User2Service {
     try {
       user = await this.findOneByEmail(email);
     } catch (error) {
+      console.error(error);
       throw error;
     }
     user.recoveryPasswordToken = crypto.randomBytes(20).toString('hex');
@@ -40,6 +41,7 @@ export class User2Service {
           user.recoveryPasswordTokenExpirationDate,
       });
     } catch (error) {
+      console.error(error);
       throw new HttpException(
         `Ocorreu um erro inesperado tente novamente`,
         500,
@@ -68,6 +70,7 @@ export class User2Service {
       user.recoveryPasswordTokenExpirationDate = null;
       await this.update(user._id, user);
     } catch (error) {
+      console.error(error);
       throw error;
     }
   }
@@ -84,6 +87,7 @@ export class User2Service {
       });
       return userSaved;
     } catch (error) {
+      console.error(error);
       throw error;
     }
   }
@@ -91,6 +95,7 @@ export class User2Service {
     try {
       return await this.userRepository.find();
     } catch (error) {
+      console.error(error);
       throw error;
     }
   }
@@ -105,6 +110,7 @@ export class User2Service {
       }
       return user;
     } catch (error) {
+      console.error(error);
       throw error;
     }
   }
@@ -118,6 +124,7 @@ export class User2Service {
       }
       return user;
     } catch (error) {
+      console.error(error);
       throw error;
     }
   }
@@ -170,6 +177,7 @@ export class User2Service {
 
       return {n: result.affected || 0};
     } catch (error) {
+      console.error(error);
       throw error;
     }
   }
@@ -186,6 +194,7 @@ export class User2Service {
         html: `Por favor, acesse o link a seguir para restaurar sua senha: <a href='https://buscandoeaprendendo.onrender.com/reset-password?token=${token}&email=${email}'>https://buscandoeaprendendo.onrender.com/reset-password?token=${token}</a>`,
       });
     } catch (error) {
+      console.error(error);
       throw error;
     }
   }

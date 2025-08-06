@@ -32,6 +32,7 @@ export class UserTask2Service {
         },
       });
     } catch (error) {
+      console.error(error);
       throw error;
     }
   }
@@ -52,6 +53,7 @@ export class UserTask2Service {
       });
       return await this.userTaskRepository.save(newUserTask);
     } catch (error) {
+      console.error(error);
       throw error;
     }
   }
@@ -76,6 +78,7 @@ export class UserTask2Service {
       }
       return this.create({userId: userId, taskId: selectedTaskId});
     } catch (error) {
+      console.error(error);
       throw error;
     }
   }
@@ -155,6 +158,7 @@ export class UserTask2Service {
 
       return this.create({userId: userId, taskId: selectedTaskId});
     } catch (error) {
+      console.error(error);
       throw error;
     }
   }

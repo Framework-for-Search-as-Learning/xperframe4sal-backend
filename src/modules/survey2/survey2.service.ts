@@ -32,7 +32,7 @@ export class Survey2Service {
       let newSurvey: Survey;
       console.log('uuid gerada: ', uuid);
       if (uuid) {
-        newSurvey = await this.surveyRepository.create({
+        newSurvey = this.surveyRepository.create({
           _id: uuid,
           name,
           title,
@@ -42,7 +42,7 @@ export class Survey2Service {
           experiment,
         });
       } else {
-        newSurvey = await this.surveyRepository.create({
+        newSurvey = this.surveyRepository.create({
           name,
           title,
           description,
@@ -86,6 +86,7 @@ export class Survey2Service {
       await this.surveyRepository.update({_id: id}, updateSurveyDto);
       return await this.findOne(id);
     } catch (error) {
+      console.error(error);
       throw error;
     }
   }

@@ -51,21 +51,20 @@ export class UserExperiments2Service {
             this.userTask2Service.create({taskId: task._id, userId: userId});
           }),
         );
-      } else {
-        if (experiment.betweenExperimentType === 'random') {
-          await this.userTask2Service.createRandom({
-            userId,
-            tasks: experiment.tasks,
-          });
+      } else if (experiment.betweenExperimentType === 'random') {
+        await this.userTask2Service.createRandom({
+          userId,
+          tasks: experiment.tasks,
+        });
 
-          //TODO retirar apos teste
-          const taskIds = await experiment.tasks.map((task) => task._id);
-          const counts = await this.userTask2Service.getTaskCounts(taskIds);
-          console.log(counts);
-        }
+        //TODO retirar apos teste
+        const taskIds = experiment.tasks.map((task) => task._id);
+        const counts = await this.userTask2Service.getTaskCounts(taskIds);
+        console.log(counts);
       }
       return savedUserExperiment;
     } catch (error) {
+      console.error(error);
       throw error;
     }
   }
@@ -78,6 +77,7 @@ export class UserExperiments2Service {
         await this.userExperimentRepository.save(userExperiments);
       return savedUserExperiments;
     } catch (error) {
+      console.error(error);
       throw error;
     }
   }
@@ -195,6 +195,7 @@ export class UserExperiments2Service {
         user_id: In(userIds),
       });
     } catch (error) {
+      console.error(error);
       throw error;
     }
   }

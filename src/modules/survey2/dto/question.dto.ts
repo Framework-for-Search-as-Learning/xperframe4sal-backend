@@ -34,6 +34,11 @@ export class QuestionDTO {
 
   @ApiProperty()
   @IsBoolean()
+  @IsOptional()
+  hasscore?: boolean;
+
+  @ApiProperty()
+  @IsBoolean()
   required: boolean;
 
   @ApiProperty()

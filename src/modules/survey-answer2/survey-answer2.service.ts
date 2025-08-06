@@ -118,6 +118,7 @@ export class SurveyAnswer2Service {
       );
       return await this.surveyAnswerRepository.findOne({where: {_id: id}});
     } catch (error) {
+      console.error(error);
       throw error;
     }
   }

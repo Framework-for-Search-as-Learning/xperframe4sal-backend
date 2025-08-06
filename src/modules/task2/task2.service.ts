@@ -68,8 +68,9 @@ export class Task2Service {
           ),
         );
       }
-      return await newTask;
+      return newTask;
     } catch (error) {
+      console.error(error);
       throw error;
     }
   }

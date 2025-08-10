@@ -54,14 +54,18 @@ export class UserTask2Controller {
     return await this.userTaskService.findAll();
   }
 
-  @Get('experiment/:experimentId')
+  @Get('user/:userId/experiment/:experimentId')
   @ApiOperation({
-    summary: 'Get all userTasks associated with a specific experiment',
+    summary: 'Get all userTasks associated with a specific user and experiment',
   })
   async findByExperimentId(
+    @Param('userId') userId: string,
     @Param('experimentId') experimentId: string,
   ): Promise<UserTask[]> {
-    return await this.userTaskService.findByExperimentId(experimentId);
+    return await this.userTaskService.findByUserIdAndExperimentId(
+      userId,
+      experimentId,
+    );
   }
   @Get('task/:taskId/users')
   @ApiOperation({summary: 'Get all users associated with a specific task'})

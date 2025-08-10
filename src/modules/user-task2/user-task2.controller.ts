@@ -14,6 +14,7 @@ import {UserTask} from './entities/user-tasks.entity';
 import {CreateUserTaskDto} from './dto/create-userTask.dto';
 import {UpdateUserTaskDto} from './dto/update-userTask.dto';
 import {User} from '../user2/entity/user.entity';
+import {Task} from '../task2/entities/task.entity';
 
 @ApiTags('user-task2')
 @Controller('user-task2')
@@ -57,6 +58,26 @@ export class UserTask2Controller {
   @ApiOperation({summary: 'Get all users associated with a specific task'})
   async findUsersByTaskId(@Param('taskId') taskId: string): Promise<User[]> {
     return await this.userTaskService.findUsersByTaskId(taskId);
+  }
+
+  @Get('user/:userId/tasks')
+  @ApiOperation({summary: 'Get all tasks associated with a specific user'})
+  async findTasksByUserId(@Param('userId') userId: string): Promise<Task[]> {
+    return await this.userTaskService.findTasksByUserId(userId);
+  }
+
+  @Get('/user/:userId/experiment/:experimentId/tasks')
+  @ApiOperation({
+    summary: 'get all tasks associated with a specific user and experiment',
+  })
+  async findTasksByUserIdAndExperimentId(
+    @Param('userId') userId: string,
+    @Param('experimentId') experimentId: string,
+  ): Promise<Task[]> {
+    return await this.userTaskService.findTasksByUserIdAndExperimentId(
+      userId,
+      experimentId,
+    );
   }
 
   @Post()

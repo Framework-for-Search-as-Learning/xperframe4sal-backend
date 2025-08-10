@@ -315,6 +315,16 @@ export class UserTask2Service {
     });
   }
 
+  async findByExperimentId(experimentId: string): Promise<UserTask[]> {
+    const userTasks = await this.userTaskRepository.find({
+      relations: ['task'],
+    });
+    const userTaskByExperiment = userTasks.filter(
+      (userTask) => userTask.task.experiment_id === experimentId,
+    );
+    return await userTaskByExperiment;
+  }
+
   async findUsersByTaskId(taskId: string): Promise<User[]> {
     const userTasks = await this.userTaskRepository.find({
       relations: ['user'],

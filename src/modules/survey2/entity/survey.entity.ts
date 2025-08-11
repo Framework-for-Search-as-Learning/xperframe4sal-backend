@@ -43,6 +43,6 @@ export class Survey extends BaseEntity {
   @Column({default: false})
   uniqueAnswer: boolean;
 
-  @Column({default: false})
+  @Column({default: true})
   required: boolean;
 }

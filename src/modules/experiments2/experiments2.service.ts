@@ -1,6 +1,6 @@
 import {forwardRef, Inject, Injectable} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
-import {Experiment} from './entity/experiment.entity';
+import {Experiment, StepsType} from './entity/experiment.entity';
 import {Repository} from 'typeorm';
 import {CreateExperimentDto} from './dto/create-experiment.dto';
 //import {Task} from '../task2/entities/task.entity';
@@ -131,5 +131,44 @@ export class Experiments2Service {
     const experiment = await this.find(id);
     await this.experimentRepository.delete({_id: id});
     return experiment;
+  }
+
+  async buildStep(experimentId: string): Promise<Record<StepsType, any>> {
+    const experiment = await this.experimentRepository.findOne({
+      where: {_id: experimentId},
+      relations: ['tasks', 'surveys', 'icfs'],
+    });
+    const step: Record<StepsType, any> = {
+      [StepsType.ICF]: undefined,
+      [StepsType.PRE]: undefined,
+      [StepsType.POST]: undefined,
+      [StepsType.TASK]: undefined,
+    };
+    if (experiment.icfs && experiment.icfs.length > 0) {
+      step[StepsType.ICF] = {label: 'Aceitar termo de consentimento', order: 1};
+    }
+
+    if (experiment.tasks && experiment.tasks.length > 0) {
+      step[StepsType.TASK] = {label: 'Finalizar tarefas de busca', order: 3};
+    }
+    if (experiment.surveys.length > 0) {
+      let hasPre = false;
+      let hasPost = false;
+      for (const survey of experiment.surveys) {
+        if (survey.type == 'pre') {
+          hasPre = true;
+        }
+        if (survey.type == 'post') {
+          hasPost = true;
+        }
+      }
+      if (hasPre) {
+        step[StepsType.PRE] = {label: 'Responder Pre-Questionarios', order: 2};
+      }
+      if (hasPost) {
+        step[StepsType.POST] = {label: 'Responder Pos-Questionarios', order: 4};
+      }
+    }
+    return step;
   }
 }

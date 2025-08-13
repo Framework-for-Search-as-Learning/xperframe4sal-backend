@@ -69,7 +69,4 @@ export class Experiment extends BaseEntity {
 
   @OneToMany(() => Icf, (icf) => icf.experiment, {cascade: true})
   icfs: Icf[];
-
-  @Column({type: 'jsonb', default: {}})
-  steps: Record<StepsType, any>;
 }

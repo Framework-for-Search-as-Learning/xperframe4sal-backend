@@ -110,11 +110,11 @@ export class SurveyAnswer2Service {
     updateSurveyAnswerDto: UpdateSurveyAnswerDto,
   ): Promise<SurveyAnswer> {
     try {
-      const {userId, surveyId} = updateSurveyAnswerDto;
+      //const {userId, surveyId} = updateSurveyAnswerDto;
       await this.surveyAnswerRepository.update(
         {_id: id},
         //TODO arrumar para incluir outras colunas da tabela
-        {user_id: userId, survey_id: surveyId},
+        updateSurveyAnswerDto,
       );
       return await this.surveyAnswerRepository.findOne({where: {_id: id}});
     } catch (error) {

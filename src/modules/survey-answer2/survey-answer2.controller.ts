@@ -1,7 +1,8 @@
-import {Body, Controller, Get, Post, Query} from '@nestjs/common';
+import {Body, Controller, Get, Param, Patch, Post, Query} from '@nestjs/common';
 import {SurveyAnswer2Service} from './survey-answer2.service';
 import {CreateSurveyAnswerDto} from './dto/create-surveyAnswer.dto';
 import {SurveyAnswer} from './entity/survey-answer.entity';
+import {UpdateSurveyAnswerDto} from './dto/update-surveyAnswer.dto';
 
 @Controller('survey-answer2')
 export class SurveyAnswer2Controller {
@@ -29,5 +30,13 @@ export class SurveyAnswer2Controller {
       return await this.surveyAnswerService.findByUserId(userId);
     }
     return await this.surveyAnswerService.findAll();
+  }
+
+  @Patch(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() updateSurveyAnswerDto: UpdateSurveyAnswerDto,
+  ): Promise<SurveyAnswer> {
+    return await this.surveyAnswerService.update(id, updateSurveyAnswerDto);
   }
 }

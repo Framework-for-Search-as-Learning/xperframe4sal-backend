@@ -1,10 +1,10 @@
-import {BaseEntity} from 'src/model/base_entity2';
-import {Experiment} from 'src/modules/experiments2/entity/experiment.entity';
-import {Survey} from 'src/modules/survey2/entity/survey.entity';
-import {TaskQuestionMap} from 'src/modules/task-question-map/entity/taskQuestionMap.entity';
-import {UserTaskSession} from 'src/modules/user-task-session2/entities/user-task-session.entity';
-import {UserTask} from 'src/modules/user-task2/entities/user-tasks.entity';
-import {Column, Entity, ManyToOne, OneToMany} from 'typeorm';
+import { BaseEntity } from 'src/model/base_entity2';
+import { Experiment } from 'src/modules/experiments2/entity/experiment.entity';
+import { Survey } from 'src/modules/survey2/entity/survey.entity';
+import { TaskQuestionMap } from 'src/modules/task-question-map/entity/taskQuestionMap.entity';
+import { UserTaskSession } from 'src/modules/user-task-session2/entities/user-task-session.entity';
+import { UserTask } from 'src/modules/user-task2/entities/user-tasks.entity';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity()
 export class Task extends BaseEntity {
@@ -14,6 +14,10 @@ export class Task extends BaseEntity {
   summary: string;
   @Column()
   description: string;
+  @Column()
+  search_source: string;
+  @Column()
+  search_model: string;
   @ManyToOne(() => Experiment, (experiment) => experiment.tasks, {
     nullable: true,
     onDelete: 'CASCADE',
@@ -27,7 +31,7 @@ export class Task extends BaseEntity {
     onDelete: 'CASCADE',
   })
   survey: Survey;
-  @Column({nullable: true})
+  @Column({ nullable: true })
   survey_id: string;
 
   @OneToMany(() => TaskQuestionMap, (taskQuestionMap) => taskQuestionMap.task, {
@@ -35,15 +39,15 @@ export class Task extends BaseEntity {
   })
   taskQuestionsMap: TaskQuestionMap[];
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   rule_type: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   max_score: number;
-  @Column({nullable: true})
+  @Column({ nullable: true })
   min_score: number;
 
-  @OneToMany(() => UserTask, (userTask) => userTask.task, {cascade: true})
+  @OneToMany(() => UserTask, (userTask) => userTask.task, { cascade: true })
   userTasks: UserTask[];
 
   //TODO verificar a utilidade de colocar isso

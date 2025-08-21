@@ -4,14 +4,14 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import {InjectRepository} from '@nestjs/typeorm';
-import {Task} from './entities/task.entity';
-import {In, Repository} from 'typeorm';
-import {CreateTaskDto} from './dto/create-task.dto';
-import {Experiments2Service} from '../experiments2/experiments2.service';
-import {UpdateTaskDto} from './dto/update-task.dto';
-import {Survey2Service} from '../survey2/survey2.service';
-import {TaskQuestionMapService} from '../task-question-map/task-question-map.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Task } from './entities/task.entity';
+import { In, Repository } from 'typeorm';
+import { CreateTaskDto } from './dto/create-task.dto';
+import { Experiments2Service } from '../experiments2/experiments2.service';
+import { UpdateTaskDto } from './dto/update-task.dto';
+import { Survey2Service } from '../survey2/survey2.service';
+import { TaskQuestionMapService } from '../task-question-map/task-question-map.service';
 
 @Injectable()
 export class Task2Service {
@@ -23,13 +23,15 @@ export class Task2Service {
     private readonly surveyService: Survey2Service,
     @Inject(forwardRef(() => TaskQuestionMapService))
     private readonly taskQuestionMapService: TaskQuestionMapService,
-  ) {}
+  ) { }
   async create(createTaskDto: CreateTaskDto): Promise<Task> {
     try {
       const {
         title,
         summary,
         description,
+        search_source,
+        search_model,
         experiment_id,
         survey_id,
         rule_type,
@@ -55,6 +57,8 @@ export class Task2Service {
         summary,
         description,
         experiment,
+        search_source,
+        search_model,
         survey,
         rule_type,
         min_score: min_score || 0,
@@ -80,7 +84,7 @@ export class Task2Service {
   }
 
   async findOne(id: string): Promise<Task> {
-    return await this.taskRepository.findOneBy({_id: id});
+    return await this.taskRepository.findOneBy({ _id: id });
   }
 
   async findMany(ids: string[]): Promise<Task[]> {
@@ -94,7 +98,7 @@ export class Task2Service {
   async findByExperimentId(experimentId: string): Promise<Task[]> {
     return await this.taskRepository.find({
       where: {
-        experiment: {_id: experimentId},
+        experiment: { _id: experimentId },
       },
     });
   }
@@ -131,13 +135,13 @@ export class Task2Service {
     }
     console.log('UpdateTaskDto: ', updateTaskDto);
     delete updateTaskDto.questionsId;
-    await this.taskRepository.update({_id: id}, updateTaskDto);
+    await this.taskRepository.update({ _id: id }, updateTaskDto);
     return await this.findOne(id);
   }
 
   async remove(id: string) {
     const task = await this.findOne(id);
-    await this.taskRepository.delete({_id: id});
+    await this.taskRepository.delete({ _id: id });
     return task;
   }
 }

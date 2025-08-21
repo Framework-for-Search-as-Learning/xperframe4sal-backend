@@ -62,4 +62,10 @@ export class Experiments2Controller {
   async remove(@Param('id') id: string) {
     return await this.experimentService.remove(id);
   }
+
+  @Get(':id/step')
+  @ApiOperation({summary: 'Get steps from experiment'})
+  async getStep(@Param('id') id: string) {
+    return await this.experimentService.buildStep(id);
+  }
 }

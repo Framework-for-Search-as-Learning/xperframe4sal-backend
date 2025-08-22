@@ -1,10 +1,10 @@
-import {BaseEntity} from 'src/model/base_entity2';
-import {Icf} from 'src/modules/icf2/entity/icf.entity';
-import {Survey} from 'src/modules/survey2/entity/survey.entity';
-import {Task} from 'src/modules/task2/entities/task.entity';
-import {UserExperiment} from 'src/modules/user-experiments2/entities/user-experiments.entity';
-import {User} from 'src/modules/user2/entity/user.entity';
-import {Column, Entity, ManyToOne, OneToMany} from 'typeorm';
+import { BaseEntity } from 'src/model/base_entity2';
+import { Icf } from 'src/modules/icf2/entity/icf.entity';
+import { Survey } from 'src/modules/survey2/entity/survey.entity';
+import { Task } from 'src/modules/task2/entities/task.entity';
+import { UserExperiment } from 'src/modules/user-experiments2/entities/user-experiments.entity';
+import { User } from 'src/modules/user2/entity/user.entity';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
 enum SurveyType {
   PRE = 'pre',
@@ -23,6 +23,8 @@ export class TaskProps {
   title: string;
   summary: string;
   description: string;
+  search_source: string;
+  search_model: string;
   SelectedSurvey: string;
   RulesExperiment: string; //score || question
   ScoreThreshold: number;
@@ -46,7 +48,7 @@ export enum StepsType {
 export class Experiment extends BaseEntity {
   @Column()
   name: string;
-  @Column({nullable: true})
+  @Column({ nullable: true })
   owner_id: string;
   @ManyToOne(() => User)
   owner: User;
@@ -56,17 +58,17 @@ export class Experiment extends BaseEntity {
   typeExperiment: string;
   @Column()
   betweenExperimentType: string;
-  @OneToMany(() => Task, (task) => task.experiment, {cascade: true})
+  @OneToMany(() => Task, (task) => task.experiment, { cascade: true })
   tasks: Task[];
   @OneToMany(
     () => UserExperiment,
     (userExperiment) => userExperiment.experiment,
-    {cascade: true},
+    { cascade: true },
   )
   userExperiments: UserExperiment[];
-  @OneToMany(() => Survey, (survey) => survey.experiment, {cascade: true})
+  @OneToMany(() => Survey, (survey) => survey.experiment, { cascade: true })
   surveys: Survey[];
 
-  @OneToMany(() => Icf, (icf) => icf.experiment, {cascade: true})
+  @OneToMany(() => Icf, (icf) => icf.experiment, { cascade: true })
   icfs: Icf[];
 }

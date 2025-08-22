@@ -5,4 +5,5 @@ export class TimeEditUserTaskDto {
   endTime?: Date;
   pauseTime?: Date[];
   resumeTime?: Date[];
+  metadata?: any | null;
 }

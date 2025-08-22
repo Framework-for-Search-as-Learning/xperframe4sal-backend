@@ -1,19 +1,19 @@
-import {Injectable, NotFoundException} from '@nestjs/common';
-import {InjectRepository} from '@nestjs/typeorm';
-import {UserTask} from './entities/user-tasks.entity';
-import {In, Repository} from 'typeorm';
-import {CreateUserTaskDto} from './dto/create-userTask.dto';
-import {User2Service} from '../user2/user2.service';
-import {Task2Service} from '../task2/task2.service';
-import {UpdateUserTaskDto} from './dto/update-userTask.dto';
-import {TimeEditUserTaskDto} from './dto/timeEditUserTaskDTO';
-import {CreateUserTaskRandomDto} from './dto/create-userTaskRandom.dto';
-import {CreateUserTaskScoreDto} from './dto/create-userTaskScore.dto';
-import {CreateUserTaskAvgQuestScoreDto} from './dto/create-userTaskAvgQuestScore.dto';
-import {TaskQuestionMapService} from '../task-question-map/task-question-map.service';
-import {User} from '../user2/entity/user.entity';
-import {CreateUserTaskByRule} from './dto/create-userTaskByRule.dto';
-import {Task} from '../task2/entities/task.entity';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserTask } from './entities/user-tasks.entity';
+import { In, Repository } from 'typeorm';
+import { CreateUserTaskDto } from './dto/create-userTask.dto';
+import { User2Service } from '../user2/user2.service';
+import { Task2Service } from '../task2/task2.service';
+import { UpdateUserTaskDto } from './dto/update-userTask.dto';
+import { TimeEditUserTaskDto } from './dto/timeEditUserTaskDTO';
+import { CreateUserTaskRandomDto } from './dto/create-userTaskRandom.dto';
+import { CreateUserTaskScoreDto } from './dto/create-userTaskScore.dto';
+import { CreateUserTaskAvgQuestScoreDto } from './dto/create-userTaskAvgQuestScore.dto';
+import { TaskQuestionMapService } from '../task-question-map/task-question-map.service';
+import { User } from '../user2/entity/user.entity';
+import { CreateUserTaskByRule } from './dto/create-userTaskByRule.dto';
+import { Task } from '../task2/entities/task.entity';
 
 @Injectable()
 export class UserTask2Service {
@@ -24,7 +24,7 @@ export class UserTask2Service {
     private readonly userService: User2Service,
     private readonly taskService: Task2Service,
     private readonly taskQuestionMapService: TaskQuestionMapService,
-  ) {}
+  ) { }
   async findOne(id: string): Promise<UserTask> {
     try {
       return await this.userTaskRepository.findOne({
@@ -39,7 +39,7 @@ export class UserTask2Service {
   }
   async create(createUserTaskDto: CreateUserTaskDto): Promise<UserTask> {
     try {
-      const {userId, taskId} = createUserTaskDto;
+      const { userId, taskId } = createUserTaskDto;
       const user = await this.userService.findOne(userId);
       if (!user) {
         throw new NotFoundException('Usuario nao foi encontrado');
@@ -63,7 +63,7 @@ export class UserTask2Service {
     createUserTaskScoreDto: CreateUserTaskScoreDto,
   ): Promise<UserTask> {
     try {
-      const {userId, taskIds, surveyAnswer} = createUserTaskScoreDto;
+      const { userId, taskIds, surveyAnswer } = createUserTaskScoreDto;
       console.log(taskIds);
       const score = surveyAnswer.score;
       const taskList = await this.taskService.findMany(taskIds);
@@ -77,7 +77,7 @@ export class UserTask2Service {
       if (!selectedTaskId) {
         throw new Error('Nenhua tarefa encontrada para o score desse usuario');
       }
-      return this.create({userId: userId, taskId: selectedTaskId});
+      return this.create({ userId: userId, taskId: selectedTaskId });
     } catch (error) {
       console.error(error);
       throw error;
@@ -131,7 +131,7 @@ export class UserTask2Service {
     createUserTaskAvgQuestScore: CreateUserTaskAvgQuestScoreDto,
   ): Promise<UserTask> {
     try {
-      const {userId, taskIds, questionsIds, surveyAnswer} =
+      const { userId, taskIds, questionsIds, surveyAnswer } =
         createUserTaskAvgQuestScore;
 
       const selectedQuestion = surveyAnswer.answers.filter((answer) =>
@@ -157,7 +157,7 @@ export class UserTask2Service {
         throw new Error('Nenhuma task encontrada para o score do usuario');
       }
 
-      return this.create({userId: userId, taskId: selectedTaskId});
+      return this.create({ userId: userId, taskId: selectedTaskId });
     } catch (error) {
       console.error(error);
       throw error;
@@ -167,7 +167,7 @@ export class UserTask2Service {
   async createBySurveyRule(
     createUserTaskByRule: CreateUserTaskByRule,
   ): Promise<void> {
-    const {userId, surveyId, surveyAnswer} = createUserTaskByRule;
+    const { userId, surveyId, surveyAnswer } = createUserTaskByRule;
     const tasks = await this.taskService.findBySurveyId(surveyId);
     const surveyScoreTasks = tasks.filter((task) => task.rule_type === 'score');
     //TODO ao inves de passar para Id passar o objeto Task na funcao de criacao de userTask
@@ -190,7 +190,7 @@ export class UserTask2Service {
       console.log('passou aqui');
       const tasksGroupedByQuestions = new Map<
         string,
-        {taskIds: string[]; questionIds: string[]}
+        { taskIds: string[]; questionIds: string[] }
       >();
       for (const taskId of questionScoreTasksIds) {
         const questionsId =
@@ -257,7 +257,7 @@ export class UserTask2Service {
     createUserTaksRandomDto: CreateUserTaskRandomDto,
   ): Promise<UserTask> {
     try {
-      const {userId, tasks} = createUserTaksRandomDto;
+      const { userId, tasks } = createUserTaksRandomDto;
       const taskIds = tasks.map((task) => task._id);
       const taskCounts = await this.getTaskCounts(taskIds);
       //const taskCountList = Object.entries(taskCounts);
@@ -268,7 +268,7 @@ export class UserTask2Service {
       );
       const randomIndex = Math.floor(Math.random() * tasksWithMinCount.length);
       const selectedTaskId = tasksWithMinCount[randomIndex];
-      return await this.create({userId: userId, taskId: selectedTaskId});
+      return await this.create({ userId: userId, taskId: selectedTaskId });
     } catch (error) {
       console.error('Error ao criar tarefa aleatória', error);
       throw error;
@@ -290,7 +290,7 @@ export class UserTask2Service {
   async findByUserId(userId: string): Promise<UserTask[]> {
     return await this.userTaskRepository.find({
       where: {
-        user: {_id: userId},
+        user: { _id: userId },
       },
     });
   }
@@ -298,7 +298,7 @@ export class UserTask2Service {
   async findByTaskId(taskId: string): Promise<UserTask[]> {
     return await this.userTaskRepository.find({
       where: {
-        task: {_id: taskId},
+        task: { _id: taskId },
       },
     });
   }
@@ -309,8 +309,8 @@ export class UserTask2Service {
   ): Promise<UserTask> {
     return await this.userTaskRepository.findOne({
       where: {
-        user: {_id: userId},
-        task: {_id: taskId},
+        user: { _id: userId },
+        task: { _id: taskId },
       },
     });
   }
@@ -320,7 +320,7 @@ export class UserTask2Service {
     experimentId: string,
   ): Promise<UserTask[]> {
     const userTasks = await this.userTaskRepository.find({
-      where: {user_id: userId},
+      where: { user_id: userId },
       relations: ['task'],
     });
     const userTaskByExperiment = userTasks.filter(
@@ -332,7 +332,7 @@ export class UserTask2Service {
   async findUsersByTaskId(taskId: string): Promise<User[]> {
     const userTasks = await this.userTaskRepository.find({
       relations: ['user'],
-      where: {task_id: taskId},
+      where: { task_id: taskId },
     });
     const users = userTasks.map((userTasks) => userTasks.user);
     return users;
@@ -340,7 +340,7 @@ export class UserTask2Service {
 
   async findTasksByUserId(userId: string): Promise<Task[]> {
     const userTasks = await this.userTaskRepository.find({
-      where: {user_id: userId},
+      where: { user_id: userId },
       relations: ['task'],
     });
     const tasks = userTasks.map((userTask) => userTask.task);
@@ -364,8 +364,8 @@ export class UserTask2Service {
   ): Promise<UserTask> {
     const result = this.findByUserIdAndTaskId(userId, taskId);
     await this.userTaskRepository.delete({
-      user: {_id: userId},
-      task: {_id: taskId},
+      user: { _id: userId },
+      task: { _id: taskId },
     });
     return result;
   }
@@ -386,7 +386,7 @@ export class UserTask2Service {
         _id: id,
       },
     });
-    await this.userTaskRepository.delete({_id: id});
+    await this.userTaskRepository.delete({ _id: id });
     return result;
   }
 
@@ -394,56 +394,56 @@ export class UserTask2Service {
     id: string,
     updateUserTaskDto: UpdateUserTaskDto,
   ): Promise<UserTask> {
-    await this.userTaskRepository.update({_id: id}, updateUserTaskDto);
-    return await this.userTaskRepository.findOne({where: {_id: id}});
+    await this.userTaskRepository.update({ _id: id }, updateUserTaskDto);
+    return await this.userTaskRepository.findOne({ where: { _id: id } });
   }
 
   async start(
     id: string,
     timeEditUserTaskDTO: TimeEditUserTaskDto,
   ): Promise<UserTask> {
-    let {isPaused, startTime} = timeEditUserTaskDTO;
+    let { isPaused, startTime } = timeEditUserTaskDTO;
     isPaused = false;
     startTime = new Date();
-    await this.update(id, {isPaused, startTime});
-    return await this.userTaskRepository.findOne({where: {_id: id}});
+    await this.update(id, { isPaused, startTime });
+    return await this.userTaskRepository.findOne({ where: { _id: id } });
   }
 
   async pause(
     id: string,
     timeEditUserTaskDto: TimeEditUserTaskDto,
   ): Promise<UserTask> {
-    let {isPaused, pauseTime} = timeEditUserTaskDto;
+    let { isPaused, pauseTime } = timeEditUserTaskDto;
     isPaused = true;
     if (!pauseTime) {
       pauseTime = [];
     }
     pauseTime.push(new Date());
-    return await this.update(id, {isPaused, pauseTime});
+    return await this.update(id, { isPaused, pauseTime });
   }
 
   async resume(
     id: string,
     timeEditUserTaskDTO: TimeEditUserTaskDto,
   ): Promise<UserTask> {
-    let {isPaused, resumeTime} = timeEditUserTaskDTO;
+    let { isPaused, resumeTime } = timeEditUserTaskDTO;
     isPaused = false;
     if (!resumeTime) {
       resumeTime = [];
     }
     resumeTime.push(new Date());
-    return await this.update(id, {isPaused, resumeTime});
+    return await this.update(id, { isPaused, resumeTime });
   }
 
   async finish(
     id: string,
     timeEditUserTaskDTO: TimeEditUserTaskDto,
   ): Promise<UserTask> {
-    let {hasFinishedTask, endTime} = timeEditUserTaskDTO;
+    let { hasFinishedTask, endTime, metadata } = timeEditUserTaskDTO;
     hasFinishedTask = true;
     endTime = new Date();
-    await this.update(id, {hasFinishedTask, endTime});
-    return await this.userTaskRepository.findOne({where: {_id: id}});
+    await this.update(id, { hasFinishedTask, endTime, metadata });
+    return await this.userTaskRepository.findOne({ where: { _id: id } });
   }
 
   public async getTaskCounts(

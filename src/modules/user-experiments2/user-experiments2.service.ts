@@ -1,15 +1,15 @@
-import {forwardRef, Inject, Injectable} from '@nestjs/common';
-import {InjectRepository} from '@nestjs/typeorm';
-import {UserExperiment} from './entities/user-experiments.entity';
-import {In, Repository} from 'typeorm';
-import {CreateUserExperimentDto} from './dto/create-userExperiment.dto';
-import {User2Service} from '../user2/user2.service';
-import {Experiments2Service} from '../experiments2/experiments2.service';
-import {UpdateUserExperimentDto} from './dto/update-userExperiment.dto';
-import {User} from '../user2/entity/user.entity';
-import {Experiment} from '../experiments2/entity/experiment.entity';
-import {UserTask2Service} from '../user-task2/user-task2.service';
-import {Task2Service} from '../task2/task2.service';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserExperiment } from './entities/user-experiments.entity';
+import { In, Repository } from 'typeorm';
+import { CreateUserExperimentDto } from './dto/create-userExperiment.dto';
+import { User2Service } from '../user2/user2.service';
+import { Experiments2Service } from '../experiments2/experiments2.service';
+import { UpdateUserExperimentDto } from './dto/update-userExperiment.dto';
+import { User } from '../user2/entity/user.entity';
+import { Experiment } from '../experiments2/entity/experiment.entity';
+import { UserTask2Service } from '../user-task2/user-task2.service';
+import { Task2Service } from '../task2/task2.service';
 
 @Injectable()
 export class UserExperiments2Service {
@@ -21,13 +21,13 @@ export class UserExperiments2Service {
     private readonly experimentService: Experiments2Service,
     private readonly userTask2Service: UserTask2Service,
     private readonly taskService: Task2Service,
-  ) {}
+  ) { }
 
   async create(
     createUserExperimentDto: CreateUserExperimentDto,
   ): Promise<UserExperiment> {
     try {
-      const {userId, experimentId} = createUserExperimentDto;
+      const { userId, experimentId } = createUserExperimentDto;
       const user = await this.userService.findOne(userId);
       const experiment =
         await this.experimentService.findWithTasks(experimentId);
@@ -48,7 +48,7 @@ export class UserExperiments2Service {
         const tasks = experiment.tasks;
         await Promise.all(
           tasks.map((task) => {
-            this.userTask2Service.create({taskId: task._id, userId: userId});
+            this.userTask2Service.create({ taskId: task._id, userId: userId });
           }),
         );
       } else if (experiment.betweenExperimentType === 'random') {
@@ -88,13 +88,16 @@ export class UserExperiments2Service {
 
   async findByUserId(userId: string): Promise<UserExperiment[]> {
     return await this.userExperimentRepository.find({
-      where: {user: {_id: userId}},
+      where: {
+        user: { _id: userId },
+        hasFinished: false
+      },
     });
   }
 
   async findUsersByExperimentId(experimentId: string): Promise<User[]> {
     const userExperiments = await this.userExperimentRepository.find({
-      where: {experiment: {_id: experimentId}},
+      where: { experiment: { _id: experimentId } },
       relations: ['user'],
     });
     return userExperiments.map((userExperiments) => userExperiments.user);
@@ -102,7 +105,10 @@ export class UserExperiments2Service {
 
   async findExperimentsByUserId(userId: string): Promise<Experiment[]> {
     const userExperiments = await this.userExperimentRepository.find({
-      where: {user: {_id: userId}},
+      where: {
+        user: { _id: userId },
+        hasFinished: false
+      },
       relations: ['experiment'],
     });
     return userExperiments.map((userExperiments) => userExperiments.experiment);
@@ -114,8 +120,8 @@ export class UserExperiments2Service {
   ): Promise<UserExperiment> {
     return await this.userExperimentRepository.findOne({
       where: {
-        user: {_id: userId},
-        experiment: {_id: experimentId},
+        user: { _id: userId },
+        experiment: { _id: experimentId },
       },
     });
   }
@@ -124,7 +130,7 @@ export class UserExperiments2Service {
     id: string,
     updateUserExperimentDto: UpdateUserExperimentDto,
   ): Promise<UserExperiment> {
-    const {userId, experimentId, stepsCompleted} = updateUserExperimentDto;
+    const { userId, experimentId, stepsCompleted } = updateUserExperimentDto;
     let user, experiment;
     if (userId) {
       user = await this.userService.findOne(userId);
@@ -136,9 +142,18 @@ export class UserExperiments2Service {
       if (!experiment) throw new Error('Experiment not found');
     }
     await this.userExperimentRepository.update(
-      {_id: id},
-      {user, experiment, stepsCompleted},
+      { _id: id },
+      { user, experiment, stepsCompleted },
     );
+    return await this.userExperimentRepository.findOne({
+      where: {
+        _id: id,
+      },
+    });
+  }
+
+  async finish(id: string): Promise<UserExperiment> {
+    await this.userExperimentRepository.update({ _id: id }, { hasFinished: true });
     return await this.userExperimentRepository.findOne({
       where: {
         _id: id,
@@ -203,8 +218,8 @@ export class UserExperiments2Service {
   async removeByUserIdAndExperimentId(userId: string, experimentId: string) {
     const result = await this.findByUserAndExperimentId(userId, experimentId);
     await this.userExperimentRepository.delete({
-      user: {_id: userId},
-      experiment: {_id: experimentId},
+      user: { _id: userId },
+      experiment: { _id: experimentId },
     });
     return result;
   }
@@ -215,7 +230,7 @@ export class UserExperiments2Service {
         _id: id,
       },
     });
-    await this.userExperimentRepository.delete({_id: id});
+    await this.userExperimentRepository.delete({ _id: id });
     return result;
   }
 }

@@ -8,25 +8,25 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import {ApiOperation, ApiTags, ApiBody, ApiQuery} from '@nestjs/swagger';
-import {UserExperiments2Service} from './user-experiments2.service';
-import {CreateUserExperimentDto} from './dto/create-userExperiment.dto';
-import {UserExperiment} from './entities/user-experiments.entity';
-import {UpdateUserExperimentDto} from './dto/update-userExperiment.dto';
-import {GetUserDto} from 'src/model/user.dto';
-import {Experiment} from '../experiments2/entity/experiment.entity';
-import {User} from '../user2/entity/user.entity';
+import { ApiOperation, ApiTags, ApiBody, ApiQuery } from '@nestjs/swagger';
+import { UserExperiments2Service } from './user-experiments2.service';
+import { CreateUserExperimentDto } from './dto/create-userExperiment.dto';
+import { UserExperiment } from './entities/user-experiments.entity';
+import { UpdateUserExperimentDto } from './dto/update-userExperiment.dto';
+import { GetUserDto } from 'src/model/user.dto';
+import { Experiment } from '../experiments2/entity/experiment.entity';
+import { User } from '../user2/entity/user.entity';
 
 @ApiTags('user-experiments2')
 @Controller('user-experiments2')
 export class UserExperiments2Controller {
   constructor(
     private readonly userExperimentService: UserExperiments2Service,
-  ) {}
+  ) { }
 
   @Post()
-  @ApiOperation({summary: 'Create a user experiment'})
-  @ApiBody({type: CreateUserExperimentDto})
+  @ApiOperation({ summary: 'Create a user experiment' })
+  @ApiBody({ type: CreateUserExperimentDto })
   async create(
     @Body() createUserExperimentDto: CreateUserExperimentDto,
   ): Promise<UserExperiment> {
@@ -34,7 +34,7 @@ export class UserExperiments2Controller {
   }
 
   @Get()
-  @ApiOperation({summary: 'Get all user experiments'})
+  @ApiOperation({ summary: 'Get all user experiments' })
   @ApiQuery({
     name: 'userId',
     required: false,
@@ -64,7 +64,7 @@ export class UserExperiments2Controller {
   }
 
   @Get('/experiment/:experimentId')
-  @ApiOperation({summary: 'Get users by experiment id'})
+  @ApiOperation({ summary: 'Get users by experiment id' })
   async findUsersByExperimentId(
     @Param('experimentId') experimentId: string,
   ): Promise<GetUserDto[]> {
@@ -82,7 +82,7 @@ export class UserExperiments2Controller {
   }
 
   @Get('/user/:userId')
-  @ApiOperation({summary: 'Get experiments by user id'})
+  @ApiOperation({ summary: 'Get experiments by user id' })
   async findExperimentsByUserId(
     @Param('userId') userId: string,
   ): Promise<Experiment[]> {
@@ -92,8 +92,8 @@ export class UserExperiments2Controller {
   }
 
   @Patch(':id')
-  @ApiOperation({summary: 'Update a user experiment'})
-  @ApiBody({type: UpdateUserExperimentDto})
+  @ApiOperation({ summary: 'Update a user experiment' })
+  @ApiBody({ type: UpdateUserExperimentDto })
   async update(
     @Param('id') id: string,
     @Body() updateUserExperimentDto: UpdateUserExperimentDto,
@@ -105,17 +105,26 @@ export class UserExperiments2Controller {
     return result;
   }
 
+  @Patch('finish/:id')
+  @ApiOperation({ summary: 'Mark a user experiment as finished' })
+  async finish(
+    @Param('id') id: string,
+  ): Promise<UserExperiment> {
+    const result = await this.userExperimentService.finish(id);
+    return result;
+  }
+
   @Patch('/update-users/:id')
   async updateExperimentUsers(
     @Param('id') id: string,
-    @Body() body: {newUsersId: string[]},
+    @Body() body: { newUsersId: string[] },
   ): Promise<User[]> {
-    const {newUsersId} = body;
+    const { newUsersId } = body;
     return this.userExperimentService.updateExperimentUsers(id, newUsersId);
   }
 
   @Delete()
-  @ApiOperation({summary: 'Delete user experiment by user and experiment id'})
+  @ApiOperation({ summary: 'Delete user experiment by user and experiment id' })
   @ApiQuery({
     name: 'userId',
     required: true,
@@ -139,7 +148,7 @@ export class UserExperiments2Controller {
   }
 
   @Delete(':id')
-  @ApiOperation({summary: 'Delete a user experiment by id'})
+  @ApiOperation({ summary: 'Delete a user experiment by id' })
   async remove(@Param('id') id: string) {
     return await this.userExperimentService.remove(id);
   }

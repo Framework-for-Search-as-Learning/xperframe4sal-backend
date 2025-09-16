@@ -40,7 +40,7 @@ export class Experiments2Controller {
   async importExperiment(
     @Param('ownerId') ownerId: string,
     @UploadedFile() file: any,
-  ): Promise<Experiment> {
+  ): Promise<string[]> {
     if (!file) {
       throw new Error('No file uploaded');
     }

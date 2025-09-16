@@ -147,11 +147,11 @@ export class Experiments2Service {
       [StepsType.TASK]: undefined,
     };
     if (experiment.icfs && experiment.icfs.length > 0) {
-      step[StepsType.ICF] = { label: 'Aceitar termo de consentimento', order: 1 };
+      step[StepsType.ICF] = { label: 'accept_icf', order: 1 };
     }
 
     if (experiment.tasks && experiment.tasks.length > 0) {
-      step[StepsType.TASK] = { label: 'Finalizar tarefas de busca', order: 3 };
+      step[StepsType.TASK] = { label: 'end_task', order: 3 };
     }
     if (experiment.surveys.length > 0) {
       let hasPre = false;
@@ -165,10 +165,10 @@ export class Experiments2Service {
         }
       }
       if (hasPre) {
-        step[StepsType.PRE] = { label: 'Responder Pre-Questionarios', order: 2 };
+        step[StepsType.PRE] = { label: 'answer_pre_survey', order: 2 };
       }
       if (hasPost) {
-        step[StepsType.POST] = { label: 'Responder Pos-Questionarios', order: 4 };
+        step[StepsType.POST] = { label: 'answer_post_survey', order: 4 };
       }
     }
     return step;

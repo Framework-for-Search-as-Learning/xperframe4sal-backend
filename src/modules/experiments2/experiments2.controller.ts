@@ -30,7 +30,6 @@ export class Experiments2Controller {
   async create(
     @Body() createExperimentDto: CreateExperimentDto,
   ): Promise<Experiment> {
-    console.log("SurveyProps66: ", createExperimentDto.surveysProps)
     return await this.experimentService.create(createExperimentDto);
   }
 

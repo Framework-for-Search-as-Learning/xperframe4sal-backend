@@ -39,8 +39,6 @@ export class Experiments2Service {
       betweenExperimentType,
       icf,
     } = createExperimentDto;
-    console.log('Survey Props:');
-    console.log(surveysProps);
     const owner = await this.userService.findOne(ownerId);
     const experiment = await this.experimentRepository.create({
       name,
@@ -53,6 +51,7 @@ export class Experiments2Service {
     const savedExperiment = await this.experimentRepository.save(experiment);
 
     //Create Surveys
+    console.log("SurveyProps67: ", surveysProps)
     const SurveysPromises = surveysProps.map((survey) => {
       return this.surveyService.create({
         description: survey.description,
@@ -60,7 +59,7 @@ export class Experiments2Service {
         title: survey.title,
         questions: survey.questions,
         type: survey.type,
-        experimentId: survey.experimentId,
+        experimentId: savedExperiment._id,
         uuid: survey.uuid,
       });
     });

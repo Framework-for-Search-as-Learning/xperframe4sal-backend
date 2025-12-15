@@ -65,7 +65,6 @@ export class SurveyAnswer2Service {
           surveyId: newSurveyAnswer.survey_id,
           surveyAnswer: newSurveyAnswer,
         });
-        console.log('teste666');
       }
       return newSurveyAnswer;
     } catch (error) {

@@ -52,18 +52,15 @@ export class TaskQuestionMapService {
     newQuestionsId: string[],
   ): Promise<void> {
     try {
-      console.log('newQuestionsid:', newQuestionsId);
       const currentQuestionsInTask = await this.findQuestionsByTask(taskId);
 
       const questionsToRemove = currentQuestionsInTask.filter(
         (question) => !newQuestionsId.includes(question),
       );
 
-      console.log('questionsToRemove: ', questionsToRemove);
       const questionsToAdd = newQuestionsId.filter(
         (question) => !currentQuestionsInTask.includes(question),
       );
-      console.log('questionsToAdd: ', questionsToAdd);
 
       if (questionsToRemove.length !== 0) {
         await this.removeQuestionsFromTask(taskId, questionsToRemove);

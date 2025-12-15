@@ -51,7 +51,6 @@ export class Task2Service {
           throw new NotFoundException('Survey não encontrado');
         }
       }
-      console.log('Create TaskDto: ', createTaskDto);
       const newTask = await this.taskRepository.save({
         title,
         summary,
@@ -64,7 +63,6 @@ export class Task2Service {
         min_score: min_score || 0,
         max_score: max_score || 0,
       });
-      console.log(newTask);
       if (questionsId?.length > 0) {
         await Promise.all(
           questionsId.map((questionId) =>
@@ -126,14 +124,11 @@ export class Task2Service {
       await this.taskQuestionMapService.findQuestionsByTask(id);
     //TODO verificar depois se essas duas listas vao ser passadas na mesma ordem
     if (questionsInTask !== updateTaskDto?.questionsId) {
-      console.log('Passou aqui 666666666');
-      console.log('updateQuestionsiId: ', updateTaskDto.questionsId);
       await this.taskQuestionMapService.updateTaskQuestionMap(
         id,
         updateTaskDto.questionsId,
       );
     }
-    console.log('UpdateTaskDto: ', updateTaskDto);
     delete updateTaskDto.questionsId;
     await this.taskRepository.update({ _id: id }, updateTaskDto);
     return await this.findOne(id);

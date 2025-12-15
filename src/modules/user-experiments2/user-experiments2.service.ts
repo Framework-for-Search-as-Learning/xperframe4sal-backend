@@ -60,7 +60,6 @@ export class UserExperiments2Service {
         //TODO retirar apos teste
         const taskIds = experiment.tasks.map((task) => task._id);
         const counts = await this.userTask2Service.getTaskCounts(taskIds);
-        console.log(counts);
       }
       return savedUserExperiment;
     } catch (error) {

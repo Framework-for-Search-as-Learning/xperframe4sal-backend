@@ -30,7 +30,6 @@ export class Survey2Service {
         throw new NotFoundException('Experimento não encontrado');
       }
       let newSurvey: Survey;
-      console.log('uuid gerada: ', uuid);
       if (uuid) {
         newSurvey = this.surveyRepository.create({
           _id: uuid,

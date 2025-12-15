@@ -51,7 +51,6 @@ export class Experiments2Service {
     const savedExperiment = await this.experimentRepository.save(experiment);
 
     //Create Surveys
-    console.log("SurveyProps67: ", surveysProps)
     const SurveysPromises = surveysProps.map((survey) => {
       return this.surveyService.create({
         description: survey.description,

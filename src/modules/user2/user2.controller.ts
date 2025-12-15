@@ -145,7 +145,6 @@ export class User2Controller {
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<GetUserDto> {
-    console.log(updateUserDto);
     const userDto = await this._userService.update(id, updateUserDto);
     return {
       id: userDto._id,

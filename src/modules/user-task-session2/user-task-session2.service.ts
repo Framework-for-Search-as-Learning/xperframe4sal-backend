@@ -69,7 +69,6 @@ export class UserTaskSession2Service {
         where: {_id: id},
         relations: ['pages'],
       });
-      console.log('UserTaskSession: ', userTaskSession);
       if (!userTaskSession) {
         throw new NotFoundException('Session not found');
       }

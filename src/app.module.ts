@@ -58,14 +58,14 @@ import {Page} from './modules/user-task-session2/entities/page.entity';
     PuppeteerModule,
     SurveysModule,
     MongooseModule.forRoot(
-      process.env.MONGO ? process.env.MONGO : 'mongodb://mongo-api:27017',
+      process.env.MONGO_URL ? process.env.MONGO_URL : 'mongodb://localhost:27017',
       {
         dbName: 'cbf',
       },
     ),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'postgres-api',
+      host: process.env.POSTGRES_HOST ? process.env.POSTGRES_HOST : 'localhost',
       port: 5432,
       username: process.env.DB_USER,
       password: process.env.DB_PASS,

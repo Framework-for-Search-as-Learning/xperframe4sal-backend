@@ -1,5 +1,22 @@
 services:
-  postgres:
+
+  api:
+    build: 
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: nestjs-dev
+    restart: no
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    env_file:
+      - .env
+    depends_on:
+      - postgres-api
+      - mongo-api
+  postgres-api:
     image: postgres:17-alpine
     restart: no
     environment:
@@ -22,9 +39,9 @@ services:
     volumes:
       - pgadmin_data:/var/lib/pgadmin
     depends_on:
-      - postgres
+      - postgres-api
 
-  mongo:
+  mongo-api:
     image: mongo
     restart: no
     ports:

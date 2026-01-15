@@ -389,7 +389,7 @@ export class Experiments2Service {
             if (!question.type || typeof question.type !== 'string') {
               // errors.push(`Missing or invalid field: experiment.surveys.questions.type`);
               errors.push('yaml_error_missing_survey_question_type');
-            } else if (!['open', 'multiple-choice', 'multiple-selection'].includes(question.type)) {
+            } else if (!['open', 'multiple-choices', 'multiple-selection'].includes(question.type)) {
               // errors.push(`Invalid value for experiment.surveys.questions.type`);
               errors.push('yaml_error_invalid_survey_question_type');
             } else if (question.type != 'open') {

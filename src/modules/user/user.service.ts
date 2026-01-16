@@ -2,7 +2,7 @@ import { HttpException, Inject, Injectable, NotFoundException, UnauthorizedExcep
 import { User } from '../../model/user.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import * as crypto from 'crypto';
 import { UserExperimentsService } from '../user-experiments/user-experiments.service';
 import { ExperimentsService } from '../experiments/experiments.service';

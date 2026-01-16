@@ -7,7 +7,7 @@ import {
 import {InjectRepository} from '@nestjs/typeorm';
 import {User} from './entity/user.entity';
 import {Repository} from 'typeorm';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import {ForgotPasswordDto, ResetPasswordDto} from 'src/model/user.dto';
 import * as crypto from 'crypto';
 import {MailerService} from '@nestjs-modules/mailer';

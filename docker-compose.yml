@@ -15,7 +15,6 @@ services:
       - .env
     depends_on:
       - postgres-api
-      - mongo-api
   postgres-api:
     image: postgres:17-alpine
     restart: no
@@ -41,15 +40,6 @@ services:
     depends_on:
       - postgres-api
 
-  mongo-api:
-    image: mongo
-    restart: no
-    ports:
-      - '27017:27017'
-    volumes:
-      - mongo_data:/data/db
-
 volumes:
   postgres_data:
-  mongo_data:
   pgadmin_data:

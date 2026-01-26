@@ -38,6 +38,8 @@ export class Experiments2Service {
       typeExperiment,
       betweenExperimentType,
       icf,
+      googleApiKey,
+      googleCx
     } = createExperimentDto;
     const owner = await this.userService.findOne(ownerId);
     const experiment = await this.experimentRepository.create({
@@ -47,6 +49,8 @@ export class Experiments2Service {
       owner,
       typeExperiment,
       betweenExperimentType,
+      GOOGLE_API_KEY: googleApiKey,
+      GOOGLE_CX: googleCx
     });
     const savedExperiment = await this.experimentRepository.save(experiment);
 

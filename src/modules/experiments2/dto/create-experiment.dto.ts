@@ -30,7 +30,15 @@ export class CreateExperimentDto {
   @IsString()
   betweenExperimentType: string;
 
- 
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsOptional()
+  GOOGLE_API_KEY: string;
+  
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  GOOGLE_CX: string;
 
   //Ver como fazer a relação
   //tasks: Task[];

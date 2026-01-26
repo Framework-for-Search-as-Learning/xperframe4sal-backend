@@ -233,11 +233,20 @@ export class UserExperiments2Service {
     return result;
   }
 
-  async countUsersByExperimentId(experimentId: string): Promise<number> {
-    return this.userExperimentRepository.count({
+  async countUsersByExperimentId(experimentId: string): Promise<{totalUsers: number, completedResponses: number}> {
+    const totalUsers =  await this.userExperimentRepository.count({
       where: {
         experiment_id: experimentId,
       },
     });
+
+    const completedResponses = await this.userExperimentRepository.count({
+      where: {
+        experiment_id: experimentId,
+        hasFinished: true
+      }
+    })
+
+    return { totalUsers, completedResponses}
   }
 }

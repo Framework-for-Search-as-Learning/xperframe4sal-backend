@@ -503,4 +503,14 @@ export class Experiments2Service {
 
     return errors;
   }
+
+
+  async getGeneralExpirementInfos(experiment_id: string){
+    const experiment =  await this.experimentRepository.findOneBy({_id: experiment_id});
+    const userExperimentInfos = await this.userExperimentService.countUsersByExperimentId(experiment_id);
+    return {
+      experimentStatus: experiment.status,
+      userExperimentInfos
+    };
+  }
 }

@@ -101,6 +101,12 @@ export class Experiments2Controller {
     res.send(yamlContent);
   }
 
+  @Get('general-info/:experimentId')
+  @ApiOperation({ summary: 'Get general experiment info' })
+  async getGeneralExperimentInfo(@Param('experimentId') experimentId: string) {
+    return await this.experimentService.getGeneralExpirementInfos(experimentId);
+  }
+
   @Get(':id/step')
   @ApiOperation({ summary: 'Get steps from experiment' })
   async getStep(@Param('id') id: string) {

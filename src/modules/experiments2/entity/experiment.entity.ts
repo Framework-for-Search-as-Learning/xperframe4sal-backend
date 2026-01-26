@@ -58,6 +58,10 @@ export class Experiment extends BaseEntity {
   typeExperiment: string;
   @Column()
   betweenExperimentType: string;
+
+  @Column({default: 'NOT_STARTED'})
+  status: string;
+
   @OneToMany(() => Task, (task) => task.experiment, { cascade: true })
   tasks: Task[];
   @OneToMany(

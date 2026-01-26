@@ -12,6 +12,7 @@ export class GoogleController {
   @Get('google')
   async query(
     @Query('query') query: string,
+    @Query('experimentId') experimentId: string,
     @Query('start') startIndex: number = 0,
     @Query('num') resultsPerPage: number = 10,
   ) {
@@ -22,6 +23,7 @@ export class GoogleController {
         query,
         Number(startIndex),
         Number(resultsPerPage),
+        experimentId,
       );
     } catch (error: any) {
       throw error;

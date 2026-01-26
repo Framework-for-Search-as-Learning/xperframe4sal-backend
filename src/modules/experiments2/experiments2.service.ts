@@ -91,6 +91,19 @@ export class Experiments2Service {
     return savedExperiment;
   }
 
+  async getGoogleCredentials(experimentId: string) {
+    try{
+    const experiment = await this.experimentRepository.findOne({
+      where: {_id: experimentId},
+      select: ['GOOGLE_API_KEY', 'GOOGLE_CX'],
+    });
+    return {apiKey: experiment.GOOGLE_API_KEY, cx: experiment.GOOGLE_CX};
+    }catch(error){
+      throw new Error(error.message);
+    }
+    
+  }
+
   async findAll(): Promise<Experiment[]> {
     return await this.experimentRepository.find();
   }

@@ -12,6 +12,13 @@ enum SurveyType {
   OTHER = 'other',
 }
 
+
+export enum ExperimentStatus{
+  NOT_STARTED = 'NOT_STARTED',
+  IN_PROGRESS = 'IN_PROGRESS',
+  FINISHED = 'FINISHED',
+}
+
 export class SurveyProps {
   id: string;
   uniqueAnswer: boolean = false;
@@ -59,8 +66,14 @@ export class Experiment extends BaseEntity {
   @Column()
   betweenExperimentType: string;
 
-  @Column({default: 'NOT_STARTED'})
-  status: string;
+  @Column({default: ExperimentStatus.NOT_STARTED})
+  status: ExperimentStatus;
+
+  @Column({nullable: false})
+  GOOGLE_API_KEY: string;
+
+  @Column({nullable: false})
+  GOOGLE_CX: string
 
   @OneToMany(() => Task, (task) => task.experiment, { cascade: true })
   tasks: Task[];

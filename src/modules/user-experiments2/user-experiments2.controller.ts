@@ -152,4 +152,11 @@ export class UserExperiments2Controller {
   async remove(@Param('id') id: string) {
     return await this.userExperimentService.remove(id);
   }
+
+  @Get('users-count/:experimentId')
+  @ApiOperation({ summary: 'Count users participating in an experiment' })
+  async countUsers(@Param('experimentId') experimentId: string) {
+    return await this.userExperimentService.countUsersByExperimentId(experimentId);
+  }
 }
+

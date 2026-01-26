@@ -232,4 +232,12 @@ export class UserExperiments2Service {
     await this.userExperimentRepository.delete({ _id: id });
     return result;
   }
+
+  async countUsersByExperimentId(experimentId: string): Promise<number> {
+    return this.userExperimentRepository.count({
+      where: {
+        experiment_id: experimentId,
+      },
+    });
+  }
 }

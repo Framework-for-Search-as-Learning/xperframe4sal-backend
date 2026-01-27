@@ -1,4 +1,4 @@
-import {Module} from '@nestjs/common';
+import {forwardRef, Module} from '@nestjs/common';
 import {UserTask2Service} from './user-task2.service';
 import {UserTask2Controller} from './user-task2.controller';
 import {TypeOrmModule} from '@nestjs/typeorm';
@@ -10,7 +10,7 @@ import {TaskQuestionMapModule} from '../task-question-map/task-question-map.modu
 @Module({
   imports: [
     TypeOrmModule.forFeature([UserTask]),
-    Task2Module,
+    forwardRef(() => Task2Module),
     User2Module,
     TaskQuestionMapModule,
   ],

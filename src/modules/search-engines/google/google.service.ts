@@ -5,6 +5,7 @@ import { GOOGLE } from './google-constants';
 import { SearchResultDto } from '../search-result.dto';
 import { CanceledError } from 'axios';
 import { Experiments2Service } from 'src/modules/experiments2/experiments2.service';
+import { Task2Service } from 'src/modules/task2/task2.service';
 
 
 const checkXFrameOptions = async (url: string, httpService: HttpService, maxAttemps: number = 2, sleep: number = 100, timeout = 2000) => {
@@ -44,17 +45,17 @@ const MAX_START_INDEX = 91;
 export class GoogleService implements SearchEngineService {
   constructor(
     private readonly httpService: HttpService,
-    private readonly experimentService: Experiments2Service
+    private readonly taskService: Task2Service
   ) { }
 
   async query(
     query: string,
     startIndex: number = 1,
     resultsPerPage: number = 10,
-    experimentId: string,
+    taskId: string,
   ): Promise<QueryResponse> {
     try {
-      const credentials = await this.experimentService.getGoogleCredentials(experimentId);
+      const credentials = await this.taskService.getGoogleCredentials(taskId);
       return this.queryInternal(query, startIndex, resultsPerPage, credentials);
     } catch (error) {
       throw error;

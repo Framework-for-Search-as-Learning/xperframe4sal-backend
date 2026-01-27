@@ -20,6 +20,7 @@ export class UserExperiments2Service {
     @Inject(forwardRef(() => Experiments2Service))
     private readonly experimentService: Experiments2Service,
     private readonly userTask2Service: UserTask2Service,
+    @Inject(forwardRef(() => Task2Service))
     private readonly taskService: Task2Service,
   ) { }
 

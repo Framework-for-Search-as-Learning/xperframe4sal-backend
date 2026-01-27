@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserTask } from './entities/user-tasks.entity';
 import { In, Repository } from 'typeorm';
@@ -22,6 +22,7 @@ export class UserTask2Service {
     private readonly userTaskRepository: Repository<UserTask>,
 
     private readonly userService: User2Service,
+    @Inject(forwardRef(() => Task2Service))
     private readonly taskService: Task2Service,
     private readonly taskQuestionMapService: TaskQuestionMapService,
   ) { }

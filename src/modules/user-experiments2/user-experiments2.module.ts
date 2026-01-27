@@ -14,7 +14,7 @@ import {Task2Module} from '../task2/task2.module';
     User2Module,
     forwardRef(() => Experiments2Module),
     UserTask2Module,
-    Task2Module,
+    forwardRef(() => Task2Module),
   ],
   providers: [UserExperiments2Service],
   controllers: [UserExperiments2Controller],

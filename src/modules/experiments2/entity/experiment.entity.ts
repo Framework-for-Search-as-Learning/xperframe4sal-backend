@@ -69,12 +69,6 @@ export class Experiment extends BaseEntity {
   @Column({default: ExperimentStatus.NOT_STARTED})
   status: ExperimentStatus;
 
-  @Column({nullable: false, default: ''})
-  GOOGLE_API_KEY: string;
-
-  @Column({nullable: false, default: ''})
-  GOOGLE_CX: string
-
   @OneToMany(() => Task, (task) => task.experiment, { cascade: true })
   tasks: Task[];
   @OneToMany(

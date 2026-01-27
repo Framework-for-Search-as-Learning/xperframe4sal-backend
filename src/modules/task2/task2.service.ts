@@ -139,4 +139,19 @@ export class Task2Service {
     await this.taskRepository.delete({ _id: id });
     return task;
   }
+
+
+    async getGoogleCredentials(taskId: string) {
+      try{
+      const experiment = await this.taskRepository.findOne({
+        where: {_id: taskId},
+        select: ['googleApiKey', 'googleCx'],
+      });
+      return {apiKey: experiment.googleApiKey, cx: experiment.googleCx};
+      }catch(error){
+        throw new Error(error.message);
+      }
+      
+    }
+  
 }

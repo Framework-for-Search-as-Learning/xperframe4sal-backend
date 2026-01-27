@@ -18,6 +18,16 @@ export class Task extends BaseEntity {
   search_source: string;
   @Column()
   search_model: string;
+
+  @Column({nullable: true, select: false})
+  googleApiKey: string;
+
+  @Column({nullable: true, select: false})
+  googleCx: string;
+
+  @Column({nullable: true, select: false})
+  geminiApiKey: string;
+
   @ManyToOne(() => Experiment, (experiment) => experiment.tasks, {
     nullable: true,
     onDelete: 'CASCADE',

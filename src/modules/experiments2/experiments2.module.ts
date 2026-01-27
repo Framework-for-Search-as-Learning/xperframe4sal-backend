@@ -16,7 +16,7 @@ import {Icf2Module} from '../icf2/icf2.module';
     forwardRef(() => UserExperiments2Module),
     UserTask2Module,
     User2Module,
-    Task2Module,
+    forwardRef(() => Task2Module),
     Survey2Module,
     forwardRef(() => Icf2Module),
   ],

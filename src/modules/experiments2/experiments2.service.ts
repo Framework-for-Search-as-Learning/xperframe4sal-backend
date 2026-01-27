@@ -22,6 +22,7 @@ export class Experiments2Service {
     private readonly userExperimentService: UserExperiments2Service,
     private readonly userTaskService: UserTask2Service,
     private readonly userService: User2Service,
+    @Inject(forwardRef(() => Task2Service))
     private readonly taskService: Task2Service,
     private readonly surveyService: Survey2Service,
     @Inject(forwardRef(() => Icf2Service))
@@ -38,8 +39,6 @@ export class Experiments2Service {
       typeExperiment,
       betweenExperimentType,
       icf,
-      googleApiKey,
-      googleCx
     } = createExperimentDto;
     const owner = await this.userService.findOne(ownerId);
     const experiment = await this.experimentRepository.create({
@@ -49,8 +48,6 @@ export class Experiments2Service {
       owner,
       typeExperiment,
       betweenExperimentType,
-      GOOGLE_API_KEY: googleApiKey,
-      GOOGLE_CX: googleCx
     });
     const savedExperiment = await this.experimentRepository.save(experiment);
 
@@ -95,18 +92,6 @@ export class Experiments2Service {
     return savedExperiment;
   }
 
-  async getGoogleCredentials(experimentId: string) {
-    try{
-    const experiment = await this.experimentRepository.findOne({
-      where: {_id: experimentId},
-      select: ['GOOGLE_API_KEY', 'GOOGLE_CX'],
-    });
-    return {apiKey: experiment.GOOGLE_API_KEY, cx: experiment.GOOGLE_CX};
-    }catch(error){
-      throw new Error(error.message);
-    }
-    
-  }
 
   async findAll(): Promise<Experiment[]> {
     return await this.experimentRepository.find();

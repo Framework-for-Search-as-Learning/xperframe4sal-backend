@@ -55,4 +55,20 @@ export class CreateTaskDto {
   @ApiProperty()
   @IsOptional()
   max_score?: number;
+
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  googleApiKey?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  googleCx?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  geminiApiKey?: string;
 }

@@ -79,6 +79,9 @@ export class Experiments2Service {
         max_score: task.ScoreThresholdmx,
         questionsId: task.selectedQuestionIds,
         experiment_id: savedExperiment._id,
+        googleApiKey: task.googleApiKey,
+        googleCx: task.googleCx,
+        geminiApiKey: task.geminiApiKey,
       });
     });
     await Promise.all(TasksPromises);

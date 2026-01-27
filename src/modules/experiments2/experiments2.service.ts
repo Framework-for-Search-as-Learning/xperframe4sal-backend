@@ -1,7 +1,7 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Experiment, StepsType } from './entity/experiment.entity';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { CreateExperimentDto } from './dto/create-experiment.dto';
 import { UserExperiments2Service } from '../user-experiments2/user-experiments2.service';
 import { UserTask2Service } from '../user-task2/user-task2.service';
@@ -490,4 +490,16 @@ export class Experiments2Service {
 
     return errors;
   }
+
+
+  async getExperimentStatus(experimentId: string): Promise<string> {
+    const experiment = await this.experimentRepository.findOne({
+      where: { _id: experimentId },
+      select: ['status'],
+    });
+    if(!experiment){
+      throw new NotFoundException('Experiment not found');
+    }
+    return experiment.status;
+  };
 }

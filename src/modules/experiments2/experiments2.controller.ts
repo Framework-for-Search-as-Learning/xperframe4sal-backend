@@ -106,4 +106,11 @@ export class Experiments2Controller {
   async getStep(@Param('id') id: string) {
     return await this.experimentService.buildStep(id);
   }
+
+
+  @Get(':id/status')
+  @ApiOperation({ summary: 'Get status from experiment' })
+  async getStatus(@Param('id') id: string) {
+    return await this.experimentService.getExperimentStatus(id);
+  }
 }

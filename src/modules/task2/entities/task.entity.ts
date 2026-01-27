@@ -19,13 +19,13 @@ export class Task extends BaseEntity {
   @Column()
   search_model: string;
 
-  @Column({nullable: true, select: false})
+  @Column({nullable: true, select: false, default: ''})
   googleApiKey: string;
 
-  @Column({nullable: true, select: false})
+  @Column({nullable: true, select: false, default: ''})
   googleCx: string;
 
-  @Column({nullable: true, select: false})
+  @Column({nullable: true, select: false, default: ''})
   geminiApiKey: string;
 
   @ManyToOne(() => Experiment, (experiment) => experiment.tasks, {

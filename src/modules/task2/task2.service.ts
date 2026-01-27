@@ -38,7 +38,11 @@ export class Task2Service {
         min_score,
         max_score,
         questionsId,
+        googleApiKey,
+        googleCx,
+        geminiApiKey
       } = createTaskDto;
+
 
       const experiment = await this.experimentService.find(experiment_id);
       if (!experiment) {
@@ -62,6 +66,9 @@ export class Task2Service {
         rule_type,
         min_score: min_score || 0,
         max_score: max_score || 0,
+        googleApiKey,
+        googleCx,
+        geminiApiKey
       });
       if (questionsId?.length > 0) {
         await Promise.all(

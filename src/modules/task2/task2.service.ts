@@ -5,13 +5,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Task } from './entities/task.entity';
 import { In, Repository } from 'typeorm';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { Experiments2Service } from '../experiments2/experiments2.service';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { Survey2Service } from '../survey2/survey2.service';
 import { TaskQuestionMapService } from '../task-question-map/task-question-map.service';
+import { Task } from './entities/task.entity';
 
 @Injectable()
 export class Task2Service {

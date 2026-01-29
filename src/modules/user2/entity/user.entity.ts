@@ -1,3 +1,4 @@
+import { LlmSession } from 'src/llm-session/entity/llm-session.entity';
 import {BaseEntity} from 'src/model/base_entity2';
 import {SurveyAnswer} from 'src/modules/survey-answer2/entity/survey-answer.entity';
 import {UserExperiment} from 'src/modules/user-experiments2/entities/user-experiments.entity';
@@ -36,6 +37,10 @@ export class User extends BaseEntity {
 
   @OneToMany(() => UserTaskSession, (session) => session.user)
   sessions: UserTaskSession[];
+
+
+  @OneToMany(() => LlmSession, (session) => session.user)
+  llmSessions: LlmSession[];
 
   //TODO role
 }

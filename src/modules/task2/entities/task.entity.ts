@@ -1,3 +1,4 @@
+import { LlmSession } from 'src/llm-session/entity/llm-session.entity';
 import { BaseEntity } from 'src/model/base_entity2';
 import { Experiment } from 'src/modules/experiments2/entity/experiment.entity';
 import { Survey } from 'src/modules/survey2/entity/survey.entity';
@@ -27,6 +28,9 @@ export class Task extends BaseEntity {
 
   @Column({nullable: true, select: false, default: ''})
   geminiApiKey: string;
+
+  @OneToMany(() => LlmSession, (session) => session.task)
+  llmSessions: LlmSession[];
 
   @ManyToOne(() => Experiment, (experiment) => experiment.tasks, {
     nullable: true,

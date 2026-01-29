@@ -2,10 +2,10 @@ import {forwardRef, Module} from '@nestjs/common';
 import {Task2Service} from './task2.service';
 import {Task2Controller} from './task2.controller';
 import {TypeOrmModule} from '@nestjs/typeorm';
-import {Task} from './entities/task.entity';
 import {Experiments2Module} from '../experiments2/experiments2.module';
 import {Survey2Module} from '../survey2/survey2.module';
 import {TaskQuestionMapModule} from '../task-question-map/task-question-map.module';
+import { Task } from './entities/task.entity';
 
 @Module({
   imports: [

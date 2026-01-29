@@ -13,7 +13,6 @@ import {User} from './modules/user2/entity/user.entity';
 import {Experiments2Module} from './modules/experiments2/experiments2.module';
 import {Experiment} from './modules/experiments2/entity/experiment.entity';
 import {Task2Module} from './modules/task2/task2.module';
-import {Task} from './modules/task2/entities/task.entity';
 import {UserExperiments2Module} from './modules/user-experiments2/user-experiments2.module';
 import {UserExperiment} from './modules/user-experiments2/entities/user-experiments.entity';
 import {UserTask2Module} from './modules/user-task2/user-task2.module';
@@ -29,6 +28,10 @@ import {Icf} from './modules/icf2/entity/icf.entity';
 import {UserTaskSession2Module} from './modules/user-task-session2/user-task-session2.module';
 import {UserTaskSession} from './modules/user-task-session2/entities/user-task-session.entity';
 import {Page} from './modules/user-task-session2/entities/page.entity';
+import { LlmSessionModule } from './llm-session/llm-session.module';
+import { LlmSession } from './llm-session/entity/llm-session.entity';
+import { LlmMessage } from './llm-session/entity/llm-message.entity';
+import { Task } from './modules/task2/entities/task.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -58,6 +61,8 @@ import {Page} from './modules/user-task-session2/entities/page.entity';
         Icf,
         UserTaskSession,
         Page,
+        LlmSession,
+        LlmMessage
       ],
       synchronize: true,
     }),
@@ -79,6 +84,7 @@ import {Page} from './modules/user-task-session2/entities/page.entity';
     TaskQuestionMapModule,
     Icf2Module,
     UserTaskSession2Module,
+    LlmSessionModule,
   ],
   controllers: [AppController],
   providers: [],

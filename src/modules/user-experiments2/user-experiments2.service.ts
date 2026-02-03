@@ -103,7 +103,7 @@ export class UserExperiments2Service {
     return userExperiments.map((userExperiments) => userExperiments.user);
   }
 
-  async findExperimentsByUserId(userId: string): Promise<Experiment[]> {
+  async findExperimentsByUserId(userId: string): Promise<UserExperiment[]> {
     const userExperiments = await this.userExperimentRepository.find({
       where: {
         user: { _id: userId },
@@ -111,7 +111,7 @@ export class UserExperiments2Service {
       },
       relations: ['experiment'],
     });
-    return userExperiments.map((userExperiments) => userExperiments.experiment);
+    return userExperiments
   }
 
   async findByUserAndExperimentId(

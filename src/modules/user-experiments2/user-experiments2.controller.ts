@@ -85,7 +85,7 @@ export class UserExperiments2Controller {
   @ApiOperation({ summary: 'Get experiments by user id' })
   async findExperimentsByUserId(
     @Param('userId') userId: string,
-  ): Promise<Experiment[]> {
+  ): Promise<UserExperiment[]> {
     const experiments =
       await this.userExperimentService.findExperimentsByUserId(userId);
     return experiments;

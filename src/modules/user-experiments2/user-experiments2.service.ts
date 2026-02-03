@@ -130,7 +130,7 @@ export class UserExperiments2Service {
     id: string,
     updateUserExperimentDto: UpdateUserExperimentDto,
   ): Promise<UserExperiment> {
-    const { userId, experimentId, stepsCompleted } = updateUserExperimentDto;
+    const { userId, experimentId } = updateUserExperimentDto;
     let user, experiment;
     if (userId) {
       user = await this.userService.findOne(userId);
@@ -143,7 +143,7 @@ export class UserExperiments2Service {
     }
     await this.userExperimentRepository.update(
       { _id: id },
-      { user, experiment, stepsCompleted },
+      updateUserExperimentDto
     );
     return await this.userExperimentRepository.findOne({
       where: {

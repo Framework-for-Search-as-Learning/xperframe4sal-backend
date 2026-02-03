@@ -7,9 +7,9 @@ import {User} from 'src/modules/user2/entity/user.entity';
 import {Column, Entity, ManyToOne} from 'typeorm';
 
 export enum UserExperimentStatus {
-  FINISHED = 'finished',
-  IN_PROGRESS = 'in_progress',
-  NOT_STARTED = 'not_started',
+  FINISHED = 'FINISHED',
+  IN_PROGRESS = 'IN_PROGRESS',
+  NOT_STARTED = 'NOT_STARTED',
 }
 
 @Entity()

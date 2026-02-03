@@ -1,6 +1,6 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserExperiment } from './entities/user-experiments.entity';
+import { UserExperiment, UserExperimentStatus } from './entities/user-experiments.entity';
 import { In, Repository } from 'typeorm';
 import { CreateUserExperimentDto } from './dto/create-userExperiment.dto';
 import { User2Service } from '../user2/user2.service';
@@ -153,7 +153,14 @@ export class UserExperiments2Service {
   }
 
   async finish(id: string): Promise<UserExperiment> {
-    await this.userExperimentRepository.update({ _id: id }, { hasFinished: true });
+    await this.userExperimentRepository.update(
+      { _id: id },
+      {
+        hasFinished: true,
+        status: UserExperimentStatus.FINISHED,
+        completionDate: new Date(),
+      },
+    );
     return await this.userExperimentRepository.findOne({
       where: {
         _id: id,

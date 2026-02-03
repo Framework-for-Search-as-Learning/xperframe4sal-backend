@@ -1,8 +1,9 @@
 //import {StepsType} from 'src/modules/experiments2/entity/experiment.entity';
 
 import {ApiProperty} from '@nestjs/swagger';
-import {IsNotEmpty, IsObject, IsOptional, IsString} from 'class-validator';
+import {IsDateString, IsEnum, IsNotEmpty, IsObject, IsOptional, IsString} from 'class-validator';
 import {StepsType} from 'src/modules/experiments2/entity/experiment.entity';
+import {UserExperimentStatus} from '../entities/user-experiments.entity';
 
 export class CreateUserExperimentDto {
   @ApiProperty()
@@ -19,4 +20,19 @@ export class CreateUserExperimentDto {
   @IsOptional()
   @IsObject()
   stepsCompleted?: Record<StepsType, boolean>;
+
+  @ApiProperty({enum: UserExperimentStatus})
+  @IsOptional()
+  @IsEnum(UserExperimentStatus)
+  status?: UserExperimentStatus;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsDateString()
+  startDate?: Date;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsDateString()
+  completionDate?: Date;
 }

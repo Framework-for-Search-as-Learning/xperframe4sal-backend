@@ -38,6 +38,7 @@ export class LlmSessionController {
 
       await saveBotResponse(fullBotResponse);
     } catch (error) {
+      console.error('Error processing chat message:', error.message);
       res.write('\n[ERROR: Error to generate  response]');
       res.end();
     }

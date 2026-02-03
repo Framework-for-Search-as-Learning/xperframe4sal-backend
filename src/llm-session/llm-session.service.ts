@@ -22,6 +22,16 @@ export class LlmSessionService {
   ) {}
 
   async startSession(userId: string, taskId: string): Promise<LlmSession> {
+    const existingSession = await this.llmSessionRepository.findOne({
+      where: {user: {_id: userId}, task: {_id: taskId}},
+      relations: ['messages'],
+      order: {messages: {createdAt: 'ASC'}},
+    });
+
+    if (existingSession) {
+      return existingSession;
+    }
+
     const task = await this.taskRepository.findOne({where: {_id: taskId}});
     if (!task) {
       throw new NotFoundException('Task not found');

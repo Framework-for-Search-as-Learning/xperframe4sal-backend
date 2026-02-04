@@ -12,6 +12,7 @@ import {Survey2Service} from './survey2.service';
 import {CreateSurveyDto} from './dto/create-survey.dto';
 import {Survey} from './entity/survey.entity';
 import {UpdateSurveyDto} from './dto/update-survey.dto';
+import { SurveyStatsDto } from './dto/survey-stats.dto';
 
 @ApiTags('survey2')
 @Controller('survey2')
@@ -59,5 +60,11 @@ export class Survey2Controller {
   @ApiOperation({summary: 'Delete a survey by id'})
   async remove(@Param('id') id: string) {
     return await this.surveyService.remove(id);
+  }
+
+  @Get(':id/stats')
+  @ApiOperation({ summary: 'Get survey statistics' })
+  async getStats(@Param('id') id: string): Promise<SurveyStatsDto> {
+    return await this.surveyService.getStats(id);
   }
 }

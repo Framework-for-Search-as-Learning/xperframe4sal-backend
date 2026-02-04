@@ -1,4 +1,4 @@
-import {Module} from '@nestjs/common';
+import {forwardRef, Module} from '@nestjs/common';
 import {SurveyAnswer2Service} from './survey-answer2.service';
 import {SurveyAnswer2Controller} from './survey-answer2.controller';
 import {TypeOrmModule} from '@nestjs/typeorm';
@@ -11,7 +11,7 @@ import {UserTask2Module} from '../user-task2/user-task2.module';
   imports: [
     TypeOrmModule.forFeature([SurveyAnswer]),
     User2Module,
-    Survey2Module,
+    forwardRef(() => Survey2Module),
     UserTask2Module,
   ],
   providers: [SurveyAnswer2Service],

@@ -1,4 +1,4 @@
-import {Injectable, NotFoundException} from '@nestjs/common';
+import {forwardRef, Inject, Injectable, NotFoundException} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {SurveyAnswer} from './entity/survey-answer.entity';
 import {Repository} from 'typeorm';
@@ -16,6 +16,7 @@ export class SurveyAnswer2Service {
     @InjectRepository(SurveyAnswer)
     private readonly surveyAnswerRepository: Repository<SurveyAnswer>,
     private readonly userService: User2Service,
+    @Inject(forwardRef(() => Survey2Service))
     private readonly surveyService: Survey2Service,
     private readonly userTask2Service: UserTask2Service,
   ) {}
@@ -130,5 +131,13 @@ export class SurveyAnswer2Service {
       totalScore += questionScore;
     }
     return totalScore;
+  }
+
+  async findBySurveyId(surveyId: string): Promise<SurveyAnswer[]> {
+    return await this.surveyAnswerRepository.find({
+      where: {
+        survey_id: surveyId,
+      },
+    });
   }
 }

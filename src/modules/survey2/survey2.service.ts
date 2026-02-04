@@ -11,6 +11,9 @@ import {Repository} from 'typeorm';
 import {CreateSurveyDto} from './dto/create-survey.dto';
 import {UpdateSurveyDto} from './dto/update-survey.dto';
 import {Experiments2Service} from '../experiments2/experiments2.service';
+import { SurveyAnswer2Service } from '../survey-answer2/survey-answer2.service';
+import { SurveyStatsDto, SurveyQuestionStatDto, SurveyQuestionStatOptionDto } from './dto/survey-stats.dto';
+import { QuestionType } from './dto/question.dto';
 
 @Injectable()
 export class Survey2Service {
@@ -19,6 +22,8 @@ export class Survey2Service {
     private readonly surveyRepository: Repository<Survey>,
     @Inject(forwardRef(() => Experiments2Service))
     private readonly experimentService: Experiments2Service,
+    @Inject(forwardRef(() => SurveyAnswer2Service))
+    private readonly surveyAnswerService: SurveyAnswer2Service,
   ) {}
 
   async create(createSurveyDto: CreateSurveyDto): Promise<Survey> {
@@ -93,5 +98,77 @@ export class Survey2Service {
     const survey = await this.findOne(id);
     await this.surveyRepository.delete({_id: id});
     return survey;
+  }
+
+  async getStats(surveyId: string): Promise<SurveyStatsDto> {
+    const survey = await this.findOne(surveyId);
+    if (!survey) {
+      throw new NotFoundException('Survey not found');
+    }
+
+    const answers = await this.surveyAnswerService.findBySurveyId(surveyId);
+    
+    const questionStats: SurveyQuestionStatDto[] = [];
+
+    // Filter valid questions (not OPEN)
+    const validQuestions = survey.questions.filter(q => q.type !== QuestionType.OPEN);
+
+    for (const question of validQuestions) {
+      const qStat: SurveyQuestionStatDto = {
+        statement: question.statement,
+        type: question.type,
+        totalAnswers: 0,
+        options: []
+      };
+
+      // Initialize options
+      if (question.options) {
+        qStat.options = question.options.map(opt => ({
+          statement: opt.statement,
+          count: 0,
+          percentage: 0
+        }));
+      }
+
+      // Count answers
+      let answeredCount = 0;
+      answers.forEach(ans => {
+        // Find answer for this question matching by statement
+        const qAnswer = ans.answers.find(a => a.questionStatement === question.statement);
+        
+        if (qAnswer) {
+          answeredCount++;
+          
+          if (qAnswer.selectedOptions) {
+             qAnswer.selectedOptions.forEach(selOpt => {
+               const statOpt = qStat.options.find(o => o.statement === selOpt.statement);
+               if (statOpt) {
+                 statOpt.count++;
+               }
+             });
+          }
+        }
+      });
+      
+      qStat.totalAnswers = answeredCount;
+
+      // Calculate percentages
+      if (answeredCount > 0) {
+        qStat.options.forEach(opt => {
+          opt.percentage = parseFloat(((opt.count / answeredCount) * 100).toFixed(2));
+        });
+      }
+
+      questionStats.push(qStat);
+    }
+
+    return {
+      surveyId: survey._id,
+      name: survey.name,
+      title: survey.title,
+      description: survey.description,
+      type: survey.type,
+      questions: questionStats
+    };
   }
 }

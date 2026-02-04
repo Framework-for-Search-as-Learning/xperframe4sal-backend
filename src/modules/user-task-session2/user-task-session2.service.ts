@@ -50,6 +50,7 @@ export class UserTaskSession2Service {
         user_id: userId,
         task_id: taskId,
       },
+      relations: ['pages']
     });
   }
 

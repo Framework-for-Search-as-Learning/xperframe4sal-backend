@@ -102,4 +102,14 @@ export class LlmSessionService {
       throw new Error('Error processing Gemini AI response');
     }
   }
+
+  async findByUserIdAndTaskId(userId: string, taskId: string): Promise<LlmSession> {
+    return await this.llmSessionRepository.findOne({
+      where: {
+        user: { _id: userId },
+        task: { _id: taskId }
+      },
+      relations: ['messages']
+    });
+  }
 }

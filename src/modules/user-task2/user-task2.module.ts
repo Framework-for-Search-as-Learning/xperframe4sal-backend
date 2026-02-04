@@ -6,6 +6,8 @@ import {UserTask} from './entities/user-tasks.entity';
 import {User2Module} from '../user2/user2.module';
 import {Task2Module} from '../task2/task2.module';
 import {TaskQuestionMapModule} from '../task-question-map/task-question-map.module';
+import { UserTaskSession2Module } from '../user-task-session2/user-task-session2.module';
+import { LlmSessionModule } from 'src/llm-session/llm-session.module';
 
 @Module({
   imports: [
@@ -13,6 +15,8 @@ import {TaskQuestionMapModule} from '../task-question-map/task-question-map.modu
     forwardRef(() => Task2Module),
     User2Module,
     TaskQuestionMapModule,
+    forwardRef(() => UserTaskSession2Module),
+    forwardRef(() => LlmSessionModule)
   ],
   providers: [UserTask2Service],
   controllers: [UserTask2Controller],

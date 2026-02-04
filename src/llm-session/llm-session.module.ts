@@ -9,6 +9,7 @@ import { Task } from 'src/modules/task2/entities/task.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([LlmSession, LlmMessage, Task])],
   providers: [LlmSessionService],
-  controllers: [LlmSessionController]
+  controllers: [LlmSessionController],
+  exports: [LlmSessionService]
 })
 export class LlmSessionModule {}

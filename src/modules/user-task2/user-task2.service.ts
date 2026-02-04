@@ -14,6 +14,9 @@ import { TaskQuestionMapService } from '../task-question-map/task-question-map.s
 import { User } from '../user2/entity/user.entity';
 import { CreateUserTaskByRule } from './dto/create-userTaskByRule.dto';
 import { Task } from '../task2/entities/task.entity';
+import { UserTaskSession2Service } from '../user-task-session2/user-task-session2.service';
+import { LlmSessionService } from 'src/llm-session/llm-session.service';
+import { TaskExecutionDetailsDto, SearchTaskDetailsDto, LlmTaskDetailsDto, ResourceAccessDto } from './dto/task-execution-details.dto';
 
 @Injectable()
 export class UserTask2Service {
@@ -25,6 +28,10 @@ export class UserTask2Service {
     @Inject(forwardRef(() => Task2Service))
     private readonly taskService: Task2Service,
     private readonly taskQuestionMapService: TaskQuestionMapService,
+    @Inject(forwardRef(() => UserTaskSession2Service))
+    private readonly userTaskSessionService: UserTaskSession2Service,
+    @Inject(forwardRef(() => LlmSessionService))
+    private readonly llmSessionService: LlmSessionService,
   ) { }
   async findOne(id: string): Promise<UserTask> {
     try {
@@ -455,5 +462,74 @@ export class UserTask2Service {
   private async getTaskAssignmentCount(taskId: string): Promise<number> {
     const tasks = await this.findByTaskId(taskId);
     return tasks.length;
+  }
+
+  async getExecutionDetails(userTaskId: string): Promise<TaskExecutionDetailsDto> {
+    const userTask = await this.userTaskRepository.findOne({
+      where: { _id: userTaskId },
+      relations: ['task', 'user']
+    });
+
+    if (!userTask) {
+      throw new NotFoundException('UserTask not found');
+    }
+
+    const { task, user } = userTask;
+    let executionTime = 0;
+    if (userTask.startTime && userTask.endTime) {
+      executionTime = new Date(userTask.endTime).getTime() - new Date(userTask.startTime).getTime();
+    }
+
+    const details: TaskExecutionDetailsDto = {
+      userTaskId: userTask._id,
+      taskId: task._id,
+      taskTitle: task.title,
+      taskType: task.search_source,
+      executionTime,
+    };
+
+    if (task.search_source === 'search-engine') {
+      const sessions = await this.userTaskSessionService.finByUserIdAndTaskId(user._id, task._id);
+      
+      const resources: ResourceAccessDto[] = [];
+      let totalDepth = 0;
+
+      for (const session of sessions) {
+        if (session.pages) {
+          session.pages.forEach(page => {
+            totalDepth++;
+            
+            let timeSpent = 0;
+            if (page.startTime && page.endTime) {
+              timeSpent = new Date(page.endTime).getTime() - new Date(page.startTime).getTime();
+            }
+
+            resources.push({
+              title: page.title,
+              url: page.url,
+              timeSpent,
+              visitTime: page.startTime
+            });
+          });
+        }
+      }
+
+      details.searchDetails = {
+        resourcesAccessedDepth: totalDepth,
+        queriesCount: sessions.length,
+        resources
+      };
+
+    } else if (task.search_source === 'llm') {
+      const llmSession = await this.llmSessionService.findByUserIdAndTaskId(user._id, task._id);
+      
+      const messages = llmSession ? llmSession.messages : [];
+      details.llmDetails = {
+        totalMessages: messages.length,
+        promptsCount: messages.filter(m => m.role === 'user').length
+      };
+    }
+
+    return details;
   }
 }

@@ -9,5 +9,6 @@ import {Page} from './entities/page.entity';
   imports: [TypeOrmModule.forFeature([UserTaskSession, Page])],
   providers: [UserTaskSession2Service],
   controllers: [UserTaskSession2Controller],
+  exports: [UserTaskSession2Service],
 })
 export class UserTaskSession2Module {}

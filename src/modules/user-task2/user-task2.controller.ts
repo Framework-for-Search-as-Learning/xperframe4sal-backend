@@ -16,6 +16,7 @@ import { UpdateUserTaskDto } from './dto/update-userTask.dto';
 import { User } from '../user2/entity/user.entity';
 import { Task } from '../task2/entities/task.entity';
 import { TimeEditUserTaskDto } from './dto/timeEditUserTaskDTO';
+import { TaskExecutionDetailsDto } from './dto/task-execution-details.dto';
 
 @ApiTags('user-task2')
 @Controller('user-task2')
@@ -26,6 +27,12 @@ export class UserTask2Controller {
   @ApiOperation({ summary: 'Get a user task by id' })
   async findOne(@Param('id') id: string): Promise<UserTask> {
     return await this.userTaskService.findOne(id);
+  }
+
+  @Get(':id/execution-details')
+  @ApiOperation({ summary: 'Get detailed execution info for a user task' })
+  async getExecutionDetails(@Param('id') id: string): Promise<TaskExecutionDetailsDto> {
+    return await this.userTaskService.getExecutionDetails(id);
   }
 
   @Get()

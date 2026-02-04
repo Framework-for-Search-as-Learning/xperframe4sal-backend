@@ -10,6 +10,8 @@ import { User } from '../user2/entity/user.entity';
 import { Experiment } from '../experiments2/entity/experiment.entity';
 import { UserTask2Service } from '../user-task2/user-task2.service';
 import { Task2Service } from '../task2/task2.service';
+import { ExperimentStatsDto } from '../experiments2/dto/experiment-stats.dto';
+import { ExperimentParticipantDto } from '../experiments2/dto/experiment-participant.dto';
 
 @Injectable()
 export class UserExperiments2Service {
@@ -256,5 +258,60 @@ export class UserExperiments2Service {
     })
 
     return { totalUsers, completedResponses}
+  }
+
+  async getDetailedStats(experimentId: string): Promise<ExperimentStatsDto> {
+    const totalParticipants = await this.userExperimentRepository.count({
+      where: { experiment: { _id: experimentId } },
+    });
+
+    const finishedParticipants = await this.userExperimentRepository.count({
+      where: {
+        experiment: { _id: experimentId },
+        hasFinished: true
+      }
+    });
+
+    const inProgressParticipants = totalParticipants - finishedParticipants;
+
+    const completionPercentage = totalParticipants > 0 ? (finishedParticipants / totalParticipants) * 100 : 0;
+
+    return {
+      totalParticipants,
+      finishedParticipants,
+      inProgressParticipants,
+      completionPercentage: parseFloat(completionPercentage.toFixed(2))
+    };
+  }
+
+  async getParticipantsDetails(experimentId: string): Promise<ExperimentParticipantDto[]> {
+    const userExperiments = await this.userExperimentRepository.find({
+      where: { experiment: { _id: experimentId } },
+      relations: ['user'],
+    });
+
+    return userExperiments.map(ue => {
+      const steps = ue.stepsCompleted || {};
+      const totalSteps = Object.keys(steps).length || 4;
+      const completedSteps = Object.values(steps).filter(v => v).length;
+      
+      const progress = totalSteps > 0 ? (completedSteps / totalSteps) * 100 : 0;
+      
+      let timeTaken = 0;
+      if (ue.startDate && ue.completionDate) {
+        timeTaken = new Date(ue.completionDate).getTime() - new Date(ue.startDate).getTime();
+      }
+
+      return {
+        id: ue.user?._id,
+        name: ue.user ? `${ue.user.name} ${ue.user.lastName}` : 'Unknown',
+        email: ue.user?.email || '',
+        status: ue.status,
+        startDate: ue.startDate,
+        completionDate: ue.completionDate,
+        timeTaken,
+        progress: parseFloat(progress.toFixed(2))
+      };
+    });
   }
 }

@@ -12,6 +12,8 @@ import { Survey2Service } from '../survey2/survey2.service';
 import { Icf2Service } from '../icf2/icf2.service';
 import * as yaml from 'js-yaml';
 import { error } from 'console';
+import { ExperimentStatsDto } from './dto/experiment-stats.dto';
+import { ExperimentParticipantDto } from './dto/experiment-participant.dto';
 
 @Injectable()
 export class Experiments2Service {
@@ -102,6 +104,14 @@ export class Experiments2Service {
 
   async find(id: string): Promise<Experiment> {
     return await this.experimentRepository.findOneBy({ _id: id });
+  }
+
+  async getStats(id: string): Promise<ExperimentStatsDto> {
+    return await this.userExperimentService.getDetailedStats(id);
+  }
+
+  async getParticipants(id: string): Promise<ExperimentParticipantDto[]> {
+    return await this.userExperimentService.getParticipantsDetails(id);
   }
 
   async findWithTasks(id: string): Promise<Experiment> {

@@ -19,6 +19,9 @@ import { Experiment } from './entity/experiment.entity';
 import { CreateExperimentDto } from './dto/create-experiment.dto';
 import { UpdateExperimentDto } from './dto/update-experiment.dto';
 
+import { ExperimentStatsDto } from './dto/experiment-stats.dto';
+import { ExperimentParticipantDto } from './dto/experiment-participant.dto';
+
 @ApiTags('experiments2')
 @Controller('experiments2')
 export class Experiments2Controller {
@@ -83,6 +86,18 @@ export class Experiments2Controller {
   @ApiOperation({ summary: 'Delete an experiment by id' })
   async remove(@Param('id') id: string) {
     return await this.experimentService.remove(id);
+  }
+
+  @Get(':id/stats')
+  @ApiOperation({ summary: 'Get experiment statistics' })
+  async getStats(@Param('id') id: string): Promise<ExperimentStatsDto> {
+    return await this.experimentService.getStats(id);
+  }
+
+  @Get(':id/participants')
+  @ApiOperation({ summary: 'Get experiment participants details' })
+  async getParticipants(@Param('id') id: string): Promise<ExperimentParticipantDto[]> {
+    return await this.experimentService.getParticipants(id);
   }
 
   @Get('export/:id')

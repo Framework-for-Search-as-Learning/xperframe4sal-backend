@@ -14,6 +14,7 @@ import * as yaml from 'js-yaml';
 import { error } from 'console';
 import { ExperimentStatsDto } from './dto/experiment-stats.dto';
 import { ExperimentParticipantDto } from './dto/experiment-participant.dto';
+import { ExperimentTaskExecutionDto } from './dto/experiment-tasks-execution.dto';
 
 @Injectable()
 export class Experiments2Service {
@@ -119,6 +120,35 @@ export class Experiments2Service {
       where: { _id: id },
       relations: ['tasks'],
     });
+  }
+
+  async getTasksExecutionDetails(experimentId: string): Promise<ExperimentTaskExecutionDto[]> {
+     const userTasks = await this.userTaskService.findByExperimentId(experimentId);
+     
+     const grouped = new Map<string, { task: any, executions: any[] }>();
+     
+     for (const ut of userTasks) {
+       if (!grouped.has(ut.task_id)) {
+         grouped.set(ut.task_id, { task: ut.task, executions: [] });
+       }
+       grouped.get(ut.task_id).executions.push(ut);
+     }
+     
+     const result: ExperimentTaskExecutionDto[] = [];
+     
+     for (const [taskId, data] of grouped) {
+       const executionsDetails = await Promise.all(
+         data.executions.map(ut => this.userTaskService.getExecutionDetailsFromEntity(ut))
+       );
+       
+       result.push({
+         taskId: taskId,
+         taskTitle: data.task.title,
+         executions: executionsDetails
+       });
+     }
+     
+     return result;
   }
 
   async findOneByName(name: string): Promise<Experiment> {

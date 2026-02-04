@@ -21,6 +21,7 @@ import { UpdateExperimentDto } from './dto/update-experiment.dto';
 
 import { ExperimentStatsDto } from './dto/experiment-stats.dto';
 import { ExperimentParticipantDto } from './dto/experiment-participant.dto';
+import { ExperimentTaskExecutionDto } from './dto/experiment-tasks-execution.dto';
 
 @ApiTags('experiments2')
 @Controller('experiments2')
@@ -98,6 +99,12 @@ export class Experiments2Controller {
   @ApiOperation({ summary: 'Get experiment participants details' })
   async getParticipants(@Param('id') id: string): Promise<ExperimentParticipantDto[]> {
     return await this.experimentService.getParticipants(id);
+  }
+
+  @Get(':id/tasks-execution')
+  @ApiOperation({ summary: 'Get experiment tasks execution details' })
+  async getTasksExecution(@Param('id') id: string): Promise<ExperimentTaskExecutionDto[]> {
+    return await this.experimentService.getTasksExecutionDetails(id);
   }
 
   @Get('export/:id')

@@ -15,6 +15,7 @@ import { error } from 'console';
 import { ExperimentStatsDto } from './dto/experiment-stats.dto';
 import { ExperimentParticipantDto } from './dto/experiment-participant.dto';
 import { ExperimentTaskExecutionDto } from './dto/experiment-tasks-execution.dto';
+import { ExperimentSurveyStatsDto } from './dto/experiment-surveys-stats.dto';
 
 @Injectable()
 export class Experiments2Service {
@@ -149,6 +150,18 @@ export class Experiments2Service {
      }
      
      return result;
+  }
+
+  async getSurveysStats(experimentId: string): Promise<ExperimentSurveyStatsDto> {
+    const surveys = await this.surveyService.findByExperimentId(experimentId);
+    
+    const surveysStats = await Promise.all(
+      surveys.map(survey => this.surveyService.getStats(survey._id))
+    );
+
+    return {
+      surveys: surveysStats
+    };
   }
 
   async findOneByName(name: string): Promise<Experiment> {

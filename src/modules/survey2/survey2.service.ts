@@ -83,6 +83,7 @@ export class Survey2Service {
       where: {
         experiment: {_id: experimentId},
       },
+      relations: ['experiment']
     });
   }
   async update(id: string, updateSurveyDto: UpdateSurveyDto): Promise<Survey> {

@@ -32,7 +32,6 @@ import {Page} from './modules/user-task-session2/entities/page.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      //isso é para o funcionamento do set SECRET no .env
       isGlobal: true,
     }),
     AuthModule,

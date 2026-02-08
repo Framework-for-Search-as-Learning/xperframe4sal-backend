@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026, marcelomachado
+ * Licensed under The MIT License [see LICENSE for details]
+ */
+
 import { HttpException, Injectable } from '@nestjs/common';
 import { QueryResponse, SearchEngineService } from 'src/interfaces/search-engine';
 import { HttpService } from 'src/modules/http/http.service';

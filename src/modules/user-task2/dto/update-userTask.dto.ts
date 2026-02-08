@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026, marcelomachado
+ * Licensed under The MIT License [see LICENSE for details]
+ */
+
 import {IntersectionType, PartialType} from '@nestjs/swagger';
 import {CreateUserTaskDto} from './create-userTask.dto';
 import {TimeEditUserTaskDto} from './timeEditUserTaskDTO';

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026, marcelomachado
+ * Licensed under The MIT License [see LICENSE for details]
+ */
+
 import { Controller, Get, Query } from '@nestjs/common';
 import { BingService } from './bing.service';
 

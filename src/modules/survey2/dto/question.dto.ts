@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026, marcelomachado
+ * Licensed under The MIT License [see LICENSE for details]
+ */
+
 import {ApiProperty} from '@nestjs/swagger';
 import {Type} from 'class-transformer';
 import {

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026, marcelomachado
+ * Licensed under The MIT License [see LICENSE for details]
+ */
+
 import {forwardRef, Module} from '@nestjs/common';
 import {Task2Service} from './task2.service';
 import {Task2Controller} from './task2.controller';

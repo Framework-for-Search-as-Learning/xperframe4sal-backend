@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026, marcelomachado
+ * Licensed under The MIT License [see LICENSE for details]
+ */
+
 import {BaseEntity} from 'src/model/base_entity2';
 import {Experiment} from 'src/modules/experiments2/entity/experiment.entity';
 import {Column, Entity, ManyToOne} from 'typeorm';

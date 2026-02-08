@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026, marcelomachado
+ * Licensed under The MIT License [see LICENSE for details]
+ */
+
 import {forwardRef, Module} from '@nestjs/common';
 import {Survey2Controller} from './survey2.controller';
 import {Survey2Service} from './survey2.service';

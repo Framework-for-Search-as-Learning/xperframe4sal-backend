@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026, marcelomachado
+ * Licensed under The MIT License [see LICENSE for details]
+ */
+
 import {Body, Controller, Get, Param, Patch, Post, Query} from '@nestjs/common';
 import {UserTaskSession2Service} from './user-task-session2.service';
 import {UserTaskSession} from './entities/user-task-session.entity';

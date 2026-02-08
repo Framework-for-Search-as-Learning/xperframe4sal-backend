@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026, marcelomachado
+ * Licensed under The MIT License [see LICENSE for details]
+ */
+
 import {Controller, Get, Param} from '@nestjs/common';
 import {TaskQuestionMapService} from './task-question-map.service';
 import {ApiOperation} from '@nestjs/swagger';

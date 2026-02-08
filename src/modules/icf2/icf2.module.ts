@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026, marcelomachado
+ * Licensed under The MIT License [see LICENSE for details]
+ */
+
 import {forwardRef, Module} from '@nestjs/common';
 import {Icf2Service} from './icf2.service';
 import {Icf2Controller} from './icf2.controller';

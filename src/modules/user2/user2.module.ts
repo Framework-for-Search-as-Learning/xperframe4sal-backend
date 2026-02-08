@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026, marcelomachado
+ * Licensed under The MIT License [see LICENSE for details]
+ */
+
 import {Module} from '@nestjs/common';
 import {User2Service} from './user2.service';
 import {User2Controller} from './user2.controller';

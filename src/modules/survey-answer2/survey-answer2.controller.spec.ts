@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026, marcelomachado
+ * Licensed under The MIT License [see LICENSE for details]
+ */
+
 import { Test, TestingModule } from '@nestjs/testing';
 import { SurveyAnswer2Controller } from './survey-answer2.controller';
 

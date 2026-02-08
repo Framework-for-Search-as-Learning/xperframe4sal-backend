@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026, marcelomachado
+ * Licensed under The MIT License [see LICENSE for details]
+ */
+
 import {Module} from '@nestjs/common';
 import {SurveyAnswer2Service} from './survey-answer2.service';
 import {SurveyAnswer2Controller} from './survey-answer2.controller';

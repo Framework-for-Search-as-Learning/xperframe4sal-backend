@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026, marcelomachado
+ * Licensed under The MIT License [see LICENSE for details]
+ */
+
 import { Schema, SchemaFactory, Prop } from '@nestjs/mongoose';
 import { BaseEntity } from './base.entity';
 

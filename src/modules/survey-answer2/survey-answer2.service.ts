@@ -8,6 +8,7 @@ import {Survey2Service} from '../survey2/survey2.service';
 import {UpdateSurveyAnswerDto} from './dto/update-surveyAnswer.dto';
 import {QuestionType} from '../survey2/dto/question.dto';
 import {UserTask2Service} from '../user-task2/user-task2.service';
+import {AnswerDTO} from './dto/answers.dto';
 
 @Injectable()
 export class SurveyAnswer2Service {
@@ -33,25 +34,7 @@ export class SurveyAnswer2Service {
         throw new NotFoundException('Survey não encontrado.');
       }
 
-      let totalScore = 0;
-      for (const answer of answers) {
-        let questionScore = 0;
-        if (
-          answer.questionType === QuestionType.MULTIPLE_CHOICES ||
-          answer.questionType === QuestionType.MULTIPLE_SELECTION
-        ) {
-          questionScore = answer.selectedOptions?.reduce(
-            (acc, option) => acc + option.score,
-            0,
-          );
-        }
-
-        //TODO implementar para verificar as subquestoes
-        //if(answer.subAnswer && answer.subAnswer.length > 0)
-
-        answer.score = questionScore;
-        totalScore += questionScore;
-      }
+      const totalScore = this.calculateScore(answers);
       const newSurveyAnswer = await this.surveyAnswerRepository.save({
         user: user,
         survey: survey,
@@ -109,10 +92,13 @@ export class SurveyAnswer2Service {
     updateSurveyAnswerDto: UpdateSurveyAnswerDto,
   ): Promise<SurveyAnswer> {
     try {
-      //const {userId, surveyId} = updateSurveyAnswerDto;
+      if (updateSurveyAnswerDto.answers) {
+        updateSurveyAnswerDto.score = this.calculateScore(
+          updateSurveyAnswerDto.answers,
+        );
+      }
       await this.surveyAnswerRepository.update(
         {_id: id},
-        //TODO arrumar para incluir outras colunas da tabela
         updateSurveyAnswerDto,
       );
       return await this.surveyAnswerRepository.findOne({where: {_id: id}});
@@ -120,5 +106,29 @@ export class SurveyAnswer2Service {
       console.error(error);
       throw error;
     }
+  }
+
+  private calculateScore(answers: AnswerDTO[]): number {
+    let totalScore = 0;
+    for (const answer of answers) {
+      let questionScore = 0;
+      if (
+        answer.questionType === QuestionType.MULTIPLE_CHOICES ||
+        answer.questionType === QuestionType.MULTIPLE_SELECTION
+      ) {
+        questionScore =
+          answer.selectedOptions?.reduce(
+            (acc, option) => acc + option.score,
+            0,
+          ) || 0;
+      }
+
+      //TODO implementar para verificar as subquestoes
+      //if(answer.subAnswer && answer.subAnswer.length > 0)
+
+      answer.score = questionScore;
+      totalScore += questionScore;
+    }
+    return totalScore;
   }
 }

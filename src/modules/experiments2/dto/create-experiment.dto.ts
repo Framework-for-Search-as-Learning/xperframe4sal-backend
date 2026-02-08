@@ -11,6 +11,11 @@ export class CreateExperimentDto {
   name: string;
 
   @ApiProperty()
+  @IsOptional()
+  @IsString()
+  status: string;
+
+  @ApiProperty()
   @IsNotEmpty()
   @IsString()
   ownerId: string;
@@ -36,4 +41,6 @@ export class CreateExperimentDto {
   surveysProps: CreateSurveyDto[];
 
   icf: {title: string; description: string};
+
+  
 }

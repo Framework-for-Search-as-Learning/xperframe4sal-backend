@@ -5,6 +5,12 @@ export class TaskExecutionDetailsDto {
   userTaskId: string;
 
   @ApiProperty()
+  userName: string;
+
+  @ApiProperty()
+  userEmail: string;
+
+  @ApiProperty()
   taskId: string;
 
   @ApiProperty()

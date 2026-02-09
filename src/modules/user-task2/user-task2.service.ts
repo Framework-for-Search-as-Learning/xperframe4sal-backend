@@ -482,6 +482,8 @@ export class UserTask2Service {
 
     const details: TaskExecutionDetailsDto = {
       userTaskId: userTask._id,
+      userName: user.name,
+      userEmail: user.email,
       taskId: task._id,
       taskTitle: task.title,
       taskType: task.search_source,
@@ -490,7 +492,7 @@ export class UserTask2Service {
 
     if (task.search_source === 'search-engine') {
       const sessions = await this.userTaskSessionService.finByUserIdAndTaskId(user._id, task._id);
-      
+
       const resources: ResourceAccessDto[] = [];
       let totalDepth = 0;
 
@@ -498,7 +500,7 @@ export class UserTask2Service {
         if (session.pages) {
           session.pages.forEach(page => {
             totalDepth++;
-            
+
             let timeSpent = 0;
             if (page.startTime && page.endTime) {
               timeSpent = new Date(page.endTime).getTime() - new Date(page.startTime).getTime();
@@ -522,7 +524,7 @@ export class UserTask2Service {
 
     } else if (task.search_source === 'llm') {
       const llmSession = await this.llmSessionService.findByUserIdAndTaskId(user._id, task._id);
-      
+
       const messages = llmSession ? llmSession.messages : [];
       details.llmDetails = {
         totalMessages: messages.length,
@@ -553,6 +555,8 @@ export class UserTask2Service {
 
     const details: TaskExecutionDetailsDto = {
       userTaskId: userTask._id,
+      userName: user.name,
+      userEmail: user.email,
       taskId: task._id,
       taskTitle: task.title,
       taskType: task.search_source,
@@ -561,7 +565,7 @@ export class UserTask2Service {
 
     if (task.search_source === 'search-engine') {
       const sessions = await this.userTaskSessionService.finByUserIdAndTaskId(user._id, task._id);
-      
+
       const resources: ResourceAccessDto[] = [];
       let totalDepth = 0;
 
@@ -569,7 +573,7 @@ export class UserTask2Service {
         if (session.pages) {
           session.pages.forEach(page => {
             totalDepth++;
-            
+
             let timeSpent = 0;
             if (page.startTime && page.endTime) {
               timeSpent = new Date(page.endTime).getTime() - new Date(page.startTime).getTime();
@@ -593,7 +597,7 @@ export class UserTask2Service {
 
     } else if (task.search_source === 'llm') {
       const llmSession = await this.llmSessionService.findByUserIdAndTaskId(user._id, task._id);
-      
+
       const messages = llmSession ? llmSession.messages : [];
       details.llmDetails = {
         totalMessages: messages.length,

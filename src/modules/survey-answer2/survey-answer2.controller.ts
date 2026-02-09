@@ -1,12 +1,12 @@
-import {Body, Controller, Get, Param, Patch, Post, Query} from '@nestjs/common';
-import {SurveyAnswer2Service} from './survey-answer2.service';
-import {CreateSurveyAnswerDto} from './dto/create-surveyAnswer.dto';
-import {SurveyAnswer} from './entity/survey-answer.entity';
-import {UpdateSurveyAnswerDto} from './dto/update-surveyAnswer.dto';
+import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { SurveyAnswer2Service } from './survey-answer2.service';
+import { CreateSurveyAnswerDto } from './dto/create-surveyAnswer.dto';
+import { SurveyAnswer } from './entity/survey-answer.entity';
+import { UpdateSurveyAnswerDto } from './dto/update-surveyAnswer.dto';
 
 @Controller('survey-answer2')
 export class SurveyAnswer2Controller {
-  constructor(private readonly surveyAnswerService: SurveyAnswer2Service) {}
+  constructor(private readonly surveyAnswerService: SurveyAnswer2Service) { }
 
   @Post()
   async create(
@@ -30,6 +30,17 @@ export class SurveyAnswer2Controller {
       return await this.surveyAnswerService.findByUserId(userId);
     }
     return await this.surveyAnswerService.findAll();
+  }
+
+  @Get('/user/:userId/survey/:surveyId')
+  async findByUserIdAndSurveyId(
+    @Param('userId') userId: string,
+    @Param('surveyId') surveyId: string,
+  ): Promise<SurveyAnswer> {
+    return await this.surveyAnswerService.findByUserIdAndSurveyId(
+      userId,
+      surveyId,
+    );
   }
 
   @Patch(':id')

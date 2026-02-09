@@ -108,6 +108,7 @@ export class Experiments2Controller {
     return await this.experimentService.getTasksExecutionDetails(id);
   }
 
+
   @Get(':id/surveys-stats')
   @ApiOperation({ summary: 'Get experiment surveys statistics' })
   async getSurveysStats(@Param('id') id: string): Promise<ExperimentSurveyStatsDto> {

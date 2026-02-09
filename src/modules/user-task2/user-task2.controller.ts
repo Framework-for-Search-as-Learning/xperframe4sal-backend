@@ -29,10 +29,17 @@ export class UserTask2Controller {
     return await this.userTaskService.findOne(id);
   }
 
-  @Get(':id/execution-details')
-  @ApiOperation({ summary: 'Get detailed execution info for a user task' })
-  async getExecutionDetails(@Param('id') id: string): Promise<TaskExecutionDetailsDto> {
-    return await this.userTaskService.getExecutionDetails(id);
+
+  @Get('execution-details/user/:userId/task/:taskId')
+  @ApiOperation({ summary: 'Get detailed execution info for a specific user and task' })
+  async getUserTaskExecutionDetails(
+    @Param('userId') userId: string,
+    @Param('taskId') taskId: string
+  ): Promise<TaskExecutionDetailsDto[]> {
+    const userTasks = await this.userTaskService.findByUserAndTask(userId, taskId);
+    return await Promise.all(
+      userTasks.map(ut => this.userTaskService.getExecutionDetailsFromEntity(ut))
+    );
   }
 
   @Get()

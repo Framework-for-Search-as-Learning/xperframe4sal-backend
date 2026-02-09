@@ -603,4 +603,14 @@ export class UserTask2Service {
 
     return details;
   }
+
+  async findByUserAndTask(userId: string, taskId: string): Promise<UserTask[]> {
+    return await this.userTaskRepository.find({
+      relations: ['task', 'user'],
+      where: {
+        user: { _id: userId },
+        task: { _id: taskId }
+      }
+    });
+  }
 }

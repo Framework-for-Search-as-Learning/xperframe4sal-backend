@@ -11,7 +11,6 @@ import { Task2Service } from '../task2/task2.service';
 import { Survey2Service } from '../survey2/survey2.service';
 import { Icf2Service } from '../icf2/icf2.service';
 import * as yaml from 'js-yaml';
-import { error } from 'console';
 import { ExperimentStatsDto } from './dto/experiment-stats.dto';
 import { ExperimentParticipantDto } from './dto/experiment-participant.dto';
 import { ExperimentTaskExecutionDto } from './dto/experiment-tasks-execution.dto';
@@ -124,37 +123,37 @@ export class Experiments2Service {
   }
 
   async getTasksExecutionDetails(experimentId: string): Promise<ExperimentTaskExecutionDto[]> {
-     const userTasks = await this.userTaskService.findByExperimentId(experimentId);
-     
-     const grouped = new Map<string, { task: any, executions: any[] }>();
-     
-     for (const ut of userTasks) {
-       if (!grouped.has(ut.task_id)) {
-         grouped.set(ut.task_id, { task: ut.task, executions: [] });
-       }
-       grouped.get(ut.task_id).executions.push(ut);
-     }
-     
-     const result: ExperimentTaskExecutionDto[] = [];
-     
-     for (const [taskId, data] of grouped) {
-       const executionsDetails = await Promise.all(
-         data.executions.map(ut => this.userTaskService.getExecutionDetailsFromEntity(ut))
-       );
-       
-       result.push({
-         taskId: taskId,
-         taskTitle: data.task.title,
-         executions: executionsDetails
-       });
-     }
-     
-     return result;
+    const userTasks = await this.userTaskService.findByExperimentId(experimentId);
+
+    const grouped = new Map<string, { task: any, executions: any[] }>();
+
+    for (const ut of userTasks) {
+      if (!grouped.has(ut.task_id)) {
+        grouped.set(ut.task_id, { task: ut.task, executions: [] });
+      }
+      grouped.get(ut.task_id).executions.push(ut);
+    }
+
+    const result: ExperimentTaskExecutionDto[] = [];
+
+    for (const [taskId, data] of grouped) {
+      const executionsDetails = await Promise.all(
+        data.executions.map(ut => this.userTaskService.getExecutionDetailsFromEntity(ut))
+      );
+
+      result.push({
+        taskId: taskId,
+        taskTitle: data.task.title,
+        executions: executionsDetails
+      });
+    }
+
+    return result;
   }
 
   async getSurveysStats(experimentId: string): Promise<ExperimentSurveyStatsDto> {
     const surveys = await this.surveyService.findByExperimentId(experimentId);
-    
+
     const surveysStats = await Promise.all(
       surveys.map(survey => this.surveyService.getStats(survey._id))
     );
@@ -550,8 +549,8 @@ export class Experiments2Service {
   }
 
 
-  async getGeneralExpirementInfos(experiment_id: string){
-    const experiment =  await this.experimentRepository.findOneBy({_id: experiment_id});
+  async getGeneralExpirementInfos(experiment_id: string) {
+    const experiment = await this.experimentRepository.findOneBy({ _id: experiment_id });
     const userExperimentInfos = await this.userExperimentService.countUsersByExperimentId(experiment_id);
     return {
       experimentStatus: experiment.status,

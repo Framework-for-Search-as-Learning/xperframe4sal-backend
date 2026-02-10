@@ -3,13 +3,13 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import {InjectRepository} from '@nestjs/typeorm';
-import {LlmSession} from './entity/llm-session.entity';
-import {Repository} from 'typeorm';
-import {LlmMessage} from './entity/llm-message.entity';
-import {Task} from 'src/modules/task2/entities/task.entity';
-import {User} from 'src/modules/user2/entity/user.entity';
-import {Content, GoogleGenerativeAI} from '@google/generative-ai';
+import { InjectRepository } from '@nestjs/typeorm';
+import { LlmSession } from './entity/llm-session.entity';
+import { Repository } from 'typeorm';
+import { LlmMessage } from './entity/llm-message.entity';
+import { Task } from 'src/modules/task2/entities/task.entity';
+import { User } from 'src/modules/user2/entity/user.entity';
+import { Content, GoogleGenerativeAI } from '@google/generative-ai';
 
 @Injectable()
 export class LlmSessionService {
@@ -19,26 +19,26 @@ export class LlmSessionService {
     @InjectRepository(LlmMessage)
     private readonly llmMessageRepository: Repository<LlmMessage>,
     @InjectRepository(Task) private readonly taskRepository: Repository<Task>,
-  ) {}
+  ) { }
 
   async startSession(userId: string, taskId: string): Promise<LlmSession> {
     const existingSession = await this.llmSessionRepository.findOne({
-      where: {user: {_id: userId}, task: {_id: taskId}},
+      where: { user: { _id: userId }, task: { _id: taskId } },
       relations: ['messages'],
-      order: {messages: {createdAt: 'ASC'}},
+      order: { messages: { createdAt: 'ASC' } },
     });
 
     if (existingSession) {
       return existingSession;
     }
 
-    const task = await this.taskRepository.findOne({where: {_id: taskId}});
+    const task = await this.taskRepository.findOne({ where: { _id: taskId } });
     if (!task) {
       throw new NotFoundException('Task not found');
     }
 
     const newSession = this.llmSessionRepository.create({
-      user: {_id: userId} as User,
+      user: { _id: userId } as User,
       task: task,
     });
 
@@ -47,21 +47,27 @@ export class LlmSessionService {
 
   async processChatMessage(sessionId: string, userId: string, content: string) {
     const session = await this.llmSessionRepository.findOne({
-      where: {id: sessionId},
+      where: { id: sessionId },
       relations: ['task', 'user'],
       select: {
         id: true,
         task: {
           _id: true,
-          geminiApiKey: true,
+          provider_config: {
+            apiKey: true,
+            provider: true,
+            model: true,
+          },
         },
       },
     });
     if (!session) throw new NotFoundException('Session not found');
     if (session.user._id !== userId)
       throw new ForbiddenException('Session does not belong to user');
-    if (!session.task.geminiApiKey)
+    const providerConfig = session.task.provider_config || {};
+    if (!providerConfig.apiKey || !providerConfig.provider) {
       throw new ForbiddenException('Task without AI configuration');
+    }
 
     await this.llmMessageRepository.save({
       content: content,
@@ -70,19 +76,24 @@ export class LlmSessionService {
     });
 
     const history = await this.llmMessageRepository.find({
-      where: {session: {id: sessionId}},
-      order: {createdAt: 'ASC'},
+      where: { session: { id: sessionId } },
+      order: { createdAt: 'ASC' },
       take: 20,
     });
 
     const historyForAi: Content[] = history.slice(0, -1).map((msg) => ({
       role: msg.role,
-      parts: [{text: msg.content}],
+      parts: [{ text: msg.content }],
     }));
 
-    const genAI = new GoogleGenerativeAI(session.task.geminiApiKey);
-    const model = genAI.getGenerativeModel({model: 'gemini-2.5-flash'});
-    const chat = model.startChat({history: historyForAi});
+    if (!['gemini'].includes(providerConfig.provider)) {
+      throw new ForbiddenException('LLM provider not supported');
+    }
+
+    const modelName = providerConfig.model || 'gemini-2.5-flash';
+    const genAI = new GoogleGenerativeAI(providerConfig.apiKey);
+    const model = genAI.getGenerativeModel({ model: modelName });
+    const chat = model.startChat({ history: historyForAi });
 
     try {
       const result = await chat.sendMessageStream(content);

@@ -38,9 +38,7 @@ export class Task2Service {
         min_score,
         max_score,
         questionsId,
-        googleApiKey,
-        googleCx,
-        geminiApiKey
+        provider_config
       } = createTaskDto;
 
 
@@ -66,9 +64,7 @@ export class Task2Service {
         rule_type,
         min_score: min_score || 0,
         max_score: max_score || 0,
-        googleApiKey,
-        googleCx,
-        geminiApiKey
+        provider_config
       });
       if (questionsId?.length > 0) {
         await Promise.all(
@@ -149,16 +145,19 @@ export class Task2Service {
 
 
     async getGoogleCredentials(taskId: string) {
-      try{
-      const experiment = await this.taskRepository.findOne({
-        where: {_id: taskId},
-        select: ['googleApiKey', 'googleCx'],
-      });
-      return {apiKey: experiment.googleApiKey, cx: experiment.googleCx};
-      }catch(error){
+      try {
+        const task = await this.taskRepository.findOne({
+          where: {_id: taskId},
+          select: ['provider_config'],
+        });
+        const providerConfig = task?.provider_config || {};
+        if (providerConfig.provider !== 'google') {
+          throw new Error('Google provider not configured for this task');
+        }
+        return {apiKey: providerConfig.apiKey, cx: providerConfig.cx};
+      } catch (error) {
         throw new Error(error.message);
       }
-      
     }
   
 }

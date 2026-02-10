@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator';
 
 export class CreateTaskDto {
   @ApiProperty()
@@ -56,19 +56,8 @@ export class CreateTaskDto {
   @IsOptional()
   max_score?: number;
 
-
   @ApiProperty()
   @IsOptional()
-  @IsString()
-  googleApiKey?: string;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsString()
-  googleCx?: string;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsString()
-  geminiApiKey?: string;
+  @IsObject()
+  provider_config?: Record<string, unknown>;
 }

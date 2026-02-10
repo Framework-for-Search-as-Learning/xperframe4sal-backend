@@ -36,9 +36,7 @@ export class TaskProps {
   ScoreThreshold: number;
   ScoreThresholdmx: number;
   selectedQuestionIds: string[];
-  googleApiKey?: string;
-  googleCx?: string;
-  geminiApiKey?: string;
+  provider_config?: Record<string, unknown>;
 }
 
 export class UserProps {

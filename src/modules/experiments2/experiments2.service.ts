@@ -82,9 +82,7 @@ export class Experiments2Service {
         max_score: task.ScoreThresholdmx,
         questionsId: task.selectedQuestionIds,
         experiment_id: savedExperiment._id,
-        googleApiKey: task.googleApiKey,
-        googleCx: task.googleCx,
-        geminiApiKey: task.geminiApiKey,
+        provider_config: task.provider_config,
       });
     });
     await Promise.all(TasksPromises);
@@ -535,12 +533,6 @@ export class Experiments2Service {
         if (!task.search_model || typeof task.search_model !== 'string') {
           // errors.push(`Missing or invalid field: experiments.tasks.search_model`);
           errors.push('yaml_error_missing_tasks_search_model');
-        } else if (task.search_source === 'llm') {
-          if (!['gemini'].includes(task.search_model))
-            errors.push('yaml_error_invalid_task_llm_search_model')
-        } else if (task.search_source === 'search-engine') {
-          if (!['google'].includes(task.search_model))
-            errors.push('yaml_error_invalid_task_engine_search_model')
         }
       });
     }

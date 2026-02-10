@@ -7,6 +7,14 @@ import { UserTaskSession } from 'src/modules/user-task-session2/entities/user-ta
 import { UserTask } from 'src/modules/user-task2/entities/user-tasks.entity';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
+export type TaskProviderConfig = {
+  provider?: string;
+  model?: string;
+  apiKey?: string;
+  cx?: string;
+  [key: string]: unknown;
+};
+
 @Entity()
 export class Task extends BaseEntity {
   @Column()
@@ -20,14 +28,12 @@ export class Task extends BaseEntity {
   @Column()
   search_model: string;
 
-  @Column({nullable: true, select: false, default: ''})
-  googleApiKey: string;
-
-  @Column({nullable: true, select: false, default: ''})
-  googleCx: string;
-
-  @Column({nullable: true, select: false, default: ''})
-  geminiApiKey: string;
+  @Column({
+    type: 'jsonb',
+    nullable: true,
+    select: false,
+  })
+  provider_config?: TaskProviderConfig;
 
   @OneToMany(() => LlmSession, (session) => session.task)
   llmSessions: LlmSession[];

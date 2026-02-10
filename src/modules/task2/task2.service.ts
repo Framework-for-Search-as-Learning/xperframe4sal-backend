@@ -144,20 +144,20 @@ export class Task2Service {
   }
 
 
-    async getGoogleCredentials(taskId: string) {
-      try {
-        const task = await this.taskRepository.findOne({
-          where: {_id: taskId},
-          select: ['provider_config'],
-        });
-        const providerConfig = task?.provider_config || {};
-        if (providerConfig.provider !== 'google') {
-          throw new Error('Google provider not configured for this task');
-        }
-        return {apiKey: providerConfig.apiKey, cx: providerConfig.cx};
-      } catch (error) {
-        throw new Error(error.message);
+  async getGoogleCredentials(taskId: string) {
+    try {
+      const task = await this.taskRepository.findOne({
+        where: { _id: taskId },
+        select: ['provider_config'],
+      });
+      const providerConfig = task?.provider_config || {};
+      if (providerConfig.provider !== 'googleSearch') {
+        throw new Error('GoogleSearch provider not configured for this task');
       }
+      return { apiKey: providerConfig.apiKey, cx: providerConfig.cx };
+    } catch (error) {
+      throw new Error(error.message);
     }
-  
+  }
+
 }

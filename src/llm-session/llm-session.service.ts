@@ -86,7 +86,7 @@ export class LlmSessionService {
       parts: [{ text: msg.content }],
     }));
 
-    if (!['gemini'].includes(providerConfig.provider)) {
+    if (!['google'].includes(providerConfig.provider)) {
       throw new ForbiddenException('LLM provider not supported');
     }
 

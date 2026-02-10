@@ -7,8 +7,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { LlmSession } from './entity/llm-session.entity';
 import { Repository } from 'typeorm';
 import { LlmMessage } from './entity/llm-message.entity';
-import { Task } from 'src/modules/task2/entities/task.entity';
-import { User } from 'src/modules/user2/entity/user.entity';
+import { Task } from 'src/modules/task/entities/task.entity';
+import { User } from 'src/modules/user/entity/user.entity';
 import { Content, GoogleGenerativeAI } from '@google/generative-ai';
 
 @Injectable()

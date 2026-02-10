@@ -4,19 +4,19 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import {In, Repository} from 'typeorm';
-import {TaskQuestionMap} from './entity/taskQuestionMap.entity';
-import {Task2Service} from '../task2/task2.service';
-import {InjectRepository} from '@nestjs/typeorm';
+import { In, Repository } from 'typeorm';
+import { TaskQuestionMap } from './entity/taskQuestionMap.entity';
+import { TaskService } from '../task/task.service';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class TaskQuestionMapService {
   constructor(
     @InjectRepository(TaskQuestionMap)
     private readonly taskQuestionMapRepository: Repository<TaskQuestionMap>,
-    @Inject(forwardRef(() => Task2Service))
-    private readonly taskService: Task2Service,
-  ) {}
+    @Inject(forwardRef(() => TaskService))
+    private readonly taskService: TaskService,
+  ) { }
 
   async create(taskId: string, questionId: string): Promise<TaskQuestionMap> {
     try {
@@ -36,7 +36,7 @@ export class TaskQuestionMapService {
   async findQuestionsByTask(taskId: string): Promise<string[]> {
     try {
       const taskquestions = await this.taskQuestionMapRepository.find({
-        where: {task_id: taskId},
+        where: { task_id: taskId },
       });
       const questionsIds = taskquestions.map(
         (taskQuestion) => taskQuestion.question_id,

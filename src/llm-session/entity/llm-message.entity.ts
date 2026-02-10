@@ -5,7 +5,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import {LlmSession} from './llm-session.entity';
+import { LlmSession } from './llm-session.entity';
 
 @Entity('llm_messages')
 export class LlmMessage {
@@ -18,7 +18,9 @@ export class LlmMessage {
   @Column()
   role: 'user' | 'model'; // Aqui fica claro que é IA
 
-  @ManyToOne(() => LlmSession, (session) => session.messages)
+  @ManyToOne(() => LlmSession, (session) => session.messages, {
+    onDelete: 'CASCADE',
+  })
   session: LlmSession;
 
   @CreateDateColumn()

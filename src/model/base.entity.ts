@@ -3,17 +3,20 @@
  * Licensed under The MIT License [see LICENSE for details]
  */
 
-import { Prop, Schema } from '@nestjs/mongoose';
+import {
+  Column,
+  CreateDateColumn,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
-@Schema()
 export abstract class BaseEntity {
+  @PrimaryGeneratedColumn('uuid')
   _id: string;
-  @Prop({ type: 'boolean', default: true })
+  @Column({default: true})
   isActive: boolean;
-
-  @Prop({ type: Date, default: Date.now })
+  @CreateDateColumn()
   createdAt: Date;
-
-  @Prop({ type: Date, default: Date.now })
-  lastChangedAt: Date;
+  @UpdateDateColumn()
+  lastChangeAt: Date;
 }

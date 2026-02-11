@@ -10,11 +10,11 @@ import {AuthController} from './auth.controller';
 import {AuthService} from './auth.service';
 import {JwtStrategy} from './strategies/jwt.strategy';
 import {LocalStrategy} from './strategies/local.strategy';
-import {User2Module} from '../user2/user2.module';
+import {UserModule} from '../user/user.module';
 
 @Module({
   imports: [
-    User2Module,
+    UserModule,
     PassportModule,
     JwtModule.register({
       secret: process.env.SECRET,

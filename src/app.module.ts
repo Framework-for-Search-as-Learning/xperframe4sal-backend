@@ -5,35 +5,33 @@
 
 import {Module} from '@nestjs/common';
 import {AppController} from './app.controller';
-import {MongooseModule} from '@nestjs/mongoose';
 import {AuthModule} from './modules/auth/auth.module';
 import {HttpModule} from './modules/http/http.module';
 import {GoogleModule} from './modules/search-engines/google/google.module';
-import {PuppeteerModule} from './modules/puppeteer/puppeteer.module';
 import {MailerModule} from '@nestjs-modules/mailer';
 import {ConfigModule} from '@nestjs/config';
 import {TypeOrmModule} from '@nestjs/typeorm';
-import {User2Module} from './modules/user2/user2.module';
-import {User} from './modules/user2/entity/user.entity';
-import {Experiments2Module} from './modules/experiments2/experiments2.module';
-import {Experiment} from './modules/experiments2/entity/experiment.entity';
-import {Task2Module} from './modules/task2/task2.module';
-import {Task} from './modules/task2/entities/task.entity';
-import {UserExperiments2Module} from './modules/user-experiments2/user-experiments2.module';
-import {UserExperiment} from './modules/user-experiments2/entities/user-experiments.entity';
-import {UserTask2Module} from './modules/user-task2/user-task2.module';
-import {UserTask} from './modules/user-task2/entities/user-tasks.entity';
-import {Survey2Module} from './modules/survey2/survey2.module';
-import {Survey} from './modules/survey2/entity/survey.entity';
-import {SurveyAnswer2Module} from './modules/survey-answer2/survey-answer2.module';
-import {SurveyAnswer} from './modules/survey-answer2/entity/survey-answer.entity';
+import {UserModule} from './modules/user/user.module';
+import {User} from './modules/user/entity/user.entity';
+import {ExperimentsModule} from './modules/experiments/experiments.module';
+import {Experiment} from './modules/experiments/entity/experiment.entity';
+import {TaskModule} from './modules/task/task.module';
+import {Task} from './modules/task/entities/task.entity';
+import {UserExperimentsModule} from './modules/user-experiments/user-experiments.module';
+import {UserExperiment} from './modules/user-experiments/entities/user-experiments.entity';
+import {UserTaskModule} from './modules/user-task/user-task.module';
+import {UserTask} from './modules/user-task/entities/user-tasks.entity';
+import {SurveyModule} from './modules/survey/survey.module';
+import {Survey} from './modules/survey/entity/survey.entity';
+import {SurveyAnswerModule} from './modules/survey-answer/survey-answer.module';
+import {SurveyAnswer} from './modules/survey-answer/entity/survey-answer.entity';
 import {TaskQuestionMapModule} from './modules/task-question-map/task-question-map.module';
 import {TaskQuestionMap} from './modules/task-question-map/entity/taskQuestionMap.entity';
-import {Icf2Module} from './modules/icf2/icf2.module';
-import {Icf} from './modules/icf2/entity/icf.entity';
-import {UserTaskSession2Module} from './modules/user-task-session2/user-task-session2.module';
-import {UserTaskSession} from './modules/user-task-session2/entities/user-task-session.entity';
-import {Page} from './modules/user-task-session2/entities/page.entity';
+import {IcfModule} from './modules/icf/icf.module';
+import {Icf} from './modules/icf/entity/icf.entity';
+import {UserTaskSessionModule} from './modules/user-task-session/user-task-session.module';
+import {UserTaskSession} from './modules/user-task-session/entities/user-task-session.entity';
+import {Page} from './modules/user-task-session/entities/page.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -42,14 +40,13 @@ import {Page} from './modules/user-task-session2/entities/page.entity';
     AuthModule,
     HttpModule,
     GoogleModule,
-    PuppeteerModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.POSTGRES_HOST ? process.env.POSTGRES_HOST : 'localhost',
-      port: 5432,
+      port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 5432,
       username: process.env.DB_USER,
-      password: process.env.DB_PASS,                                                                                                                                      
-      database: 'cbf',
+      password: process.env.DB_PASSWORD,                                                                                                                                      
+      database: process.env.DB_NAME ? process.env.DB_NAME : 'sal',
       entities: [
         User,
         Experiment,
@@ -73,16 +70,16 @@ import {Page} from './modules/user-task-session2/entities/page.entity';
         },
       },
     }),
-    User2Module,
-    Experiments2Module,
-    Task2Module,
-    UserExperiments2Module,
-    UserTask2Module,
-    Survey2Module,
-    SurveyAnswer2Module,
+    UserModule,
+    ExperimentsModule,
+    TaskModule,
+    UserExperimentsModule,
+    UserTaskModule,
+    SurveyModule,
+    SurveyAnswerModule,
     TaskQuestionMapModule,
-    Icf2Module,
-    UserTaskSession2Module,
+    IcfModule,
+    UserTaskSessionModule,
   ],
   controllers: [AppController],
   providers: [],

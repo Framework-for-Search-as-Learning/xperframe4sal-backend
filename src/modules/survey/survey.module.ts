@@ -1,0 +1,22 @@
+/*
+ * Copyright (c) 2026, marcelomachado
+ * Licensed under The MIT License [see LICENSE for details]
+ */
+
+import {forwardRef, Module} from '@nestjs/common';
+import {SurveyController} from './survey.controller';
+import {SurveyService} from './survey.service';
+import {TypeOrmModule} from '@nestjs/typeorm';
+import {Survey} from './entity/survey.entity';
+import {ExperimentsModule} from '../experiments/experiments.module';
+
+@Module({
+  imports: [
+    TypeOrmModule.forFeature([Survey]),
+    forwardRef(() => ExperimentsModule),
+  ],
+  controllers: [SurveyController],
+  providers: [SurveyService],
+  exports: [SurveyService],
+})
+export class SurveyModule {}

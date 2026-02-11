@@ -22,11 +22,6 @@ export class CreateTaskDto {
   @IsString()
   search_source: string;
 
-  @ApiProperty({ description: 'Search model identifier', example: 'web' })
-  @IsOptional()
-  @IsString()
-  search_model: string;
-
   @ApiProperty({ description: 'Experiment ID this task belongs to', example: '64d2f4a8e5f9b20b1c8a9f10' })
   @IsNotEmpty()
   @IsString()

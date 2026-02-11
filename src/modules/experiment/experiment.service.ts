@@ -75,7 +75,6 @@ export class ExperimentService {
         summary: task.summary,
         description: task.description,
         search_source: task.search_source,
-        search_model: task.search_model,
         survey_id: task.SelectedSurvey,
         rule_type: task.RulesExperiment,
         min_score: task.ScoreThreshold,
@@ -269,7 +268,6 @@ export class ExperimentService {
           max_score: task.max_score,
           min_score: task.min_score,
           search_source: task.search_source,
-          search_model: task.search_model,
           survey_id: task.survey_id,
         })) || [],
       }
@@ -341,7 +339,6 @@ export class ExperimentService {
             summary: task.summary,
             description: task.description,
             search_source: task.search_source,
-            search_model: task.search_model,
             survey_id: task.survey_id || null,
             rule_type: task.rule_type,
             min_score: task.min_score || 0,
@@ -530,10 +527,6 @@ export class ExperimentService {
           errors.push('yaml_error_invalid_tasks_search_source');
         }
 
-        if (!task.search_model || typeof task.search_model !== 'string') {
-          // errors.push(`Missing or invalid field: experiments.tasks.search_model`);
-          errors.push('yaml_error_missing_tasks_search_model');
-        }
       });
     }
 

@@ -26,8 +26,6 @@ export class Task extends BaseEntity {
   description: string;
   @Column()
   search_source: string;
-  @Column()
-  search_model: string;
 
   @Column({
     type: 'jsonb',

@@ -30,7 +30,6 @@ export class TaskProps {
   summary: string;
   description: string;
   search_source: string;
-  search_model: string;
   SelectedSurvey: string;
   RulesExperiment: string; //score || question
   ScoreThreshold: number;

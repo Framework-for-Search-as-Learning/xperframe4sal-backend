@@ -5,13 +5,19 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { ExperimentService } from '../experiment/experiment.service';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { SurveyService } from '../survey/survey.service';
 import { TaskQuestionMapService } from '../task-question-map/task-question-map.service';
-import { Task } from './entities/task.entity';
+import { Task, TaskProviderConfig } from './entities/task.entity';
+import { PROVIDER_CONFIG_SECRET_KEYS } from './constants/provider-config.constants';
+import { TaskWithProviderMask } from './types/provider-config.types';
+import {
+  buildProviderConfigMask,
+  isMaskedValue,
+} from './utils/provider-config-mask.util';
 
 @Injectable()
 export class TaskService {
@@ -24,7 +30,25 @@ export class TaskService {
     @Inject(forwardRef(() => TaskQuestionMapService))
     private readonly taskQuestionMapService: TaskQuestionMapService,
   ) { }
-  async create(createTaskDto: CreateTaskDto): Promise<Task> {
+  private applyProviderConfigMask(task: Task | null): TaskWithProviderMask | null {
+    if (!task) {
+      return task;
+    }
+    const { masked, sanitized } = buildProviderConfigMask(
+      task.provider_config as TaskProviderConfig,
+    );
+    return {
+      ...task,
+      provider_config: sanitized as Record<string, unknown>,
+      provider_config_masked: masked,
+    } as TaskWithProviderMask;
+  }
+
+  private applyProviderConfigMaskList(tasks: Task[]): TaskWithProviderMask[] {
+    return tasks.map((task) => this.applyProviderConfigMask(task) as TaskWithProviderMask);
+  }
+
+  async create(createTaskDto: CreateTaskDto): Promise<TaskWithProviderMask> {
     try {
       const {
         title,
@@ -84,8 +108,13 @@ export class TaskService {
     return await this.taskRepository.find();
   }
 
-  async findOne(id: string): Promise<Task> {
-    return await this.taskRepository.findOneBy({ _id: id });
+  async findOne(id: string): Promise<TaskWithProviderMask> {
+    const task = await this.taskRepository
+      .createQueryBuilder('task')
+      .addSelect('task.provider_config')
+      .where('task._id = :id', { id })
+      .getOne();
+    return this.applyProviderConfigMask(task) as TaskWithProviderMask;
   }
 
   async findMany(ids: string[]): Promise<Task[]> {
@@ -112,7 +141,7 @@ export class TaskService {
     });
   }
 
-  async update(id: string, updateTaskDto: UpdateTaskDto): Promise<Task> {
+  async update(id: string, updateTaskDto: UpdateTaskDto): Promise<TaskWithProviderMask> {
     const oldTask = await this.findOne(id);
     if (
       updateTaskDto.survey_id &&
@@ -133,6 +162,33 @@ export class TaskService {
       );
     }
     delete updateTaskDto.questionsId;
+
+    if (updateTaskDto.provider_config) {
+      const current = await this.taskRepository.findOne({
+        where: { _id: id },
+        select: ['provider_config'],
+      });
+      const currentConfig = (current?.provider_config || {}) as TaskProviderConfig;
+      const incomingConfig = updateTaskDto.provider_config as TaskProviderConfig;
+      const mergedConfig: TaskProviderConfig = {
+        ...currentConfig,
+        ...incomingConfig,
+      };
+      for (const key of PROVIDER_CONFIG_SECRET_KEYS) {
+        const incomingValue = incomingConfig[key];
+        const incomingString = typeof incomingValue === 'string' ? incomingValue : undefined;
+        const preserveValue = !incomingString || isMaskedValue(incomingString);
+        if (preserveValue) {
+          if (currentConfig[key]) {
+            mergedConfig[key] = currentConfig[key];
+          } else {
+            delete mergedConfig[key];
+          }
+        }
+      }
+      updateTaskDto.provider_config = mergedConfig as Record<string, unknown>;
+    }
+
     await this.taskRepository.update({ _id: id }, updateTaskDto);
     return await this.findOne(id);
   }

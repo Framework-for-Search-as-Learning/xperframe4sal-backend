@@ -42,7 +42,7 @@ import {Page} from './modules/user-task-session/entities/page.entity';
     GoogleModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.POSTGRES_HOST ? process.env.POSTGRES_HOST : 'localhost',
+      host: process.env.DB_HOST ? process.env.DB_HOST : 'localhost',
       port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 5432,
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,                                                                                                                                      

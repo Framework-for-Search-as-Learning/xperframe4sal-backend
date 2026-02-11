@@ -3,7 +3,6 @@
  * Licensed under The MIT License [see LICENSE for details]
  */
 
-//import {StepsType} from 'src/modules/experiments2/entity/experiment.entity';
 
 import {ApiProperty} from '@nestjs/swagger';
 import {IsNotEmpty, IsObject, IsOptional, IsString} from 'class-validator';

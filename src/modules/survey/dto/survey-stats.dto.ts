@@ -2,46 +2,46 @@ import { ApiProperty } from '@nestjs/swagger';
 import { SurveyType } from '../entity/survey.entity';
 
 export class SurveyQuestionStatOptionDto {
-  @ApiProperty()
+  @ApiProperty({ description: 'Option statement' })
   statement: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'Number of selections' })
   count: number;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'Percentage of selections' })
   percentage: number;
 }
 
 export class SurveyQuestionStatDto {
-  @ApiProperty()
+  @ApiProperty({ description: 'Question statement' })
   statement: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'Question type' })
   type: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'Total number of answers' })
   totalAnswers: number;
 
-  @ApiProperty({ type: [SurveyQuestionStatOptionDto] })
+  @ApiProperty({ type: [SurveyQuestionStatOptionDto], description: 'Option statistics' })
   options: SurveyQuestionStatOptionDto[];
 }
 
 export class SurveyStatsDto {
-  @ApiProperty()
+  @ApiProperty({ description: 'Survey ID' })
   surveyId: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'Survey name' })
   name: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'Survey title' })
   title: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'Survey description' })
   description: string;
 
-  @ApiProperty({ enum: SurveyType })
+  @ApiProperty({ enum: SurveyType, description: 'Survey type' })
   type: SurveyType;
 
-  @ApiProperty({ type: [SurveyQuestionStatDto] })
+  @ApiProperty({ type: [SurveyQuestionStatDto], description: 'Question statistics' })
   questions: SurveyQuestionStatDto[];
 }

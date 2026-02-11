@@ -1,27 +1,62 @@
-import {Body, Controller, Get, Param, Post, Res} from '@nestjs/common';
-import {LlmSessionService} from './llm-session.service';
-import {Response} from 'express';
+import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
+import { LlmSessionService } from './llm-session.service';
+import { Response } from 'express';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiProduces,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
+@ApiTags('LLM Session')
 @Controller('llm-session')
 export class LlmSessionController {
-  constructor(private readonly llmSessionService: LlmSessionService) {}
+  constructor(private readonly llmSessionService: LlmSessionService) { }
 
   @Post('start')
-  async startSession(@Body() body: {taskId: string; userId: string}) {
+  @ApiOperation({ summary: 'Start an LLM session' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        taskId: { type: 'string', description: 'Task ID' },
+        userId: { type: 'string', description: 'User ID' },
+      },
+      required: ['taskId', 'userId'],
+    },
+  })
+  @ApiResponse({ status: 201, description: 'Session started.' })
+  async startSession(@Body() body: { taskId: string; userId: string }) {
     return this.llmSessionService.startSession(body.userId, body.taskId);
   }
 
   @Post(':id/message')
+  @ApiOperation({ summary: 'Send a message to an LLM session' })
+  @ApiParam({ name: 'id', type: String, description: 'LLM session ID' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        userId: { type: 'string', description: 'User ID' },
+        content: { type: 'string', description: 'Message content' },
+      },
+      required: ['userId', 'content'],
+    },
+  })
+  @ApiProduces('text/plain')
+  @ApiResponse({ status: 200, description: 'Streaming response from the model.' })
   async sendMessage(
     @Param('id') sessionId: string,
-    @Body() body: {userId: string; content: string},
+    @Body() body: { userId: string; content: string },
     @Res() res: Response,
   ) {
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
     res.setHeader('Transfer-Encoding', 'chunked');
 
     try {
-      const {stream, saveBotResponse} =
+      const { stream, saveBotResponse } =
         await this.llmSessionService.processChatMessage(
           sessionId,
           body.userId,

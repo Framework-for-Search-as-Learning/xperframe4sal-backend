@@ -6,32 +6,32 @@ import { StepsType } from 'src/modules/experiment/entity/experiment.entity';
 import { UserExperimentStatus } from '../entities/user-experiments.entity';
 
 export class CreateUserExperimentDto {
-  @ApiProperty()
+  @ApiProperty({ description: 'User ID', example: '64d2f4a8e5f9b20b1c8a9f10' })
   @IsNotEmpty()
   @IsString()
   userId: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'Experiment ID', example: '64d2f4a8e5f9b20b1c8a9f20' })
   @IsNotEmpty()
   @IsString()
   experimentId: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'Steps completed map', required: false, example: { consent: true } })
   @IsOptional()
   @IsObject()
   stepsCompleted?: Record<StepsType, boolean>;
 
-  @ApiProperty({ enum: UserExperimentStatus })
+  @ApiProperty({ enum: UserExperimentStatus, description: 'Experiment participation status', required: false })
   @IsOptional()
   @IsEnum(UserExperimentStatus)
   status?: UserExperimentStatus;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'Start date', example: '2026-02-11T10:00:00.000Z', required: false })
   @IsOptional()
   @IsDateString()
   startDate?: Date;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'Completion date', example: '2026-02-11T12:00:00.000Z', required: false })
   @IsOptional()
   @IsDateString()
   completionDate?: Date;

@@ -1,4 +1,4 @@
-import {ApiProperty} from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 //import {Type} from 'class-transformer';
 import {
   /*IsArray*/ IsNumber,
@@ -7,11 +7,11 @@ import {
 //import {QuestionDTO} from './question.dto';
 
 export class OptionDTO {
-  @ApiProperty()
+  @ApiProperty({ description: 'Option statement', example: 'Strongly agree' })
   @IsString()
   statement: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'Score assigned to the option', example: 5 })
   @IsNumber()
   score: number;
 

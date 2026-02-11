@@ -1,4 +1,4 @@
-import {ApiProperty} from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsArray,
   IsNotEmpty,
@@ -7,25 +7,27 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import {AnswerDTO} from './answers.dto';
-import {Type} from 'class-transformer';
+import { AnswerDTO } from './answers.dto';
+import { Type } from 'class-transformer';
 
 export class CreateSurveyAnswerDto {
-  @ApiProperty()
+  @ApiProperty({ description: 'User ID', example: '64d2f4a8e5f9b20b1c8a9f10' })
   @IsNotEmpty()
   @IsString()
   userId: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'Survey ID', example: '64d2f4a8e5f9b20b1c8a9f11' })
   @IsNotEmpty()
   @IsString()
   surveyId: string;
 
+  @ApiProperty({ type: [AnswerDTO], description: 'Answers for the survey' })
   @IsArray()
-  @ValidateNested({each: true})
+  @ValidateNested({ each: true })
   @Type(() => AnswerDTO)
   answers: AnswerDTO[];
 
+  @ApiProperty({ description: 'Computed survey score', example: 12, required: false })
   @IsOptional()
   @IsNumber()
   score?: number = 0;

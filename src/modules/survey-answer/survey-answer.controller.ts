@@ -3,12 +3,24 @@ import { SurveyAnswerService } from './survey-answer.service';
 import { CreateSurveyAnswerDto } from './dto/create-surveyAnswer.dto';
 import { SurveyAnswer } from './entity/survey-answer.entity';
 import { UpdateSurveyAnswerDto } from './dto/update-surveyAnswer.dto';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
+@ApiTags('Survey Answer')
 @Controller('survey-answer')
 export class SurveyAnswerController {
   constructor(private readonly surveyAnswerService: SurveyAnswerService) { }
 
   @Post()
+  @ApiOperation({ summary: 'Submit survey answers' })
+  @ApiBody({ type: CreateSurveyAnswerDto })
+  @ApiResponse({ status: 201, description: 'Survey answers submitted.' })
   async create(
     @Body() createSurveyAnswerDto: CreateSurveyAnswerDto,
   ): Promise<SurveyAnswer> {
@@ -16,6 +28,10 @@ export class SurveyAnswerController {
   }
 
   @Get()
+  @ApiOperation({ summary: 'Get survey answers or filter by userId and surveyId' })
+  @ApiQuery({ name: 'userId', required: false, type: String, description: 'User ID' })
+  @ApiQuery({ name: 'surveyId', required: false, type: String, description: 'Survey ID' })
+  @ApiResponse({ status: 200, description: 'Survey answers list or filtered result.' })
   async findAll(
     @Query('userId') userId: string,
     @Query('surveyId') surveyId: string,
@@ -33,6 +49,10 @@ export class SurveyAnswerController {
   }
 
   @Get('/user/:userId/survey/:surveyId')
+  @ApiOperation({ summary: 'Get survey answer by user and survey' })
+  @ApiParam({ name: 'userId', type: String, description: 'User ID' })
+  @ApiParam({ name: 'surveyId', type: String, description: 'Survey ID' })
+  @ApiResponse({ status: 200, description: 'Survey answer.' })
   async findByUserIdAndSurveyId(
     @Param('userId') userId: string,
     @Param('surveyId') surveyId: string,
@@ -44,6 +64,10 @@ export class SurveyAnswerController {
   }
 
   @Patch(':id')
+  @ApiOperation({ summary: 'Update survey answer' })
+  @ApiParam({ name: 'id', type: String, description: 'SurveyAnswer ID' })
+  @ApiBody({ type: UpdateSurveyAnswerDto })
+  @ApiResponse({ status: 200, description: 'Survey answer updated.' })
   async update(
     @Param('id') id: string,
     @Body() updateSurveyAnswerDto: UpdateSurveyAnswerDto,

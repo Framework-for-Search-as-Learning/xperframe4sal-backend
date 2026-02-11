@@ -8,7 +8,8 @@ import { UserTask } from 'src/modules/user-task/entities/user-tasks.entity';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
 export type TaskProviderConfig = {
-  provider?: string;
+  modelProvider?: string;
+  searchProvider?: string;
   model?: string;
   apiKey?: string;
   cx?: string;

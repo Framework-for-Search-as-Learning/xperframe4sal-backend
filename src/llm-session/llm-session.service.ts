@@ -55,7 +55,7 @@ export class LlmSessionService {
           _id: true,
           provider_config: {
             apiKey: true,
-            provider: true,
+            modelProvider: true,
             model: true,
           },
         },
@@ -65,7 +65,7 @@ export class LlmSessionService {
     if (session.user._id !== userId)
       throw new ForbiddenException('Session does not belong to user');
     const providerConfig = session.task.provider_config || {};
-    if (!providerConfig.apiKey || !providerConfig.provider) {
+    if (!providerConfig.apiKey || !providerConfig.modelProvider) {
       throw new ForbiddenException('Task without AI configuration');
     }
 
@@ -86,7 +86,7 @@ export class LlmSessionService {
       parts: [{ text: msg.content }],
     }));
 
-    if (!['google'].includes(providerConfig.provider)) {
+    if (!['google'].includes(providerConfig.modelProvider)) {
       throw new ForbiddenException('LLM provider not supported');
     }
 

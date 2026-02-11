@@ -207,7 +207,7 @@ export class TaskService {
         select: ['provider_config'],
       });
       const providerConfig = task?.provider_config || {};
-      if (providerConfig.provider !== 'googleSearch') {
+      if (providerConfig.searchProvider !== 'google') {
         throw new Error('GoogleSearch provider not configured for this task');
       }
       return { apiKey: providerConfig.apiKey, cx: providerConfig.cx };

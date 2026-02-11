@@ -492,34 +492,44 @@ export class UserTaskService {
 
     if (task.search_source === 'search-engine') {
       const sessions = await this.userTaskSessionService.finByUserIdAndTaskId(user._id, task._id);
+      const sortedSessions = [...sessions].sort((a, b) => {
+        const aTime = a.timestamp ? new Date(a.timestamp).getTime() : 0;
+        const bTime = b.timestamp ? new Date(b.timestamp).getTime() : 0;
+        return aTime - bTime;
+      });
 
-      const resources: ResourceAccessDto[] = [];
       let totalDepth = 0;
 
-      for (const session of sessions) {
-        if (session.pages) {
-          session.pages.forEach(page => {
-            totalDepth++;
+      const queries = sortedSessions.map((session) => {
+        const resources = (session.pages || []).map((page) => {
+          totalDepth++;
 
-            let timeSpent = 0;
-            if (page.startTime && page.endTime) {
-              timeSpent = new Date(page.endTime).getTime() - new Date(page.startTime).getTime();
-            }
+          let timeSpent = 0;
+          if (page.startTime && page.endTime) {
+            timeSpent = new Date(page.endTime).getTime() - new Date(page.startTime).getTime();
+          }
 
-            resources.push({
-              title: page.title,
-              url: page.url,
-              timeSpent,
-              visitTime: page.startTime
-            });
-          });
-        }
-      }
+          return {
+            title: page.title,
+            url: page.url,
+            timeSpent,
+            visitTime: page.startTime
+          };
+        });
+
+        return {
+          query: session.query,
+          timestamp: session.timestamp,
+          serpNumber: session.serpNumber,
+          resourcesAccessedCount: resources.length,
+          resources
+        };
+      });
 
       details.searchDetails = {
-        resourcesAccessedDepth: totalDepth,
+        resourcesAccessedTotal: totalDepth,
         queriesCount: sessions.length,
-        resources
+        queries
       };
 
     } else if (task.search_source === 'llm') {
@@ -565,34 +575,44 @@ export class UserTaskService {
 
     if (task.search_source === 'search-engine') {
       const sessions = await this.userTaskSessionService.finByUserIdAndTaskId(user._id, task._id);
+      const sortedSessions = [...sessions].sort((a, b) => {
+        const aTime = a.timestamp ? new Date(a.timestamp).getTime() : 0;
+        const bTime = b.timestamp ? new Date(b.timestamp).getTime() : 0;
+        return aTime - bTime;
+      });
 
-      const resources: ResourceAccessDto[] = [];
       let totalDepth = 0;
 
-      for (const session of sessions) {
-        if (session.pages) {
-          session.pages.forEach(page => {
-            totalDepth++;
+      const queries = sortedSessions.map((session) => {
+        const resources = (session.pages || []).map((page) => {
+          totalDepth++;
 
-            let timeSpent = 0;
-            if (page.startTime && page.endTime) {
-              timeSpent = new Date(page.endTime).getTime() - new Date(page.startTime).getTime();
-            }
+          let timeSpent = 0;
+          if (page.startTime && page.endTime) {
+            timeSpent = new Date(page.endTime).getTime() - new Date(page.startTime).getTime();
+          }
 
-            resources.push({
-              title: page.title,
-              url: page.url,
-              timeSpent,
-              visitTime: page.startTime
-            });
-          });
-        }
-      }
+          return {
+            title: page.title,
+            url: page.url,
+            timeSpent,
+            visitTime: page.startTime
+          };
+        });
+
+        return {
+          query: session.query,
+          timestamp: session.timestamp,
+          serpNumber: session.serpNumber,
+          resourcesAccessedCount: resources.length,
+          resources
+        };
+      });
 
       details.searchDetails = {
-        resourcesAccessedDepth: totalDepth,
+        resourcesAccessedTotal: totalDepth,
         queriesCount: sessions.length,
-        resources
+        queries
       };
 
     } else if (task.search_source === 'llm') {

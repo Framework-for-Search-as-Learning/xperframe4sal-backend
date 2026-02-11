@@ -30,13 +30,30 @@ export class TaskExecutionDetailsDto {
 }
 
 export class SearchTaskDetailsDto {
-  @ApiProperty({ description: 'Number of unique resources accessed' })
-  resourcesAccessedDepth: number;
+  @ApiProperty({ description: 'Total number of resources accessed across all queries' })
+  resourcesAccessedTotal: number;
 
   @ApiProperty({ description: 'Number of search queries performed' })
   queriesCount: number;
 
-  @ApiProperty({ type: 'array', description: 'Visited resources details' })
+  @ApiProperty({ type: 'array', description: 'Queries with their resources' })
+  queries: SearchQueryWithResourcesDto[];
+}
+
+export class SearchQueryWithResourcesDto {
+  @ApiProperty()
+  query: string;
+
+  @ApiProperty()
+  timestamp: Date;
+
+  @ApiProperty()
+  serpNumber: number;
+
+  @ApiProperty({ description: 'Number of resources accessed for this query' })
+  resourcesAccessedCount: number;
+
+  @ApiProperty({ type: 'array', description: 'Visited resources for this query' })
   resources: ResourceAccessDto[];
 }
 

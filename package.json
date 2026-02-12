@@ -33,7 +33,6 @@
     "@nestjs/core": "^11.0.6",
     "@nestjs/jwt": "^10.1.1",
     "@nestjs/mapped-types": "^2.0.6",
-    "@nestjs/mongoose": "^10.0.2",
     "@nestjs/passport": "^10.0.2",
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/swagger": "^11.0.3",
@@ -59,9 +58,6 @@
     "passport-local": "^1.0.0",
     "path": "^0.12.7",
     "pg": "^8.13.1",
-    "puppeteer": "^21.6.0",
-    "puppeteer-extra": "^3.3.6",
-    "puppeteer-extra-plugin-stealth": "^2.11.2",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
     "typeorm": "^0.3.20"

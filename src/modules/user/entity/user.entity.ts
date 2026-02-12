@@ -1,4 +1,4 @@
-import { LlmSession } from 'src/llm-session/entity/llm-session.entity';
+import { LlmSession } from 'src/modules/llm-session/entity/llm-session.entity';
 import { BaseEntity } from 'src/model/base_entity2';
 import { SurveyAnswer } from 'src/modules/survey-answer/entity/survey-answer.entity';
 import { UserExperiment } from 'src/modules/user-experiment/entities/user-experiments.entity';

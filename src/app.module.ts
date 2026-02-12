@@ -28,9 +28,9 @@ import { Icf } from './modules/icf/entity/icf.entity';
 import { UserTaskSessionModule } from './modules/user-task-session/user-task-session.module';
 import { UserTaskSession } from './modules/user-task-session/entities/user-task-session.entity';
 import { Page } from './modules/user-task-session/entities/page.entity';
-import { LlmSessionModule } from './llm-session/llm-session.module';
-import { LlmSession } from './llm-session/entity/llm-session.entity';
-import { LlmMessage } from './llm-session/entity/llm-message.entity';
+import { LlmSessionModule } from './modules/llm-session/llm-session.module';
+import { LlmSession } from './modules/llm-session/entity/llm-session.entity';
+import { LlmMessage } from './modules/llm-session/entity/llm-message.entity';
 import { Task } from './modules/task/entities/task.entity';
 @Module({
   imports: [

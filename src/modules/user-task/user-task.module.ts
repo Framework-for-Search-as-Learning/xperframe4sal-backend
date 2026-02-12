@@ -7,7 +7,7 @@ import { UserModule } from '../user/user.module';
 import { TaskModule } from '../task/task.module';
 import { TaskQuestionMapModule } from '../task-question-map/task-question-map.module';
 import { UserTaskSessionModule } from '../user-task-session/user-task-session.module';
-import { LlmSessionModule } from 'src/llm-session/llm-session.module';
+import { LlmSessionModule } from 'src/modules/llm-session/llm-session.module';
 
 @Module({
   imports: [

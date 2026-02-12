@@ -3,21 +3,21 @@
  * Licensed under The MIT License [see LICENSE for details]
  */
 
-import {ApiProperty} from '@nestjs/swagger';
-import {IsNotEmpty, IsOptional, IsString} from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateIcfDto {
-  @ApiProperty()
+  @ApiProperty({ description: 'ICF title', example: 'Informed Consent' })
   @IsNotEmpty()
   @IsString()
   title: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'ICF description text', example: 'By participating you agree to...' })
   @IsOptional()
   @IsString()
   description: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'Experiment ID', example: '64d2f4a8e5f9b20b1c8a9f10' })
   @IsNotEmpty()
   @IsString()
   experimentId: string;

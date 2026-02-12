@@ -5,7 +5,7 @@
 
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserExperiment } from './entities/user-experiments.entity';
+import { UserExperiment, UserExperimentStatus } from './entities/user-experiments.entity';
 import { In, Repository } from 'typeorm';
 import { CreateUserExperimentDto } from './dto/create-userExperiment.dto';
 import { UserService } from '../user/user.service';
@@ -15,6 +15,8 @@ import { User } from '../user/entity/user.entity';
 import { Experiment } from '../experiment/entity/experiment.entity';
 import { UserTaskService } from '../user-task/user-task.service';
 import { TaskService } from '../task/task.service';
+import { ExperimentStatsDto } from '../experiment/dto/experiment-stats.dto';
+import { ExperimentParticipantDto } from '../experiment/dto/experiment-participant.dto';
 
 @Injectable()
 export class UserExperimentService {
@@ -25,6 +27,7 @@ export class UserExperimentService {
     @Inject(forwardRef(() => ExperimentService))
     private readonly experimentService: ExperimentService,
     private readonly userTaskService: UserTaskService,
+    @Inject(forwardRef(() => TaskService))
     private readonly taskService: TaskService,
   ) { }
 
@@ -107,7 +110,7 @@ export class UserExperimentService {
     return userExperiments.map((userExperiments) => userExperiments.user);
   }
 
-  async findExperimentsByUserId(userId: string): Promise<Experiment[]> {
+  async findExperimentsByUserId(userId: string): Promise<UserExperiment[]> {
     const userExperiments = await this.userExperimentRepository.find({
       where: {
         user: { _id: userId },
@@ -115,7 +118,7 @@ export class UserExperimentService {
       },
       relations: ['experiment'],
     });
-    return userExperiments.map((userExperiments) => userExperiments.experiment);
+    return userExperiments
   }
 
   async findByUserAndExperimentId(
@@ -134,7 +137,7 @@ export class UserExperimentService {
     id: string,
     updateUserExperimentDto: UpdateUserExperimentDto,
   ): Promise<UserExperiment> {
-    const { userId, experimentId, stepsCompleted } = updateUserExperimentDto;
+    const { userId, experimentId } = updateUserExperimentDto;
     let user, experiment;
     if (userId) {
       user = await this.userService.findOne(userId);
@@ -147,7 +150,7 @@ export class UserExperimentService {
     }
     await this.userExperimentRepository.update(
       { _id: id },
-      { user, experiment, stepsCompleted },
+      updateUserExperimentDto
     );
     return await this.userExperimentRepository.findOne({
       where: {
@@ -157,7 +160,14 @@ export class UserExperimentService {
   }
 
   async finish(id: string): Promise<UserExperiment> {
-    await this.userExperimentRepository.update({ _id: id }, { hasFinished: true });
+    await this.userExperimentRepository.update(
+      { _id: id },
+      {
+        hasFinished: true,
+        status: UserExperimentStatus.FINISHED,
+        completionDate: new Date(),
+      },
+    );
     return await this.userExperimentRepository.findOne({
       where: {
         _id: id,
@@ -236,5 +246,77 @@ export class UserExperimentService {
     });
     await this.userExperimentRepository.delete({ _id: id });
     return result;
+  }
+
+  async countUsersByExperimentId(experimentId: string): Promise<{ totalUsers: number, completedResponses: number }> {
+    const totalUsers = await this.userExperimentRepository.count({
+      where: {
+        experiment_id: experimentId,
+      },
+    });
+
+    const completedResponses = await this.userExperimentRepository.count({
+      where: {
+        experiment_id: experimentId,
+        hasFinished: true
+      }
+    })
+
+    return { totalUsers, completedResponses }
+  }
+
+  async getDetailedStats(experimentId: string): Promise<ExperimentStatsDto> {
+    const totalParticipants = await this.userExperimentRepository.count({
+      where: { experiment: { _id: experimentId } },
+    });
+
+    const finishedParticipants = await this.userExperimentRepository.count({
+      where: {
+        experiment: { _id: experimentId },
+        hasFinished: true
+      }
+    });
+
+    const inProgressParticipants = totalParticipants - finishedParticipants;
+
+    const completionPercentage = totalParticipants > 0 ? (finishedParticipants / totalParticipants) * 100 : 0;
+
+    return {
+      totalParticipants,
+      finishedParticipants,
+      inProgressParticipants,
+      completionPercentage: parseFloat(completionPercentage.toFixed(2))
+    };
+  }
+
+  async getParticipantsDetails(experimentId: string): Promise<ExperimentParticipantDto[]> {
+    const userExperiments = await this.userExperimentRepository.find({
+      where: { experiment: { _id: experimentId } },
+      relations: ['user'],
+    });
+
+    return userExperiments.map(ue => {
+      const steps = ue.stepsCompleted || {};
+      const totalSteps = Object.keys(steps).length || 4;
+      const completedSteps = Object.values(steps).filter(v => v).length;
+
+      const progress = totalSteps > 0 ? (completedSteps / totalSteps) * 100 : 0;
+
+      let timeTaken = 0;
+      if (ue.startDate && ue.completionDate) {
+        timeTaken = new Date(ue.completionDate).getTime() - new Date(ue.startDate).getTime();
+      }
+
+      return {
+        id: ue.user?._id,
+        name: ue.user ? `${ue.user.name} ${ue.user.lastName}` : 'Unknown',
+        email: ue.user?.email || '',
+        status: ue.status,
+        startDate: ue.startDate,
+        completionDate: ue.completionDate,
+        timeTaken,
+        progress: parseFloat(progress.toFixed(2))
+      };
+    });
   }
 }

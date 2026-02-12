@@ -67,7 +67,8 @@ export class BingService implements SearchEngineService {
   async query(
     query: string,
     startIndex: number = 1,
-    resultsPerPage: number = 10
+    resultsPerPage: number = 10,
+    experimentId: string = '',
   ): Promise<QueryResponse> {
 
     return this.queryInternal(query, startIndex, resultsPerPage, []);

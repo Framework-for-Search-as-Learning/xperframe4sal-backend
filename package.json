@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@google-cloud/local-auth": "^3.0.0",
+    "@google/generative-ai": "^0.24.1",
     "@googleapis/forms": "^2.0.4",
     "@nestjs-modules/mailer": "^1.10.3",
     "@nestjs/common": "^11.0.6",

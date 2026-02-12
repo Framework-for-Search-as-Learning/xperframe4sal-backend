@@ -3,20 +3,24 @@
  * Licensed under The MIT License [see LICENSE for details]
  */
 
-import {Controller, Get, Query} from '@nestjs/common';
-import {GoogleService} from './google.service';
-import {ApiExcludeController} from '@nestjs/swagger';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { GoogleService } from './google.service';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiExcludeController } from '@nestjs/swagger';
 
-@ApiExcludeController()
+
+@ApiBearerAuth('jwt')
+@UseGuards(AuthGuard('jwt'))
 @Controller('search-engine')
 export class GoogleController {
   private cache: Record<string, any> = {};
 
-  constructor(private readonly googleService: GoogleService) {}
+  constructor(private readonly googleService: GoogleService) { }
 
   @Get('google')
   async query(
     @Query('query') query: string,
+    @Query('taskId') taskId: string,
     @Query('start') startIndex: number = 0,
     @Query('num') resultsPerPage: number = 10,
   ) {
@@ -27,6 +31,7 @@ export class GoogleController {
         query,
         Number(startIndex),
         Number(resultsPerPage),
+        taskId,
       );
     } catch (error: any) {
       throw error;

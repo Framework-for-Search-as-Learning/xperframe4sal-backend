@@ -9,6 +9,8 @@ import { HttpService } from 'src/modules/http/http.service';
 import { GOOGLE } from './google-constants';
 import { SearchResultDto } from '../search-result.dto';
 import { CanceledError } from 'axios';
+import { ExperimentService } from 'src/modules/experiment/experiment.service';
+import { TaskService } from 'src/modules/task/task.service';
 
 
 const checkXFrameOptions = async (url: string, httpService: HttpService, maxAttemps: number = 2, sleep: number = 100, timeout = 2000) => {
@@ -48,15 +50,18 @@ const MAX_START_INDEX = 91;
 export class GoogleService implements SearchEngineService {
   constructor(
     private readonly httpService: HttpService,
+    private readonly taskService: TaskService
   ) { }
 
   async query(
     query: string,
     startIndex: number = 1,
-    resultsPerPage: number = 10
+    resultsPerPage: number = 10,
+    taskId: string,
   ): Promise<QueryResponse> {
     try {
-      return this.queryInternal(query, startIndex, resultsPerPage);
+      const credentials = await this.taskService.getGoogleCredentials(taskId);
+      return this.queryInternal(query, startIndex, resultsPerPage, credentials);
     } catch (error) {
       throw error;
     }
@@ -64,12 +69,12 @@ export class GoogleService implements SearchEngineService {
   private async queryInternal(
     query: string,
     startIndex: number = 1,
-    resultsPerPage: number = 10
+    resultsPerPage: number = 10,
+    credentials: { apiKey: string; cx: string },
   ): Promise<QueryResponse> {
-
     try {
       startIndex = Math.min(startIndex, MAX_START_INDEX);
-      const url = `${GOOGLE.URL_BASE}?q=${query}&key=${process.env.GOOGLE_API_KEY}&cx=${process.env.GOOGLE_CX}&num=${resultsPerPage}&start=${startIndex}&hl=pt-BR&gl=br&safe=active`;
+      const url = `${GOOGLE.URL_BASE}?q=${query}&key=${credentials.apiKey}&cx=${credentials.cx}&num=${resultsPerPage}&start=${startIndex}&hl=pt-BR&gl=br&safe=active`;
       const response = await this.httpService.get<SearchResultDto>(url);
       const results = response?.data;
 

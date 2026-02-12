@@ -3,11 +3,11 @@
  * Licensed under The MIT License [see LICENSE for details]
  */
 
-import {Module} from '@nestjs/common';
-import {UserService} from './user.service';
-import {UserController} from './user.controller';
-import {TypeOrmModule} from '@nestjs/typeorm';
-import {User} from './entity/user.entity';
+import { Module } from '@nestjs/common';
+import { UserService } from './user.service';
+import { UserController } from './user.controller';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from './entity/user.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User])],
@@ -15,4 +15,4 @@ import {User} from './entity/user.entity';
   controllers: [UserController],
   exports: [UserService],
 })
-export class UserModule {}
+export class UserModule { }

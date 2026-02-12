@@ -4,7 +4,7 @@
  */
 
 import { Test, TestingModule } from '@nestjs/testing';
-import { ExperimentController as ExperimentController } from './experiment.controller';
+import { ExperimentController } from './experiment.controller';
 
 describe('ExperimentController', () => {
   let controller: ExperimentController;

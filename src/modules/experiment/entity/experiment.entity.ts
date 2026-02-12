@@ -3,7 +3,7 @@
  * Licensed under The MIT License [see LICENSE for details]
  */
 
-import { BaseEntity } from 'src/model/base.entity';
+import { BaseEntity } from 'src/model/base_entity';
 import { Icf } from 'src/modules/icf/entity/icf.entity';
 import { Survey } from 'src/modules/survey/entity/survey.entity';
 import { Task } from 'src/modules/task/entities/task.entity';
@@ -15,6 +15,12 @@ enum SurveyType {
   PRE = 'pre',
   POST = 'post',
   OTHER = 'other',
+}
+
+export enum ExperimentStatus {
+  NOT_STARTED = 'NOT_STARTED',
+  IN_PROGRESS = 'IN_PROGRESS',
+  FINISHED = 'FINISHED',
 }
 
 export class SurveyProps {
@@ -29,12 +35,12 @@ export class TaskProps {
   summary: string;
   description: string;
   search_source: string;
-  search_model: string;
   SelectedSurvey: string;
   RulesExperiment: string; //score || question
   ScoreThreshold: number;
   ScoreThresholdmx: number;
   selectedQuestionIds: string[];
+  provider_config?: Record<string, unknown>;
 }
 
 export class UserProps {
@@ -64,8 +70,8 @@ export class Experiment extends BaseEntity {
   @Column()
   betweenExperimentType: string;
 
-  @Column({default: 'NOT_STARTED'})
-  status: string;
+  @Column({ default: ExperimentStatus.NOT_STARTED })
+  status: ExperimentStatus;
 
   @OneToMany(() => Task, (task) => task.experiment, { cascade: true })
   tasks: Task[];

@@ -10,5 +10,10 @@ export interface QueryResponse {
 }
 
 export interface SearchEngineService {
-  query(query: string): Promise<QueryResponse>;
+  query(
+    query: string,
+    startIndex: number,
+    resultsPerPage: number,
+    experimentId: string,
+  ): Promise<QueryResponse>;
 }

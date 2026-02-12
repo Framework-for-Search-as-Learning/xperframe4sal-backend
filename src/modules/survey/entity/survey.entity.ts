@@ -3,11 +3,11 @@
  * Licensed under The MIT License [see LICENSE for details]
  */
 
-import {BaseEntity} from 'src/model/base.entity';
-import {Experiment} from 'src/modules/experiment/entity/experiment.entity';
-import {SurveyAnswer} from 'src/modules/survey-answer/entity/survey-answer.entity';
-import {Task} from 'src/modules/task/entities/task.entity';
-import {Column, Entity, ManyToOne, OneToMany} from 'typeorm';
+import { BaseEntity } from 'src/model/base_entity';
+import { Experiment } from 'src/modules/experiment/entity/experiment.entity';
+import { SurveyAnswer } from 'src/modules/survey-answer/entity/survey-answer.entity';
+import { Task } from 'src/modules/task/entities/task.entity';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
 export enum SurveyType {
   PRE = 'pre',
@@ -23,7 +23,7 @@ export class Survey extends BaseEntity {
   title: string;
   @Column()
   description: string;
-  @Column({type: 'jsonb'})
+  @Column({ type: 'jsonb' })
   questions: any[];
   @Column({
     type: 'enum',
@@ -41,13 +41,13 @@ export class Survey extends BaseEntity {
   })
   surveyAnswers: SurveyAnswer[];
 
-  @OneToMany(() => Task, (task) => task.survey, {cascade: true})
+  @OneToMany(() => Task, (task) => task.survey, { cascade: true })
   tasks: Task[];
 
   //TODO temporario (TESTE)
-  @Column({default: false})
+  @Column({ default: false })
   uniqueAnswer: boolean;
 
-  @Column({default: true})
+  @Column({ default: true })
   required: boolean;
 }

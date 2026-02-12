@@ -3,10 +3,10 @@
  * Licensed under The MIT License [see LICENSE for details]
  */
 
-import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Experiment, StepsType } from './entity/experiment.entity';
-import { Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateExperimentDto } from './dto/create-experiment.dto';
 import { UserExperimentService } from '../user-experiment/user-experiment.service';
 import { UserTaskService } from '../user-task/user-task.service';
@@ -16,7 +16,10 @@ import { TaskService } from '../task/task.service';
 import { SurveyService } from '../survey/survey.service';
 import { IcfService } from '../icf/icf.service';
 import * as yaml from 'js-yaml';
-import { error } from 'console';
+import { ExperimentStatsDto } from './dto/experiment-stats.dto';
+import { ExperimentParticipantDto } from './dto/experiment-participant.dto';
+import { ExperimentTaskExecutionDto } from './dto/experiment-tasks-execution.dto';
+import { ExperimentSurveyStatsDto } from './dto/experiment-surveys-stats.dto';
 
 @Injectable()
 export class ExperimentService {
@@ -27,6 +30,7 @@ export class ExperimentService {
     private readonly userExperimentService: UserExperimentService,
     private readonly userTaskService: UserTaskService,
     private readonly userService: UserService,
+    @Inject(forwardRef(() => TaskService))
     private readonly taskService: TaskService,
     private readonly surveyService: SurveyService,
     @Inject(forwardRef(() => IcfService))
@@ -76,13 +80,13 @@ export class ExperimentService {
         summary: task.summary,
         description: task.description,
         search_source: task.search_source,
-        search_model: task.search_model,
         survey_id: task.SelectedSurvey,
         rule_type: task.RulesExperiment,
         min_score: task.ScoreThreshold,
         max_score: task.ScoreThresholdmx,
         questionsId: task.selectedQuestionIds,
         experiment_id: savedExperiment._id,
+        provider_config: task.provider_config,
       });
     });
     await Promise.all(TasksPromises);
@@ -96,6 +100,7 @@ export class ExperimentService {
     return savedExperiment;
   }
 
+
   async findAll(): Promise<Experiment[]> {
     return await this.experimentRepository.find();
   }
@@ -104,11 +109,60 @@ export class ExperimentService {
     return await this.experimentRepository.findOneBy({ _id: id });
   }
 
+  async getStats(id: string): Promise<ExperimentStatsDto> {
+    return await this.userExperimentService.getDetailedStats(id);
+  }
+
+  async getParticipants(id: string): Promise<ExperimentParticipantDto[]> {
+    return await this.userExperimentService.getParticipantsDetails(id);
+  }
+
   async findWithTasks(id: string): Promise<Experiment> {
     return await this.experimentRepository.findOne({
       where: { _id: id },
       relations: ['tasks'],
     });
+  }
+
+  async getTasksExecutionDetails(experimentId: string): Promise<ExperimentTaskExecutionDto[]> {
+    const userTasks = await this.userTaskService.findByExperimentId(experimentId);
+
+    const grouped = new Map<string, { task: any, executions: any[] }>();
+
+    for (const ut of userTasks) {
+      if (!grouped.has(ut.task_id)) {
+        grouped.set(ut.task_id, { task: ut.task, executions: [] });
+      }
+      grouped.get(ut.task_id).executions.push(ut);
+    }
+
+    const result: ExperimentTaskExecutionDto[] = [];
+
+    for (const [taskId, data] of grouped) {
+      const executionsDetails = await Promise.all(
+        data.executions.map(ut => this.userTaskService.getExecutionDetailsFromEntity(ut))
+      );
+
+      result.push({
+        taskId: taskId,
+        taskTitle: data.task.title,
+        executions: executionsDetails
+      });
+    }
+
+    return result;
+  }
+
+  async getSurveysStats(experimentId: string): Promise<ExperimentSurveyStatsDto> {
+    const surveys = await this.surveyService.findByExperimentId(experimentId);
+
+    const surveysStats = await Promise.all(
+      surveys.map(survey => this.surveyService.getStats(survey._id))
+    );
+
+    return {
+      surveys: surveysStats
+    };
   }
 
   async findOneByName(name: string): Promise<Experiment> {
@@ -219,7 +273,6 @@ export class ExperimentService {
           max_score: task.max_score,
           min_score: task.min_score,
           search_source: task.search_source,
-          search_model: task.search_model,
           survey_id: task.survey_id,
         })) || [],
       }
@@ -291,7 +344,6 @@ export class ExperimentService {
             summary: task.summary,
             description: task.description,
             search_source: task.search_source,
-            search_model: task.search_model,
             survey_id: task.survey_id || null,
             rule_type: task.rule_type,
             min_score: task.min_score || 0,
@@ -480,16 +532,6 @@ export class ExperimentService {
           errors.push('yaml_error_invalid_tasks_search_source');
         }
 
-        if (!task.search_model || typeof task.search_model !== 'string') {
-          // errors.push(`Missing or invalid field: experiments.tasks.search_model`);
-          errors.push('yaml_error_missing_tasks_search_model');
-        } else if (task.search_source === 'llm') {
-          if (!['gemini'].includes(task.search_model))
-            errors.push('yaml_error_invalid_task_llm_search_model')
-        } else if (task.search_source === 'search-engine') {
-          if (!['google'].includes(task.search_model))
-            errors.push('yaml_error_invalid_task_engine_search_model')
-        }
       });
     }
 
@@ -497,14 +539,12 @@ export class ExperimentService {
   }
 
 
-  async getExperimentStatus(experimentId: string): Promise<string> {
-    const experiment = await this.experimentRepository.findOne({
-      where: { _id: experimentId },
-      select: ['status'],
-    });
-    if(!experiment){
-      throw new NotFoundException('Experiment not found');
-    }
-    return experiment.status;
-  };
+  async getGeneralExpirementInfos(experiment_id: string) {
+    const experiment = await this.experimentRepository.findOneBy({ _id: experiment_id });
+    const userExperimentInfos = await this.userExperimentService.countUsersByExperimentId(experiment_id);
+    return {
+      experimentStatus: experiment.status,
+      userExperimentInfos
+    };
+  }
 }

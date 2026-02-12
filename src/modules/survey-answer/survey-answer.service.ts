@@ -3,17 +3,17 @@
  * Licensed under The MIT License [see LICENSE for details]
  */
 
-import {Injectable, NotFoundException} from '@nestjs/common';
-import {InjectRepository} from '@nestjs/typeorm';
-import {SurveyAnswer} from './entity/survey-answer.entity';
-import {Repository} from 'typeorm';
-import {CreateSurveyAnswerDto} from './dto/create-surveyAnswer.dto';
-import {UserService} from '../user/user.service';
-import {SurveyService} from '../survey/survey.service';
-import {UpdateSurveyAnswerDto} from './dto/update-surveyAnswer.dto';
-import {QuestionType} from '../survey/dto/question.dto';
-import {UserTaskService} from '../user-task/user-task.service';
-import {AnswerDTO} from './dto/answers.dto';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { SurveyAnswer } from './entity/survey-answer.entity';
+import { Repository } from 'typeorm';
+import { CreateSurveyAnswerDto } from './dto/create-surveyAnswer.dto';
+import { UserService } from '../user/user.service';
+import { SurveyService } from '../survey/survey.service';
+import { UpdateSurveyAnswerDto } from './dto/update-surveyAnswer.dto';
+import { QuestionType } from '../survey/dto/question.dto';
+import { UserTaskService } from '../user-task/user-task.service';
+import { AnswerDTO } from './dto/answers.dto';
 
 @Injectable()
 export class SurveyAnswerService {
@@ -21,15 +21,16 @@ export class SurveyAnswerService {
     @InjectRepository(SurveyAnswer)
     private readonly surveyAnswerRepository: Repository<SurveyAnswer>,
     private readonly userService: UserService,
+    @Inject(forwardRef(() => SurveyService))
     private readonly surveyService: SurveyService,
     private readonly userTaskService: UserTaskService,
-  ) {}
+  ) { }
 
   async create(
     createSurveyAnswerDto: CreateSurveyAnswerDto,
   ): Promise<SurveyAnswer> {
     try {
-      const {userId, surveyId, answers} = createSurveyAnswerDto;
+      const { userId, surveyId, answers } = createSurveyAnswerDto;
       const user = await this.userService.findOne(userId);
       if (!user) {
         throw new NotFoundException('Usuario não encontrado.');
@@ -77,7 +78,7 @@ export class SurveyAnswerService {
     surveyId: string,
   ): Promise<SurveyAnswer> {
     return await this.surveyAnswerRepository.findOne({
-      where: {user_id: userId, survey_id: surveyId},
+      where: { user_id: userId, survey_id: surveyId },
     });
   }
 
@@ -89,7 +90,7 @@ export class SurveyAnswerService {
   }
 
   async remove(id: string) {
-    return await this.surveyAnswerRepository.delete({_id: id});
+    return await this.surveyAnswerRepository.delete({ _id: id });
   }
 
   async update(
@@ -103,10 +104,10 @@ export class SurveyAnswerService {
         );
       }
       await this.surveyAnswerRepository.update(
-        {_id: id},
+        { _id: id },
         updateSurveyAnswerDto,
       );
-      return await this.surveyAnswerRepository.findOne({where: {_id: id}});
+      return await this.surveyAnswerRepository.findOne({ where: { _id: id } });
     } catch (error) {
       console.error(error);
       throw error;
@@ -135,5 +136,13 @@ export class SurveyAnswerService {
       totalScore += questionScore;
     }
     return totalScore;
+  }
+
+  async findBySurveyId(surveyId: string): Promise<SurveyAnswer[]> {
+    return await this.surveyAnswerRepository.find({
+      where: {
+        survey_id: surveyId,
+      },
+    });
   }
 }

@@ -4,60 +4,60 @@
  */
 
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator';
 
 export class CreateTaskDto {
-  @ApiProperty()
+  @ApiProperty({ description: 'Task title', example: 'Find evidence of confirmation bias' })
   @IsNotEmpty()
   @IsString()
   title: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'Short summary for display', example: 'Search and evaluate sources' })
   @IsNotEmpty()
   @IsString()
   summary: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'Full task description', example: 'Search for articles and summarize findings.' })
   @IsOptional()
   @IsString()
   description: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'Search source identifier', example: 'bing' })
   @IsOptional()
   @IsString()
   search_source: string;
 
-  @ApiProperty()
-  @IsOptional()
-  @IsString()
-  search_model: string;
-
-  @ApiProperty()
+  @ApiProperty({ description: 'Experiment ID this task belongs to', example: '64d2f4a8e5f9b20b1c8a9f10' })
   @IsNotEmpty()
   @IsString()
   experiment_id: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'Survey ID associated with this task', example: '64d2f4a8e5f9b20b1c8a9f11', required: false })
   @IsOptional()
   @IsString()
   survey_id?: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'Rule type used for task selection', example: 'score', required: false })
   @IsOptional()
   @IsString()
   rule_type?: string; //score || question
 
-  @ApiProperty()
+  @ApiProperty({ description: 'Question IDs used by rule selection', example: ['64d2f4a8e5f9b20b1c8a9f21'], required: false })
   @IsOptional()
   @IsArray()
   questionsId?: string[];
 
   //TODO Voltar com @IsNumber apos corrigir no front
-  @ApiProperty()
+  @ApiProperty({ description: 'Minimum score to qualify', example: 10, required: false })
   @IsOptional()
   min_score?: number;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'Maximum score to qualify', example: 25, required: false })
   @IsOptional()
   max_score?: number;
+
+  @ApiProperty({ description: 'Provider specific configuration', example: { region: 'US' }, required: false })
+  @IsOptional()
+  @IsObject()
+  provider_config?: Record<string, unknown>;
 }

@@ -3,13 +3,13 @@
  * Licensed under The MIT License [see LICENSE for details]
  */
 
-import {Injectable, NotFoundException} from '@nestjs/common';
-import {InjectRepository} from '@nestjs/typeorm';
-import {UserTaskSession} from './entities/user-task-session.entity';
-import {Repository} from 'typeorm';
-import {CreateUserTaskSessionDto} from './dto/create-userTaskSession.dto';
-import {HandlePageDto} from './dto/handlePage.dto';
-import {Page} from './entities/page.entity';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserTaskSession } from './entities/user-task-session.entity';
+import { Repository } from 'typeorm';
+import { CreateUserTaskSessionDto } from './dto/create-userTaskSession.dto';
+import { HandlePageDto } from './dto/handlePage.dto';
+import { Page } from './entities/page.entity';
 
 @Injectable()
 export class UserTaskSessionService {
@@ -19,7 +19,7 @@ export class UserTaskSessionService {
 
     @InjectRepository(Page)
     private readonly pageRepository: Repository<Page>,
-  ) {}
+  ) { }
 
   async create(
     createUserTaskSessionDto: CreateUserTaskSessionDto,
@@ -37,12 +37,12 @@ export class UserTaskSessionService {
   }
 
   async findOne(id: string): Promise<UserTaskSession> {
-    return await this.userTaskSessionRepository.findOne({where: {_id: id}});
+    return await this.userTaskSessionRepository.findOne({ where: { _id: id } });
   }
 
   async findByUserId(userId: string): Promise<UserTaskSession[]> {
     return await this.userTaskSessionRepository.find({
-      where: {user_id: userId},
+      where: { user_id: userId },
     });
   }
 
@@ -55,6 +55,7 @@ export class UserTaskSessionService {
         user_id: userId,
         task_id: taskId,
       },
+      relations: ['pages']
     });
   }
 
@@ -71,7 +72,7 @@ export class UserTaskSessionService {
   ): Promise<UserTaskSession> {
     try {
       const userTaskSession = await this.userTaskSessionRepository.findOne({
-        where: {_id: id},
+        where: { _id: id },
         relations: ['pages'],
       });
       if (!userTaskSession) {
@@ -89,7 +90,7 @@ export class UserTaskSessionService {
       });
       await this.pageRepository.save(page);
       return await this.userTaskSessionRepository.findOne({
-        where: {_id: id},
+        where: { _id: id },
         relations: ['pages'],
       });
     } catch (error) {
@@ -106,7 +107,7 @@ export class UserTaskSessionService {
     //let attempt = 0
     try {
       const userTaskSession = await this.userTaskSessionRepository.findOne({
-        where: {_id: id},
+        where: { _id: id },
         relations: ['pages'],
       });
       if (!userTaskSession) {
@@ -128,13 +129,12 @@ export class UserTaskSessionService {
       pageToClose.endTime = new Date();
       await this.pageRepository.save(pageToClose);
       return await this.userTaskSessionRepository.findOne({
-        where: {_id: id},
+        where: { _id: id },
         relations: ['pages'],
       });
     } catch (error) {
       console.error(
-        `Error closing modal ${rank}: ${closePageDto.title}: ${
-          closePageDto.url
+        `Error closing modal ${rank}: ${closePageDto.title}: ${closePageDto.url
         } ${new Date()}`,
       );
       throw new Error(error.message);

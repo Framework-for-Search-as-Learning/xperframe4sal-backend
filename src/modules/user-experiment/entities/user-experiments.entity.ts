@@ -7,7 +7,7 @@ import {BaseEntity} from 'src/model/base.entity';
 import {
   Experiment,
   StepsType,
-} from 'src/modules/experiments/entity/experiment.entity';
+} from 'src/modules/experiment/entity/experiment.entity';
 import {User} from 'src/modules/user/entity/user.entity';
 import {Column, Entity, ManyToOne} from 'typeorm';
 

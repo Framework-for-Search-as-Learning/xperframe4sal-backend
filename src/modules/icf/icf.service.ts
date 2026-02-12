@@ -14,15 +14,15 @@ import {Icf} from './entity/icf.entity';
 import {Repository} from 'typeorm';
 import {CreateIcfDto} from './dto/create-icf.dto';
 import {UpdateIcfDto} from './dto/update-icf.dto';
-import {ExperimentsService} from '../experiments/experiments.service';
+import {ExperimentService} from '../experiment/experiment.service';
 
 @Injectable()
 export class IcfService {
   constructor(
     @InjectRepository(Icf)
     private readonly icfRepository: Repository<Icf>,
-    @Inject(forwardRef(() => ExperimentsService))
-    private readonly experimentService: ExperimentsService,
+    @Inject(forwardRef(() => ExperimentService))
+    private readonly experimentService: ExperimentService,
   ) {}
 
   async create(createIcfDto: CreateIcfDto): Promise<Icf> {

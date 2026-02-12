@@ -4,12 +4,12 @@
  */
 
 import {forwardRef, Module} from '@nestjs/common';
-import {UserExperimentsService} from './user-experiments.service';
-import {UserExperimentsController} from './user-experiments.controller';
+import {UserExperimentService} from './user-experiment.service';
+import {UserExperimentController} from './user-experiment.controller';
 import {TypeOrmModule} from '@nestjs/typeorm';
 import {UserExperiment} from './entities/user-experiments.entity';
 import {UserModule} from '../user/user.module';
-import {ExperimentsModule} from '../experiments/experiments.module';
+import {ExperimentModule} from '../experiment/experiment.module';
 import {UserTaskModule} from '../user-task/user-task.module';
 import {TaskModule} from '../task/task.module';
 
@@ -17,12 +17,12 @@ import {TaskModule} from '../task/task.module';
   imports: [
     TypeOrmModule.forFeature([UserExperiment]),
     UserModule,
-    forwardRef(() => ExperimentsModule),
+    forwardRef(() => ExperimentModule),
     UserTaskModule,
     TaskModule,
   ],
-  providers: [UserExperimentsService],
-  controllers: [UserExperimentsController],
-  exports: [UserExperimentsService],
+  providers: [UserExperimentService],
+  controllers: [UserExperimentController],
+  exports: [UserExperimentService],
 })
 export class UserExperimentsModule {}

@@ -9,21 +9,21 @@ import { UserExperiment } from './entities/user-experiments.entity';
 import { In, Repository } from 'typeorm';
 import { CreateUserExperimentDto } from './dto/create-userExperiment.dto';
 import { UserService } from '../user/user.service';
-import { ExperimentsService } from '../experiments/experiments.service';
+import { ExperimentService } from '../experiment/experiment.service';
 import { UpdateUserExperimentDto } from './dto/update-userExperiment.dto';
 import { User } from '../user/entity/user.entity';
-import { Experiment } from '../experiments/entity/experiment.entity';
+import { Experiment } from '../experiment/entity/experiment.entity';
 import { UserTaskService } from '../user-task/user-task.service';
 import { TaskService } from '../task/task.service';
 
 @Injectable()
-export class UserExperimentsService {
+export class UserExperimentService {
   constructor(
     @InjectRepository(UserExperiment)
     private readonly userExperimentRepository: Repository<UserExperiment>,
     private readonly userService: UserService,
-    @Inject(forwardRef(() => ExperimentsService))
-    private readonly experimentService: ExperimentsService,
+    @Inject(forwardRef(() => ExperimentService))
+    private readonly experimentService: ExperimentService,
     private readonly userTaskService: UserTaskService,
     private readonly taskService: TaskService,
   ) { }

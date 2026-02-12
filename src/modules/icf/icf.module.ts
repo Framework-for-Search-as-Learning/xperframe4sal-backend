@@ -8,12 +8,12 @@ import {IcfService} from './icf.service';
 import {IcfController} from './icf.controller';
 import {TypeOrmModule} from '@nestjs/typeorm';
 import {Icf} from './entity/icf.entity';
-import {ExperimentsModule} from '../experiments/experiments.module';
+import {ExperimentModule} from '../experiment/experiment.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Icf]),
-    forwardRef(() => ExperimentsModule),
+    forwardRef(() => ExperimentModule),
   ],
   providers: [IcfService],
   controllers: [IcfController],

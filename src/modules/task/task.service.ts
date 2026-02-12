@@ -13,7 +13,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Task } from './entities/task.entity';
 import { In, Repository } from 'typeorm';
 import { CreateTaskDto } from './dto/create-task.dto';
-import { ExperimentsService } from '../experiments/experiments.service';
+import { ExperimentService } from '../experiment/experiment.service';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { SurveyService } from '../survey/survey.service';
 import { TaskQuestionMapService } from '../task-question-map/task-question-map.service';
@@ -23,8 +23,8 @@ export class TaskService {
   constructor(
     @InjectRepository(Task)
     private readonly taskRepository: Repository<Task>,
-    @Inject(forwardRef(() => ExperimentsService))
-    private readonly experimentService: ExperimentsService,
+    @Inject(forwardRef(() => ExperimentService))
+    private readonly experimentService: ExperimentService,
     private readonly surveyService: SurveyService,
     @Inject(forwardRef(() => TaskQuestionMapService))
     private readonly taskQuestionMapService: TaskQuestionMapService,

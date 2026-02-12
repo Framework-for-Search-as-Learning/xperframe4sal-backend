@@ -4,7 +4,7 @@
  */
 
 import {BaseEntity} from 'src/model/base.entity';
-import {Experiment} from 'src/modules/experiments/entity/experiment.entity';
+import {Experiment} from 'src/modules/experiment/entity/experiment.entity';
 import {Column, Entity, ManyToOne} from 'typeorm';
 
 @Entity()

@@ -19,15 +19,15 @@ import {
 import { ApiOperation, ApiTags, ApiBody, ApiConsumes } from '@nestjs/swagger';
 import { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ExperimentsService } from './experiments.service';
+import { ExperimentService } from './experiment.service';
 import { Experiment } from './entity/experiment.entity';
 import { CreateExperimentDto } from './dto/create-experiment.dto';
 import { UpdateExperimentDto } from './dto/update-experiment.dto';
 
 @ApiTags('experiments')
 @Controller('experiments')
-export class ExperimentsController {
-  constructor(private readonly experimentService: ExperimentsService) { }
+export class ExperimentController {
+  constructor(private readonly experimentService: ExperimentService) { }
 
   @Post()
   @ApiOperation({ summary: 'Create an experiment' })

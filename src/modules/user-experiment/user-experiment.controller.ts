@@ -14,18 +14,18 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags, ApiBody, ApiQuery } from '@nestjs/swagger';
-import { UserExperimentsService } from './user-experiments.service';
+import { UserExperimentService } from './user-experiment.service';
 import { CreateUserExperimentDto } from './dto/create-userExperiment.dto';
 import { UserExperiment } from './entities/user-experiments.entity';
 import { UpdateUserExperimentDto } from './dto/update-userExperiment.dto';
-import { Experiment } from '../experiments/entity/experiment.entity';
+import { Experiment } from '../experiment/entity/experiment.entity';
 import { User } from '../user/entity/user.entity';
 
 @ApiTags('user-experiments')
 @Controller('user-experiments')
-export class UserExperimentsController {
+export class UserExperimentController {
   constructor(
-    private readonly userExperimentService: UserExperimentsService,
+    private readonly userExperimentService: UserExperimentService,
   ) { }
 
   @Post()

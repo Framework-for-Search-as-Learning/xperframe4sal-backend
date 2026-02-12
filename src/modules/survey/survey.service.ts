@@ -15,15 +15,15 @@ import {Survey} from './entity/survey.entity';
 import {Repository} from 'typeorm';
 import {CreateSurveyDto} from './dto/create-survey.dto';
 import {UpdateSurveyDto} from './dto/update-survey.dto';
-import {ExperimentsService} from '../experiments/experiments.service';
+import {ExperimentService} from '../experiment/experiment.service';
 
 @Injectable()
 export class SurveyService {
   constructor(
     @InjectRepository(Survey)
     private readonly surveyRepository: Repository<Survey>,
-    @Inject(forwardRef(() => ExperimentsService))
-    private readonly experimentService: ExperimentsService,
+    @Inject(forwardRef(() => ExperimentService))
+    private readonly experimentService: ExperimentService,
   ) {}
 
   async create(createSurveyDto: CreateSurveyDto): Promise<Survey> {

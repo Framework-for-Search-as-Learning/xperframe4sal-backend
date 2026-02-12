@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Experiment, StepsType } from './entity/experiment.entity';
 import { Not, Repository } from 'typeorm';
 import { CreateExperimentDto } from './dto/create-experiment.dto';
-import { UserExperimentsService } from '../user-experiments/user-experiments.service';
+import { UserExperimentService } from '../user-experiment/user-experiment.service';
 import { UserTaskService } from '../user-task/user-task.service';
 import { UpdateExperimentDto } from './dto/update-experiment.dto';
 import { UserService } from '../user/user.service';
@@ -19,12 +19,12 @@ import * as yaml from 'js-yaml';
 import { error } from 'console';
 
 @Injectable()
-export class ExperimentsService {
+export class ExperimentService {
   constructor(
     @InjectRepository(Experiment)
     private readonly experimentRepository: Repository<Experiment>,
-    @Inject(forwardRef(() => UserExperimentsService))
-    private readonly userExperimentService: UserExperimentsService,
+    @Inject(forwardRef(() => UserExperimentService))
+    private readonly userExperimentService: UserExperimentService,
     private readonly userTaskService: UserTaskService,
     private readonly userService: UserService,
     private readonly taskService: TaskService,

@@ -5,7 +5,7 @@
 
 import {BaseEntity} from 'src/model/base.entity';
 import {SurveyAnswer} from 'src/modules/survey-answer/entity/survey-answer.entity';
-import {UserExperiment} from 'src/modules/user-experiments/entities/user-experiments.entity';
+import {UserExperiment} from 'src/modules/user-experiment/entities/user-experiments.entity';
 import {UserTaskSession} from 'src/modules/user-task-session/entities/user-task-session.entity';
 import {UserTask} from 'src/modules/user-task/entities/user-tasks.entity';
 import {Column, Entity, OneToMany} from 'typeorm';

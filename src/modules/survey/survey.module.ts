@@ -8,12 +8,12 @@ import {SurveyController} from './survey.controller';
 import {SurveyService} from './survey.service';
 import {TypeOrmModule} from '@nestjs/typeorm';
 import {Survey} from './entity/survey.entity';
-import {ExperimentsModule} from '../experiments/experiments.module';
+import {ExperimentModule} from '../experiment/experiment.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Survey]),
-    forwardRef(() => ExperimentsModule),
+    forwardRef(() => ExperimentModule),
   ],
   controllers: [SurveyController],
   providers: [SurveyService],

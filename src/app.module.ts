@@ -13,12 +13,12 @@ import {ConfigModule} from '@nestjs/config';
 import {TypeOrmModule} from '@nestjs/typeorm';
 import {UserModule} from './modules/user/user.module';
 import {User} from './modules/user/entity/user.entity';
-import {ExperimentsModule} from './modules/experiments/experiments.module';
-import {Experiment} from './modules/experiments/entity/experiment.entity';
+import {ExperimentModule} from './modules/experiment/experiment.module';
+import {Experiment} from './modules/experiment/entity/experiment.entity';
 import {TaskModule} from './modules/task/task.module';
 import {Task} from './modules/task/entities/task.entity';
-import {UserExperimentsModule} from './modules/user-experiments/user-experiments.module';
-import {UserExperiment} from './modules/user-experiments/entities/user-experiments.entity';
+import {UserExperimentsModule} from './modules/user-experiment/user-experiment.module';
+import {UserExperiment} from './modules/user-experiment/entities/user-experiments.entity';
 import {UserTaskModule} from './modules/user-task/user-task.module';
 import {UserTask} from './modules/user-task/entities/user-tasks.entity';
 import {SurveyModule} from './modules/survey/survey.module';
@@ -71,7 +71,7 @@ import {Page} from './modules/user-task-session/entities/page.entity';
       },
     }),
     UserModule,
-    ExperimentsModule,
+    ExperimentModule,
     TaskModule,
     UserExperimentsModule,
     UserTaskModule,

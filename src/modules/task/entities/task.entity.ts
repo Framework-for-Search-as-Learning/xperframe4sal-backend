@@ -4,7 +4,7 @@
  */
 
 import { BaseEntity } from 'src/model/base.entity';
-import { Experiment } from 'src/modules/experiments/entity/experiment.entity';
+import { Experiment } from 'src/modules/experiment/entity/experiment.entity';
 import { Survey } from 'src/modules/survey/entity/survey.entity';
 import { TaskQuestionMap } from 'src/modules/task-question-map/entity/taskQuestionMap.entity';
 import { UserTaskSession } from 'src/modules/user-task-session/entities/user-task-session.entity';

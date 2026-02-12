@@ -4,7 +4,7 @@
  */
 
 import {BaseEntity} from 'src/model/base.entity';
-import {Experiment} from 'src/modules/experiments/entity/experiment.entity';
+import {Experiment} from 'src/modules/experiment/entity/experiment.entity';
 import {SurveyAnswer} from 'src/modules/survey-answer/entity/survey-answer.entity';
 import {Task} from 'src/modules/task/entities/task.entity';
 import {Column, Entity, ManyToOne, OneToMany} from 'typeorm';

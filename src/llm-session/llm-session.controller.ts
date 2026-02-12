@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
+import { Body, Controller, Param, Post, Res } from '@nestjs/common';
 import { LlmSessionService } from './llm-session.service';
 import { Response } from 'express';
 import {
@@ -75,7 +75,10 @@ export class LlmSessionController {
     } catch (error) {
       console.error('Error processing chat message:', error.message);
       res.write('\n[ERROR: Error to generate  response]');
-      res.end();
+    } finally {
+      if (!res.writableEnded) {
+        res.end();
+      }
     }
   }
 }

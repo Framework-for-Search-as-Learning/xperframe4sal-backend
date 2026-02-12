@@ -18,7 +18,6 @@ import { UserExperimentsService } from './user-experiments.service';
 import { CreateUserExperimentDto } from './dto/create-userExperiment.dto';
 import { UserExperiment } from './entities/user-experiments.entity';
 import { UpdateUserExperimentDto } from './dto/update-userExperiment.dto';
-import { GetUserDto } from 'src/model/user.dto';
 import { Experiment } from '../experiments/entity/experiment.entity';
 import { User } from '../user/entity/user.entity';
 
@@ -72,18 +71,19 @@ export class UserExperimentsController {
   @ApiOperation({ summary: 'Get users by experiment id' })
   async findUsersByExperimentId(
     @Param('experimentId') experimentId: string,
-  ): Promise<GetUserDto[]> {
+  ): Promise<User[]> {
     const users =
       await this.userExperimentService.findUsersByExperimentId(experimentId);
-    return users.map((user) => {
-      return {
-        id: user._id,
-        name: user.name,
-        lastName: user.lastName,
-        email: user.email,
-        researcher: user.researcher,
-      };
-    });
+    return users;
+    // return users.map((user) => {
+    //   return {
+    //     id: user._id,
+    //     name: user.name,
+    //     lastName: user.lastName,
+    //     email: user.email,
+    //     researcher: user.researcher,
+    //   };
+    // });
   }
 
   @Get('/user/:userId')

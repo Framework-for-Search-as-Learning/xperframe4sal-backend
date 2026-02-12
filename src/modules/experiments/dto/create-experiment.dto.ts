@@ -3,7 +3,6 @@
  * Licensed under The MIT License [see LICENSE for details]
  */
 
-//import {UserProps} from 'src/model/experiment.entity';
 import {IsNotEmpty, IsOptional, IsString} from 'class-validator';
 import {TaskProps} from '../entity/experiment.entity';
 import {CreateSurveyDto} from 'src/modules/survey/dto/create-survey.dto';

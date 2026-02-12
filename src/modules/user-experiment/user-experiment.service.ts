@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026, lapic-ufjf
+ * Licensed under The MIT License [see LICENSE for details]
+ */
+
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserExperiment, UserExperimentStatus } from './entities/user-experiments.entity';

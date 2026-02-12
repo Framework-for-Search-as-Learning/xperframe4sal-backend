@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026, lapic-ufjf
+ * Licensed under The MIT License [see LICENSE for details]
+ */
+
 //import {StepsType} from 'src/modules/experiments2/entity/experiment.entity';
 
 import { ApiProperty } from '@nestjs/swagger';

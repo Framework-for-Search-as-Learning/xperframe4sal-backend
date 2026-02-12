@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026, lapic-ufjf
+ * Licensed under The MIT License [see LICENSE for details]
+ */
+
 import { forwardRef, Module } from '@nestjs/common';
 import { UserExperimentService } from './user-experiment.service';
 import { UserExperimentController } from './user-experiment.controller';

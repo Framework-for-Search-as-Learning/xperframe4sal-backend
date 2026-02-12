@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026, lapic-ufjf
+ * Licensed under The MIT License [see LICENSE for details]
+ */
+
 import { TaskProviderConfig } from '../entities/task.entity';
 import { PROVIDER_CONFIG_SECRET_KEYS } from '../constants/provider-config.constants';
 import { ProviderConfigMasked } from '../types/provider-config.types';

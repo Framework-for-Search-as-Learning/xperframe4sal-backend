@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026, lapic-ufjf
+ * Licensed under The MIT License [see LICENSE for details]
+ */
+
 import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { SurveyAnswerService } from './survey-answer.service';
 import { CreateSurveyAnswerDto } from './dto/create-surveyAnswer.dto';

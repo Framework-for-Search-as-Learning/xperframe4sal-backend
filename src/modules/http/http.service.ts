@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026, lapic-ufjf
+ * Licensed under The MIT License [see LICENSE for details]
+ */
+
 import { HttpException, Injectable } from '@nestjs/common';
 import axios, { AxiosResponse, CanceledError } from 'axios';
 

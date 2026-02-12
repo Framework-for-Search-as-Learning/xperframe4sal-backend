@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026, lapic-ufjf
+ * Licensed under The MIT License [see LICENSE for details]
+ */
+
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { BingService } from './bing.service';
 import { AuthGuard } from '@nestjs/passport';

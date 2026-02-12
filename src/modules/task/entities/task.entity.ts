@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026, lapic-ufjf
+ * Licensed under The MIT License [see LICENSE for details]
+ */
+
 import { LlmSession } from 'src/modules/llm-session/entity/llm-session.entity';
 import { BaseEntity } from 'src/model/base_entity2';
 import { Experiment } from 'src/modules/experiment/entity/experiment.entity';

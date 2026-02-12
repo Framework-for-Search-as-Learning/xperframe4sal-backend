@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026, lapic-ufjf
+ * Licensed under The MIT License [see LICENSE for details]
+ */
+
 import { Injectable } from '@nestjs/common';
 import { QueryResponse, SearchEngineService } from 'src/interfaces/search-engine';
 import { HttpService } from 'src/modules/http/http.service';

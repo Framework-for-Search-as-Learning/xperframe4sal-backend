@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026, lapic-ufjf
+ * Licensed under The MIT License [see LICENSE for details]
+ */
+
 import { BaseEntity } from 'src/model/base_entity2';
 import { Experiment } from 'src/modules/experiment/entity/experiment.entity';
 import { SurveyAnswer } from 'src/modules/survey-answer/entity/survey-answer.entity';

@@ -1,10 +1,13 @@
+/*
+ * Copyright (c) 2026, lapic-ufjf
+ * Licensed under The MIT License [see LICENSE for details]
+ */
+
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './modules/auth/auth.module';
 import { HttpModule } from './modules/http/http.module';
 import { GoogleModule } from './modules/search-engines/google/google.module';
-import { PuppeteerModule } from './modules/puppeteer/puppeteer.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -41,7 +44,6 @@ import { Task } from './modules/task/entities/task.entity';
     AuthModule,
     HttpModule,
     GoogleModule,
-    PuppeteerModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.POSTGRES_HOST ? process.env.POSTGRES_HOST : 'localhost',

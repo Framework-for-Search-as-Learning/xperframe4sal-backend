@@ -1,8 +1,11 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { GoogleService } from './google.service';
-import { ApiExcludeController } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiExcludeController } from '@nestjs/swagger';
 
 
+@ApiBearerAuth('jwt')
+@UseGuards(AuthGuard('jwt'))
 @Controller('search-engine')
 export class GoogleController {
   private cache: Record<string, any> = {};

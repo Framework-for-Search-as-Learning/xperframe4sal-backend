@@ -156,7 +156,9 @@ export class UserController {
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: "Update a user's data" })
+  @ApiBearerAuth('jwt')
   @ApiParam({ name: 'id', type: String, description: 'User ID' })
   @ApiBody({ type: UpdateUserDto })
   @ApiResponse({ status: 200, description: 'User updated successfully.' })
@@ -175,7 +177,9 @@ export class UserController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: 'Delete a user' })
+  @ApiBearerAuth('jwt')
   @ApiParam({ name: 'id', type: String, description: 'User ID' })
   @ApiResponse({ status: 200, description: 'User deleted successfully.' })
   async remove(@Param('id') id: string) {

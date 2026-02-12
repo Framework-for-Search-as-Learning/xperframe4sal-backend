@@ -7,8 +7,11 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiParam,
@@ -26,6 +29,8 @@ import { TimeEditUserTaskDto } from './dto/timeEditUserTaskDTO';
 import { TaskExecutionDetailsDto } from './dto/task-execution-details.dto';
 
 @ApiTags('User Task')
+@ApiBearerAuth('jwt')
+@UseGuards(AuthGuard('jwt'))
 @Controller('user-task')
 export class UserTaskController {
   constructor(private readonly userTaskService: UserTaskService) { }

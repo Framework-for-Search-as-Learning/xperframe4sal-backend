@@ -1,8 +1,11 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { TaskQuestionMapService } from './task-question-map.service';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Task Question Map')
+@ApiBearerAuth('jwt')
+@UseGuards(AuthGuard('jwt'))
 @Controller('task-question-map')
 export class TaskQuestionMapController {
   constructor(

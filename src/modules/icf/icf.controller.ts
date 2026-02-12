@@ -6,14 +6,18 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { IcfService } from './icf.service';
 import { CreateIcfDto } from './dto/create-icf.dto';
 import { Icf } from './entity/icf.entity';
 import { UpdateIcfDto } from './dto/update-icf.dto';
-import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('ICF')
+@ApiBearerAuth('jwt')
+@UseGuards(AuthGuard('jwt'))
 @Controller('icf')
 export class IcfController {
   constructor(private readonly icfService: IcfService) { }

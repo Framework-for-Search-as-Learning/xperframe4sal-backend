@@ -1,7 +1,9 @@
-import { Body, Controller, Param, Post, Res } from '@nestjs/common';
+import { Body, Controller, Param, Post, Res, UseGuards } from '@nestjs/common';
 import { LlmSessionService } from './llm-session.service';
 import { Response } from 'express';
+import { AuthGuard } from '@nestjs/passport';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiParam,
@@ -11,6 +13,8 @@ import {
 } from '@nestjs/swagger';
 
 @ApiTags('LLM Session')
+@ApiBearerAuth('jwt')
+@UseGuards(AuthGuard('jwt'))
 @Controller('llm-session')
 export class LlmSessionController {
   constructor(private readonly llmSessionService: LlmSessionService) { }

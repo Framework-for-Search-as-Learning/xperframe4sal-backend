@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { UserTaskSessionService } from './user-task-session.service';
 import { UserTaskSession } from './entities/user-task-session.entity';
 import { CreateUserTaskSessionDto } from './dto/create-userTaskSession.dto';
 import { HandlePageDto } from './dto/handlePage.dto';
+import { AuthGuard } from '@nestjs/passport';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiParam,
@@ -13,6 +15,8 @@ import {
 } from '@nestjs/swagger';
 
 @ApiTags('User Task Session')
+@ApiBearerAuth('jwt')
+@UseGuards(AuthGuard('jwt'))
 @Controller('user-task-session')
 export class UserTaskSessionController {
   constructor(

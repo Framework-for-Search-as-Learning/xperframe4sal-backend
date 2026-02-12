@@ -6,8 +6,10 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { SurveyService } from './survey.service';
 import { CreateSurveyDto } from './dto/create-survey.dto';
 import { Survey } from './entity/survey.entity';
@@ -15,6 +17,8 @@ import { UpdateSurveyDto } from './dto/update-survey.dto';
 import { SurveyStatsDto } from './dto/survey-stats.dto';
 
 @ApiTags('Survey')
+@ApiBearerAuth('jwt')
+@UseGuards(AuthGuard('jwt'))
 @Controller('survey')
 export class SurveyController {
   constructor(private readonly surveyService: SurveyService) { }

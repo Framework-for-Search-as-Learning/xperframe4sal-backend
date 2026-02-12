@@ -7,8 +7,11 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiParam,
@@ -25,6 +28,8 @@ import { Experiment } from '../experiment/entity/experiment.entity';
 import { User } from '../user/entity/user.entity';
 
 @ApiTags('User Experiment')
+@ApiBearerAuth('jwt')
+@UseGuards(AuthGuard('jwt'))
 @Controller('user-experiment')
 export class UserExperimentController {
   constructor(

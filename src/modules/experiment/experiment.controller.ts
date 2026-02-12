@@ -9,9 +9,11 @@ import {
   Res,
   Header,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiConsumes,
   ApiOperation,
@@ -20,6 +22,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ExperimentService } from './experiment.service';
@@ -33,6 +36,8 @@ import { ExperimentTaskExecutionDto } from './dto/experiment-tasks-execution.dto
 import { ExperimentSurveyStatsDto } from './dto/experiment-surveys-stats.dto';
 
 @ApiTags('Experiment')
+@ApiBearerAuth('jwt')
+@UseGuards(AuthGuard('jwt'))
 @Controller('experiment')
 export class ExperimentController {
   constructor(private readonly experimentService: ExperimentService) { }

@@ -18,10 +18,10 @@ export class AuthController {
     schema: {
       type: 'object',
       properties: {
-        email: { type: 'string', example: 'user@example.com' },
+        username: { type: 'string', example: 'user@example.com' },
         password: { type: 'string', example: 'StrongPassword123' },
       },
-      required: ['email', 'password'],
+      required: ['username', 'password'],
     },
   })
   @ApiResponse({ status: 201, description: 'Login successful with JWT token.' })

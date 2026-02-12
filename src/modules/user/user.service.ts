@@ -13,7 +13,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entity/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
-import { ForgotPasswordDto, ResetPasswordDto } from 'src/model/user.dto';
+import { ForgotPasswordDto, ResetPasswordDto } from 'src/modules/user/dto/user.dto';
 import * as crypto from 'crypto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { CreateUserDto } from './dto/create-user.dto';

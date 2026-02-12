@@ -21,7 +21,7 @@ import {
   GetRecoveryPasswordDto,
   GetUserDto,
   ResetPasswordDto,
-} from 'src/model/user.dto';
+} from 'src/modules/user/dto/user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '@nestjs/passport';

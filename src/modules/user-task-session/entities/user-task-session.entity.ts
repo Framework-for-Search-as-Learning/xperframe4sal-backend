@@ -3,7 +3,7 @@
  * Licensed under The MIT License [see LICENSE for details]
  */
 
-import { BaseEntity } from 'src/model/base_entity2';
+import { BaseEntity } from 'src/model/base_entity';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { Page } from './page.entity';
 import { Task } from 'src/modules/task/entities/task.entity';

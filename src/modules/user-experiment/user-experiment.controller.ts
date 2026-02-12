@@ -28,7 +28,7 @@ import { UserExperimentService } from './user-experiment.service';
 import { CreateUserExperimentDto } from './dto/create-userExperiment.dto';
 import { UserExperiment } from './entities/user-experiments.entity';
 import { UpdateUserExperimentDto } from './dto/update-userExperiment.dto';
-import { GetUserDto } from 'src/model/user.dto';
+import { GetUserDto } from 'src/modules/user/dto/user.dto';
 import { Experiment } from '../experiment/entity/experiment.entity';
 import { User } from '../user/entity/user.entity';
 

@@ -3,7 +3,7 @@
  * Licensed under The MIT License [see LICENSE for details]
  */
 
-import { BaseEntity } from 'src/model/base_entity2';
+import { BaseEntity } from 'src/model/base_entity';
 import {
   Experiment,
   StepsType,

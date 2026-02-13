@@ -11,6 +11,9 @@ importers:
       '@google-cloud/local-auth':
         specifier: ^3.0.0
         version: 3.0.1
+      '@google/generative-ai':
+        specifier: ^0.24.1
+        version: 0.24.1
       '@googleapis/forms':
         specifier: ^2.0.4
         version: 2.5.1
@@ -645,6 +648,10 @@ packages:
   '@google-cloud/local-auth@3.0.1':
     resolution: {integrity: sha512-YJ3GFbksfHyEarbVHPSCzhKpjbnlAhdzg2SEf79l6ODukrSM1qUOqfopY232Xkw26huKSndyzmJz+A6b2WYn7Q==}
     engines: {node: '>=14.0.0'}
+
+  '@google/generative-ai@0.24.1':
+    resolution: {integrity: sha512-MqO+MLfM6kjxcKoy0p1wRzG3b4ZZXtPI+z2IE26UogS2Cm/XHO+7gGRBh6gcJsOiIVoH93UwKvW4HdgiOZCy9Q==}
+    engines: {node: '>=18.0.0'}
 
   '@googleapis/forms@2.5.1':
     resolution: {integrity: sha512-2scFPQDgGY5pCuV/2L/OYkzjcsBLh5K9GsTFM5liKu3bUDKJrq7I6uNfis6BAgpXUqzG+NCad0fMc5dJZ6cfQg==}
@@ -5026,6 +5033,8 @@ snapshots:
     transitivePeerDependencies:
       - encoding
       - supports-color
+
+  '@google/generative-ai@0.24.1': {}
 
   '@googleapis/forms@2.5.1':
     dependencies:

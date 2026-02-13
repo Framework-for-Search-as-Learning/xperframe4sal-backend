@@ -3,7 +3,7 @@
  * Licensed under The MIT License [see LICENSE for details]
  */
 
-import { BaseEntity } from 'src/model/base_entity';
+import { BaseEntity } from 'src/model/base-entity';
 import { Survey } from 'src/modules/survey/entity/survey.entity';
 import { User } from 'src/modules/user/entity/user.entity';
 import { Column, Entity, ManyToOne } from 'typeorm';

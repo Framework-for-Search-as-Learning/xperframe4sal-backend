@@ -3,7 +3,7 @@
  * Licensed under The MIT License [see LICENSE for details]
  */
 
-import { BaseEntity } from 'src/model/base_entity';
+import { BaseEntity } from 'src/model/base-entity';
 import { Icf } from 'src/modules/icf/entity/icf.entity';
 import { Survey } from 'src/modules/survey/entity/survey.entity';
 import { Task } from 'src/modules/task/entities/task.entity';

@@ -4,7 +4,7 @@
  */
 
 import { LlmSession } from 'src/modules/llm-session/entity/llm-session.entity';
-import { BaseEntity } from 'src/model/base_entity';
+import { BaseEntity } from 'src/model/base-entity';
 import { SurveyAnswer } from 'src/modules/survey-answer/entity/survey-answer.entity';
 import { UserExperiment } from 'src/modules/user-experiment/entities/user-experiments.entity';
 import { UserTaskSession } from 'src/modules/user-task-session/entities/user-task-session.entity';

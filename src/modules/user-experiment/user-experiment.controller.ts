@@ -129,7 +129,7 @@ export class UserExperimentController {
     return result;
   }
 
-  @Patch('finish/:id')
+  @Patch(':id/finish')
   @ApiOperation({ summary: 'Mark a user experiment as finished' })
   @ApiParam({ name: 'id', type: String, description: 'UserExperiment ID' })
   @ApiResponse({ status: 200, description: 'User experiment marked as finished.' })

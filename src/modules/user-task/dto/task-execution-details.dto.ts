@@ -77,6 +77,14 @@ export class ResourceAccessDto {
 }
 
 export class LlmTaskDetailsDto {
+
+  @ApiProperty({ type: 'array', description: 'Messages exchanged with the model' })
+  messages: {
+    content: string;
+    role: 'user' | 'model';
+    createdAt: Date;
+  }[];
+
   @ApiProperty({ description: 'Total messages (user + model)' })
   totalMessages: number;
 

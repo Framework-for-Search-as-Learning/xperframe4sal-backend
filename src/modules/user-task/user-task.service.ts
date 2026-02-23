@@ -542,6 +542,11 @@ export class UserTaskService {
 
       const messages = llmSession ? llmSession.messages : [];
       details.llmDetails = {
+        messages: messages.map(m => ({
+          content: m.content,
+          role: m.role,
+          createdAt: m.createdAt
+        })),  
         totalMessages: messages.length,
         promptsCount: messages.filter(m => m.role === 'user').length
       };
@@ -625,6 +630,11 @@ export class UserTaskService {
 
       const messages = llmSession ? llmSession.messages : [];
       details.llmDetails = {
+        messages: messages.map(m => ({
+          content: m.content,
+          role: m.role,
+          createdAt: m.createdAt
+        })),
         totalMessages: messages.length,
         promptsCount: messages.filter(m => m.role === 'user').length
       };

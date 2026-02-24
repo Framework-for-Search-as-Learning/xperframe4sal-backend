@@ -157,7 +157,7 @@ export class TaskService {
     }
     const questionsInTask =
       await this.taskQuestionMapService.findQuestionsByTask(id);
-    if (questionsInTask !== updateTaskDto?.questionsId) {
+    if (updateTaskDto.rule_type !== 'score' && questionsInTask !== updateTaskDto?.questionsId) {
       await this.taskQuestionMapService.updateTaskQuestionMap(
         id,
         updateTaskDto.questionsId,

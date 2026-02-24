@@ -16,12 +16,4 @@ export class CreateUserTaskRandomDto {
   @ApiProperty({ description: 'Candidate task list', type: [Task] })
   @IsNotEmpty()
   tasks: Task[];
-
-  /*
-  @ApiProperty({type: [String]})
-  @IsNotEmpty()
-  @IsArray()
-  @IsString({each: true})
-  taskIds: string[];
-  */
 }

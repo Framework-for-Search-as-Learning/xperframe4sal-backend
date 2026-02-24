@@ -18,6 +18,8 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { UserTaskSessionResponseDto } from './dto/user-task-session-response.dto';
+import { ErrorResponseDto } from 'src/common/dto/api-responses.dto';
 
 @ApiTags('User Task Session')
 @ApiBearerAuth('jwt')
@@ -32,7 +34,7 @@ export class UserTaskSessionController {
   @ApiOperation({ summary: 'Get user task sessions or filter by userId and taskId' })
   @ApiQuery({ name: 'userId', required: false, type: String, description: 'User ID' })
   @ApiQuery({ name: 'taskId', required: false, type: String, description: 'Task ID' })
-  @ApiResponse({ status: 200, description: 'User task sessions list or filtered results.' })
+  @ApiResponse({ status: 200, description: 'User task sessions list or filtered results.', type: UserTaskSessionResponseDto, isArray: true })
   async findAll(
     @Query('userId') userId: string,
     @Query('taskId') taskId: string,
@@ -52,8 +54,8 @@ export class UserTaskSessionController {
   @Get(':id')
   @ApiOperation({ summary: 'Get a user task session by id' })
   @ApiParam({ name: 'id', type: String, description: 'UserTaskSession ID' })
-  @ApiResponse({ status: 200, description: 'User task session details.' })
-  @ApiResponse({ status: 404, description: 'User task session not found.' })
+  @ApiResponse({ status: 200, description: 'User task session details.', type: UserTaskSessionResponseDto })
+  @ApiResponse({ status: 404, description: 'User task session not found.', type: ErrorResponseDto })
   async findOne(@Param('id') id: string): Promise<UserTaskSession> {
     return await this.userTaskSessionService.findOne(id);
   }
@@ -61,7 +63,7 @@ export class UserTaskSessionController {
   @Post()
   @ApiOperation({ summary: 'Create a user task session' })
   @ApiBody({ type: CreateUserTaskSessionDto })
-  @ApiResponse({ status: 201, description: 'User task session created.' })
+  @ApiResponse({ status: 201, description: 'User task session created.', type: UserTaskSessionResponseDto })
   async create(
     @Body() createUserTaskSessionDto: CreateUserTaskSessionDto,
   ): Promise<UserTaskSession> {
@@ -75,7 +77,7 @@ export class UserTaskSessionController {
   @ApiParam({ name: 'id', type: String, description: 'UserTaskSession ID' })
   @ApiParam({ name: 'rank', type: Number, description: 'Result rank' })
   @ApiBody({ type: HandlePageDto })
-  @ApiResponse({ status: 200, description: 'Page open event stored.' })
+  @ApiResponse({ status: 200, description: 'Page open event stored.', type: UserTaskSessionResponseDto })
   async openPage(
     @Param('id') id: string,
     @Param('rank') rank: number,
@@ -89,7 +91,7 @@ export class UserTaskSessionController {
   @ApiParam({ name: 'id', type: String, description: 'UserTaskSession ID' })
   @ApiParam({ name: 'rank', type: Number, description: 'Result rank' })
   @ApiBody({ type: HandlePageDto })
-  @ApiResponse({ status: 200, description: 'Page close event stored.' })
+  @ApiResponse({ status: 200, description: 'Page close event stored.', type: UserTaskSessionResponseDto })
   async closePage(
     @Param('id') id: string,
     @Param('rank') rank: number,

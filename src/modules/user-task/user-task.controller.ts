@@ -32,6 +32,10 @@ import { User } from '../user/entity/user.entity';
 import { Task } from '../task/entities/task.entity';
 import { TimeEditUserTaskDto } from './dto/timeEditUserTaskDTO';
 import { TaskExecutionDetailsDto } from './dto/task-execution-details.dto';
+import { UserTaskResponseDto } from './dto/user-task-response.dto';
+import { GetUserDto } from '../user/dto/user.dto';
+import { TaskResponseDto } from '../task/dto/task-response.dto';
+import { ErrorResponseDto } from 'src/common/dto/api-responses.dto';
 
 @ApiTags('User Task')
 @ApiBearerAuth('jwt')
@@ -43,8 +47,8 @@ export class UserTaskController {
   @Get(':id')
   @ApiOperation({ summary: 'Get a user task by id' })
   @ApiParam({ name: 'id', type: String, description: 'UserTask ID' })
-  @ApiResponse({ status: 200, description: 'User task details.' })
-  @ApiResponse({ status: 404, description: 'User task not found.' })
+  @ApiResponse({ status: 200, description: 'User task details.', type: UserTaskResponseDto })
+  @ApiResponse({ status: 404, description: 'User task not found.', type: ErrorResponseDto })
   async findOne(@Param('id') id: string): Promise<UserTask> {
     return await this.userTaskService.findOne(id);
   }
@@ -54,7 +58,7 @@ export class UserTaskController {
   @ApiOperation({ summary: 'Get detailed execution info for a specific user and task' })
   @ApiParam({ name: 'userId', type: String, description: 'User ID' })
   @ApiParam({ name: 'taskId', type: String, description: 'Task ID' })
-  @ApiResponse({ status: 200, description: 'Execution details for matching user tasks.' })
+  @ApiResponse({ status: 200, description: 'Execution details for matching user tasks.', type: TaskExecutionDetailsDto, isArray: true })
   async getUserTaskExecutionDetails(
     @Param('userId') userId: string,
     @Param('taskId') taskId: string
@@ -79,7 +83,7 @@ export class UserTaskController {
     type: String,
     description: 'Task ID',
   })
-  @ApiResponse({ status: 200, description: 'User tasks list or filtered results.' })
+  @ApiResponse({ status: 200, description: 'User tasks list or filtered results.', type: UserTaskResponseDto, isArray: true })
   async findAll(
     @Query('userId') userId: string,
     @Query('taskId') taskId: string,
@@ -99,7 +103,7 @@ export class UserTaskController {
   })
   @ApiParam({ name: 'userId', type: String, description: 'User ID' })
   @ApiParam({ name: 'experimentId', type: String, description: 'Experiment ID' })
-  @ApiResponse({ status: 200, description: 'User tasks for the user and experiment.' })
+  @ApiResponse({ status: 200, description: 'User tasks for the user and experiment.', type: UserTaskResponseDto, isArray: true })
   async findByExperimentId(
     @Param('userId') userId: string,
     @Param('experimentId') experimentId: string,
@@ -112,7 +116,7 @@ export class UserTaskController {
   @Get('task/:taskId/users')
   @ApiOperation({ summary: 'Get all users associated with a specific task' })
   @ApiParam({ name: 'taskId', type: String, description: 'Task ID' })
-  @ApiResponse({ status: 200, description: 'Users linked to the task.' })
+  @ApiResponse({ status: 200, description: 'Users linked to the task.', type: GetUserDto, isArray: true })
   async findUsersByTaskId(@Param('taskId') taskId: string): Promise<User[]> {
     return await this.userTaskService.findUsersByTaskId(taskId);
   }
@@ -120,7 +124,7 @@ export class UserTaskController {
   @Get('user/:userId/tasks')
   @ApiOperation({ summary: 'Get all tasks associated with a specific user' })
   @ApiParam({ name: 'userId', type: String, description: 'User ID' })
-  @ApiResponse({ status: 200, description: 'Tasks linked to the user.' })
+  @ApiResponse({ status: 200, description: 'Tasks linked to the user.', type: TaskResponseDto, isArray: true })
   async findTasksByUserId(@Param('userId') userId: string): Promise<Task[]> {
     return await this.userTaskService.findTasksByUserId(userId);
   }
@@ -131,7 +135,7 @@ export class UserTaskController {
   })
   @ApiParam({ name: 'userId', type: String, description: 'User ID' })
   @ApiParam({ name: 'experimentId', type: String, description: 'Experiment ID' })
-  @ApiResponse({ status: 200, description: 'Tasks linked to the user and experiment.' })
+  @ApiResponse({ status: 200, description: 'Tasks linked to the user and experiment.', type: TaskResponseDto, isArray: true })
   async findTasksByUserIdAndExperimentId(
     @Param('userId') userId: string,
     @Param('experimentId') experimentId: string,
@@ -145,7 +149,7 @@ export class UserTaskController {
   @Post()
   @ApiOperation({ summary: 'Create a new user task' })
   @ApiBody({ type: CreateUserTaskDto })
-  @ApiResponse({ status: 201, description: 'User task created successfully.' })
+  @ApiResponse({ status: 201, description: 'User task created successfully.', type: UserTaskResponseDto })
   async create(
     @Body() createUserTaskDto: CreateUserTaskDto,
   ): Promise<UserTask> {
@@ -167,7 +171,7 @@ export class UserTaskController {
     type: String,
     description: 'Task ID',
   })
-  @ApiResponse({ status: 200, description: 'User task removed.' })
+  @ApiResponse({ status: 200, description: 'User task removed.', type: UserTaskResponseDto })
   async removeByUserIdAndTaskId(
     @Query('userId') userId: string,
     @Query('taskId') taskId: string,
@@ -181,7 +185,7 @@ export class UserTaskController {
   @Delete(':id')
   @ApiOperation({ summary: 'Remove a user task by id' })
   @ApiParam({ name: 'id', type: String, description: 'UserTask ID' })
-  @ApiResponse({ status: 200, description: 'User task removed.' })
+  @ApiResponse({ status: 200, description: 'User task removed.', type: UserTaskResponseDto })
   async remove(@Param('id') id: string): Promise<UserTask> {
     return await this.userTaskService.remove(id);
   }
@@ -190,7 +194,7 @@ export class UserTaskController {
   @ApiOperation({ summary: 'Update a user task' })
   @ApiParam({ name: 'id', type: String, description: 'UserTask ID' })
   @ApiBody({ type: UpdateUserTaskDto })
-  @ApiResponse({ status: 200, description: 'User task updated successfully.' })
+  @ApiResponse({ status: 200, description: 'User task updated successfully.', type: UserTaskResponseDto })
   async update(
     @Param('id') id: string,
     @Body() updateUserTaskDto: UpdateUserTaskDto,
@@ -201,7 +205,7 @@ export class UserTaskController {
   @Patch(':id/start')
   @ApiOperation({ summary: 'Start a user task' })
   @ApiParam({ name: 'id', type: String, description: 'UserTask ID' })
-  @ApiResponse({ status: 200, description: 'User task started.' })
+  @ApiResponse({ status: 200, description: 'User task started.', type: UserTaskResponseDto })
   async start(@Param('id') id: string): Promise<UserTask> {
     const userTask = await this.userTaskService.findOne(id);
     const isPaused = userTask.isPaused;
@@ -212,7 +216,7 @@ export class UserTaskController {
   @Patch(':id/pause')
   @ApiOperation({ summary: 'Pause a user task' })
   @ApiParam({ name: 'id', type: String, description: 'UserTask ID' })
-  @ApiResponse({ status: 200, description: 'User task paused.' })
+  @ApiResponse({ status: 200, description: 'User task paused.', type: UserTaskResponseDto })
   async pause(@Param('id') id: string): Promise<UserTask> {
     const userTask = await this.userTaskService.findOne(id);
     const isPaused = userTask.isPaused;
@@ -223,7 +227,7 @@ export class UserTaskController {
   @Patch(':id/resume')
   @ApiOperation({ summary: 'Resume a user task' })
   @ApiParam({ name: 'id', type: String, description: 'UserTask ID' })
-  @ApiResponse({ status: 200, description: 'User task resumed.' })
+  @ApiResponse({ status: 200, description: 'User task resumed.', type: UserTaskResponseDto })
   async resume(@Param('id') id: string): Promise<UserTask> {
     const userTask = await this.userTaskService.findOne(id);
     const isPaused = userTask.isPaused;
@@ -235,7 +239,7 @@ export class UserTaskController {
   @ApiOperation({ summary: 'Finish a user task' })
   @ApiParam({ name: 'id', type: String, description: 'UserTask ID' })
   @ApiBody({ type: TimeEditUserTaskDto })
-  @ApiResponse({ status: 200, description: 'User task finished.' })
+  @ApiResponse({ status: 200, description: 'User task finished.', type: UserTaskResponseDto })
   async finish(@Param('id') id: string, @Body() timeEditUserTaskDto: TimeEditUserTaskDto): Promise<UserTask> {
     return await this.userTaskService.finish(id, timeEditUserTaskDto);
   }

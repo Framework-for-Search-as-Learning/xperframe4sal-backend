@@ -30,6 +30,8 @@ import { UserExperiment } from './entities/user-experiments.entity';
 import { UpdateUserExperimentDto } from './dto/update-userExperiment.dto';
 import { GetUserDto } from 'src/modules/user/dto/user.dto';
 import { User } from '../user/entity/user.entity';
+import { UserExperimentResponseDto } from './dto/user-experiment-response.dto';
+import { CountUsersResponseDto } from 'src/common/dto/api-responses.dto';
 
 @ApiTags('User Experiment')
 @ApiBearerAuth('jwt')
@@ -43,7 +45,7 @@ export class UserExperimentController {
   @Post()
   @ApiOperation({ summary: 'Create a user experiment' })
   @ApiBody({ type: CreateUserExperimentDto })
-  @ApiResponse({ status: 201, description: 'User experiment created successfully.' })
+  @ApiResponse({ status: 201, description: 'User experiment created successfully.', type: UserExperimentResponseDto })
   async create(
     @Body() createUserExperimentDto: CreateUserExperimentDto,
   ): Promise<UserExperiment> {
@@ -64,7 +66,7 @@ export class UserExperimentController {
     type: String,
     description: 'Experiment ID to filter',
   })
-  @ApiResponse({ status: 200, description: 'User experiments list or filtered results.' })
+  @ApiResponse({ status: 200, description: 'User experiments list or filtered results.', type: UserExperimentResponseDto, isArray: true })
   async findAll(
     @Query('userId') userId: string,
     @Query('experimentId') experimentId: string,
@@ -84,7 +86,7 @@ export class UserExperimentController {
   @Get('/experiment/:experimentId')
   @ApiOperation({ summary: 'Get users by experiment id' })
   @ApiParam({ name: 'experimentId', type: String, description: 'Experiment ID' })
-  @ApiResponse({ status: 200, description: 'Users participating in the experiment.' })
+  @ApiResponse({ status: 200, description: 'Users participating in the experiment.', type: GetUserDto, isArray: true })
   async findUsersByExperimentId(
     @Param('experimentId') experimentId: string,
   ): Promise<GetUserDto[]> {
@@ -104,7 +106,7 @@ export class UserExperimentController {
   @Get('/user/:userId')
   @ApiOperation({ summary: 'Get experiments by user id' })
   @ApiParam({ name: 'userId', type: String, description: 'User ID' })
-  @ApiResponse({ status: 200, description: 'Experiments for the user.' })
+  @ApiResponse({ status: 200, description: 'Experiments for the user.', type: UserExperimentResponseDto, isArray: true })
   async findExperimentsByUserId(
     @Param('userId') userId: string,
   ): Promise<UserExperiment[]> {
@@ -117,7 +119,7 @@ export class UserExperimentController {
   @ApiOperation({ summary: 'Update a user experiment' })
   @ApiParam({ name: 'id', type: String, description: 'UserExperiment ID' })
   @ApiBody({ type: UpdateUserExperimentDto })
-  @ApiResponse({ status: 200, description: 'User experiment updated successfully.' })
+  @ApiResponse({ status: 200, description: 'User experiment updated successfully.', type: UserExperimentResponseDto })
   async update(
     @Param('id') id: string,
     @Body() updateUserExperimentDto: UpdateUserExperimentDto,
@@ -132,7 +134,7 @@ export class UserExperimentController {
   @Patch(':id/finish')
   @ApiOperation({ summary: 'Mark a user experiment as finished' })
   @ApiParam({ name: 'id', type: String, description: 'UserExperiment ID' })
-  @ApiResponse({ status: 200, description: 'User experiment marked as finished.' })
+  @ApiResponse({ status: 200, description: 'User experiment marked as finished.', type: UserExperimentResponseDto })
   async finish(
     @Param('id') id: string,
   ): Promise<UserExperiment> {
@@ -152,7 +154,7 @@ export class UserExperimentController {
       required: ['newUsersId'],
     },
   })
-  @ApiResponse({ status: 200, description: 'Experiment users updated.' })
+  @ApiResponse({ status: 200, description: 'Experiment users updated.', type: GetUserDto, isArray: true })
   async updateExperimentUsers(
     @Param('id') id: string,
     @Body() body: { newUsersId: string[] },
@@ -175,7 +177,7 @@ export class UserExperimentController {
     type: String,
     description: 'Experiment ID',
   })
-  @ApiResponse({ status: 200, description: 'User experiment removed.' })
+  @ApiResponse({ status: 200, description: 'User experiment removed.', type: UserExperimentResponseDto })
   async removeByUserAndExperimentId(
     @Query('userId') userId: string,
     @Query('experimentId') experimentId: string,
@@ -189,7 +191,7 @@ export class UserExperimentController {
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a user experiment by id' })
   @ApiParam({ name: 'id', type: String, description: 'UserExperiment ID' })
-  @ApiResponse({ status: 200, description: 'User experiment removed.' })
+  @ApiResponse({ status: 200, description: 'User experiment removed.', type: UserExperimentResponseDto })
   async remove(@Param('id') id: string) {
     return await this.userExperimentService.remove(id);
   }
@@ -197,7 +199,7 @@ export class UserExperimentController {
   @Get('users-count/:experimentId')
   @ApiOperation({ summary: 'Count users participating in an experiment' })
   @ApiParam({ name: 'experimentId', type: String, description: 'Experiment ID' })
-  @ApiResponse({ status: 200, description: 'Number of users in the experiment.' })
+  @ApiResponse({ status: 200, description: 'Number of users in the experiment.', type: CountUsersResponseDto })
   async countUsers(@Param('experimentId') experimentId: string) {
     return await this.userExperimentService.countUsersByExperimentId(experimentId);
   }

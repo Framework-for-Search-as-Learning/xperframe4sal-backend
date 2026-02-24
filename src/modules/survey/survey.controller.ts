@@ -20,6 +20,8 @@ import { CreateSurveyDto } from './dto/create-survey.dto';
 import { Survey } from './entity/survey.entity';
 import { UpdateSurveyDto } from './dto/update-survey.dto';
 import { SurveyStatsDto } from './dto/survey-stats.dto';
+import { SurveyResponseDto } from './dto/survey-response.dto';
+import { ErrorResponseDto } from 'src/common/dto/api-responses.dto';
 
 @ApiTags('Survey')
 @ApiBearerAuth('jwt')
@@ -31,14 +33,14 @@ export class SurveyController {
   @Post()
   @ApiOperation({ summary: 'Create a survey' })
   @ApiBody({ type: CreateSurveyDto })
-  @ApiResponse({ status: 201, description: 'Survey created successfully.' })
+  @ApiResponse({ status: 201, description: 'Survey created successfully.', type: SurveyResponseDto })
   async create(@Body() createSurveyDto: CreateSurveyDto): Promise<Survey> {
     return await this.surveyService.create(createSurveyDto);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all surveys' })
-  @ApiResponse({ status: 200, description: 'List of surveys.' })
+  @ApiResponse({ status: 200, description: 'List of surveys.', type: SurveyResponseDto, isArray: true })
   async findAll(): Promise<Survey[]> {
     return await this.surveyService.findAll();
   }
@@ -46,8 +48,8 @@ export class SurveyController {
   @Get(':id')
   @ApiOperation({ summary: 'Get a survey by id' })
   @ApiParam({ name: 'id', type: String, description: 'Survey ID' })
-  @ApiResponse({ status: 200, description: 'Survey details.' })
-  @ApiResponse({ status: 404, description: 'Survey not found.' })
+  @ApiResponse({ status: 200, description: 'Survey details.', type: SurveyResponseDto })
+  @ApiResponse({ status: 404, description: 'Survey not found.', type: ErrorResponseDto })
   async findOne(@Param('id') id: string): Promise<Survey> {
     return await this.surveyService.findOne(id);
   }
@@ -55,7 +57,7 @@ export class SurveyController {
   @Get('/experiment/:experimentId')
   @ApiOperation({ summary: 'Get surveys by experiment id' })
   @ApiParam({ name: 'experimentId', type: String, description: 'Experiment ID' })
-  @ApiResponse({ status: 200, description: 'Surveys linked to the experiment.' })
+  @ApiResponse({ status: 200, description: 'Surveys linked to the experiment.', type: SurveyResponseDto, isArray: true })
   async findByExperimentId(
     @Param('experimentId') experimentId: string,
   ): Promise<Survey[]> {
@@ -66,7 +68,7 @@ export class SurveyController {
   @ApiOperation({ summary: 'Update a survey by id' })
   @ApiParam({ name: 'id', type: String, description: 'Survey ID' })
   @ApiBody({ type: UpdateSurveyDto })
-  @ApiResponse({ status: 200, description: 'Survey updated successfully.' })
+  @ApiResponse({ status: 200, description: 'Survey updated successfully.', type: SurveyResponseDto })
   async update(
     @Param('id') id: string,
     @Body() updateSurveyDto: UpdateSurveyDto,
@@ -77,7 +79,7 @@ export class SurveyController {
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a survey by id' })
   @ApiParam({ name: 'id', type: String, description: 'Survey ID' })
-  @ApiResponse({ status: 200, description: 'Survey deleted successfully.' })
+  @ApiResponse({ status: 200, description: 'Survey deleted successfully.', type: SurveyResponseDto })
   async remove(@Param('id') id: string) {
     return await this.surveyService.remove(id);
   }
@@ -85,7 +87,7 @@ export class SurveyController {
   @Get(':id/stats')
   @ApiOperation({ summary: 'Get survey statistics' })
   @ApiParam({ name: 'id', type: String, description: 'Survey ID' })
-  @ApiResponse({ status: 200, description: 'Survey statistics.' })
+  @ApiResponse({ status: 200, description: 'Survey statistics.', type: SurveyStatsDto })
   async getStats(@Param('id') id: string): Promise<SurveyStatsDto> {
     return await this.surveyService.getStats(id);
   }

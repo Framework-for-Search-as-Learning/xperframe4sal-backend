@@ -7,6 +7,7 @@ import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { BingService } from './bing.service';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { SearchQueryResponseDto } from '../search-query-response.dto';
 
 @ApiTags('Search Engine')
 @ApiBearerAuth('jwt')
@@ -23,7 +24,7 @@ export class BingController {
   @ApiQuery({ name: 'query', type: String, required: true, description: 'Search query' })
   @ApiQuery({ name: 'start', type: Number, required: false, description: 'Start index for pagination' })
   @ApiQuery({ name: 'num', type: Number, required: false, description: 'Number of results per page' })
-  @ApiResponse({ status: 200, description: 'Search results from Bing.' })
+  @ApiResponse({ status: 200, description: 'Search results from Bing.', type: SearchQueryResponseDto })
   async query(
     @Query('query') query: string,
     @Query('start') startIndex: number = 0,

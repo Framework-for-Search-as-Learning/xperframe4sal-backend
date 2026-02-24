@@ -4,59 +4,50 @@
  */
 
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator';
 
-export class CreateTaskDto {
+export class TaskResponseDto {
+  @ApiProperty({ description: 'Task ID', example: '9f0d7a5d-2a11-4b6b-8c1a-3f7a4a0292f9' })
+  _id: string;
+
   @ApiProperty({ description: 'Task title', example: 'Find evidence of confirmation bias' })
-  @IsNotEmpty()
-  @IsString()
   title: string;
 
   @ApiProperty({ description: 'Short summary for display', example: 'Search and evaluate sources' })
-  @IsNotEmpty()
-  @IsString()
   summary: string;
 
-  @ApiProperty({ description: 'Full task description', example: 'Search for articles and summarize findings.' })
-  @IsOptional()
-  @IsString()
+  @ApiProperty({ description: 'Task description', example: 'Search for articles and summarize findings.' })
   description: string;
 
   @ApiProperty({ description: 'Search source identifier', example: 'bing' })
-  @IsOptional()
-  @IsString()
   search_source: string;
 
-  @ApiProperty({ description: 'Experiment ID this task belongs to', example: '64d2f4a8e5f9b20b1c8a9f10' })
-  @IsNotEmpty()
-  @IsString()
+  @ApiProperty({ description: 'Experiment ID associated with this task', example: '64d2f4a8e5f9b20b1c8a9f10' })
   experiment_id: string;
 
   @ApiProperty({ description: 'Survey ID associated with this task', example: '64d2f4a8e5f9b20b1c8a9f11', required: false })
-  @IsOptional()
-  @IsString()
   survey_id?: string;
 
   @ApiProperty({ description: 'Rule type used for task selection', example: 'score', required: false })
-  @IsOptional()
-  @IsString()
   rule_type?: string;
 
-  @ApiProperty({ description: 'Question IDs used by rule selection', example: ['64d2f4a8e5f9b20b1c8a9f21'], required: false })
-  @IsOptional()
-  @IsArray()
-  questionsId?: string[];
-
   @ApiProperty({ description: 'Minimum score to qualify', example: 10, required: false })
-  @IsOptional()
   min_score?: number;
 
   @ApiProperty({ description: 'Maximum score to qualify', example: 25, required: false })
-  @IsOptional()
   max_score?: number;
 
-  @ApiProperty({ description: 'Provider specific configuration', example: {"model":"gemini-2.5-flash","apiKey":"asdasdasdsadd","modelProvider":"google"}, required: false })
-  @IsOptional()
-  @IsObject()
+  @ApiProperty({ description: 'Provider configuration returned by API', example: {"model":"gemini-2.5-flash","apiKey":"asda-----sdsadd","modelProvider":"google"}, required: false })
   provider_config?: Record<string, unknown>;
+
+  @ApiProperty({ description: 'Whether secret fields in provider config were masked', example: true, required: false })
+  provider_config_masked?: boolean;
+
+  @ApiProperty({ description: 'Whether the record is active', example: true })
+  isActive: boolean;
+
+  @ApiProperty({ description: 'Creation timestamp', example: '2026-02-24T13:30:00.000Z' })
+  createdAt: Date;
+
+  @ApiProperty({ description: 'Last update timestamp', example: '2026-02-24T13:30:00.000Z' })
+  lastChangeAt: Date;
 }

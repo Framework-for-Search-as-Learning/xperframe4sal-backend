@@ -19,6 +19,8 @@ import { Icf } from './entity/icf.entity';
 import { UpdateIcfDto } from './dto/update-icf.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { IcfResponseDto } from './dto/icf-response.dto';
+import { ErrorResponseDto } from 'src/common/dto/api-responses.dto';
 
 @ApiTags('ICF')
 @ApiBearerAuth('jwt')
@@ -30,14 +32,14 @@ export class IcfController {
   @Post()
   @ApiOperation({ summary: 'Create a icf' })
   @ApiBody({ type: CreateIcfDto })
-  @ApiResponse({ status: 201, description: 'ICF created successfully.' })
+  @ApiResponse({ status: 201, description: 'ICF created successfully.', type: IcfResponseDto })
   async create(@Body() createIcfDto: CreateIcfDto): Promise<Icf> {
     return await this.icfService.create(createIcfDto);
   }
 
   @ApiOperation({ summary: 'Get all icfs' })
   @Get()
-  @ApiResponse({ status: 200, description: 'List of ICFs.' })
+  @ApiResponse({ status: 200, description: 'List of ICFs.', type: IcfResponseDto, isArray: true })
   async findAll(): Promise<Icf[]> {
     return await this.icfService.findAll();
   }
@@ -45,8 +47,8 @@ export class IcfController {
   @Get(':id')
   @ApiOperation({ summary: 'Get a icf by id' })
   @ApiParam({ name: 'id', type: String, description: 'ICF ID' })
-  @ApiResponse({ status: 200, description: 'ICF details.' })
-  @ApiResponse({ status: 404, description: 'ICF not found.' })
+  @ApiResponse({ status: 200, description: 'ICF details.', type: IcfResponseDto })
+  @ApiResponse({ status: 404, description: 'ICF not found.', type: ErrorResponseDto })
   async findOne(@Param('id') id: string): Promise<Icf> {
     return await this.icfService.find(id);
   }
@@ -54,7 +56,7 @@ export class IcfController {
   @Get('experiment/:experimentId')
   @ApiOperation({ summary: 'Get a icf by experimentId' })
   @ApiParam({ name: 'experimentId', type: String, description: 'Experiment ID' })
-  @ApiResponse({ status: 200, description: 'ICF linked to the experiment.' })
+  @ApiResponse({ status: 200, description: 'ICF linked to the experiment.', type: IcfResponseDto })
   async findOneByExperimentId(
     @Param('experimentId') experimentId: string,
   ): Promise<Icf> {
@@ -65,7 +67,7 @@ export class IcfController {
   @ApiOperation({ summary: 'Update a icf by id' })
   @ApiParam({ name: 'id', type: String, description: 'ICF ID' })
   @ApiBody({ type: UpdateIcfDto })
-  @ApiResponse({ status: 200, description: 'ICF updated successfully.' })
+  @ApiResponse({ status: 200, description: 'ICF updated successfully.', type: IcfResponseDto })
   async update(
     @Param('id') id: string,
     @Body() updateIcfDto: UpdateIcfDto,
@@ -76,7 +78,7 @@ export class IcfController {
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a icf by id' })
   @ApiParam({ name: 'id', type: String, description: 'ICF ID' })
-  @ApiResponse({ status: 200, description: 'ICF deleted successfully.' })
+  @ApiResponse({ status: 200, description: 'ICF deleted successfully.', type: IcfResponseDto })
   async remove(@Param('id') id: string) {
     return await this.icfService.remove(id);
   }

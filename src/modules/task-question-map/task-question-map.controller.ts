@@ -7,6 +7,7 @@ import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { TaskQuestionMapService } from './task-question-map.service';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { taskQuestionIdsResponseSchema } from './dto/task-question-ids.response';
 
 @ApiTags('Task Question Map')
 @ApiBearerAuth('jwt')
@@ -20,7 +21,11 @@ export class TaskQuestionMapController {
   @Get('/task/:taskId')
   @ApiOperation({ summary: 'Get questions by taskId' })
   @ApiParam({ name: 'taskId', type: String, description: 'Task ID' })
-  @ApiResponse({ status: 200, description: 'List of question IDs for the task.' })
+  @ApiResponse({
+    status: 200,
+    description: 'List of question IDs for the task.',
+    schema: taskQuestionIdsResponseSchema,
+  })
   async findQuestions(@Param('taskId') taskId: string): Promise<string[]> {
     return await this.taskQuestionMapService.findQuestionsByTask(taskId);
   }

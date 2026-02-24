@@ -16,6 +16,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { LlmSessionResponseDto } from './dto/llm-session-response.dto';
 
 @ApiTags('LLM Session')
 @ApiBearerAuth('jwt')
@@ -36,7 +37,7 @@ export class LlmSessionController {
       required: ['taskId', 'userId'],
     },
   })
-  @ApiResponse({ status: 201, description: 'Session started.' })
+  @ApiResponse({ status: 201, description: 'Session started.', type: LlmSessionResponseDto })
   async startSession(@Body() body: { taskId: string; userId: string }) {
     return this.llmSessionService.startSession(body.userId, body.taskId);
   }
@@ -55,7 +56,14 @@ export class LlmSessionController {
     },
   })
   @ApiProduces('text/plain')
-  @ApiResponse({ status: 200, description: 'Streaming response from the model.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Streaming response from the model.',
+    schema: {
+      type: 'string',
+      example: 'This topic can be explored by comparing multiple independent sources...',
+    },
+  })
   async sendMessage(
     @Param('id') sessionId: string,
     @Body() body: { userId: string; content: string },

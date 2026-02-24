@@ -18,6 +18,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { SurveyAnswerResponseDto } from './dto/survey-answer-response.dto';
 
 @ApiTags('Survey Answer')
 @ApiBearerAuth('jwt')
@@ -29,7 +30,7 @@ export class SurveyAnswerController {
   @Post()
   @ApiOperation({ summary: 'Submit survey answers' })
   @ApiBody({ type: CreateSurveyAnswerDto })
-  @ApiResponse({ status: 201, description: 'Survey answers submitted.' })
+  @ApiResponse({ status: 201, description: 'Survey answers submitted.', type: SurveyAnswerResponseDto })
   async create(
     @Body() createSurveyAnswerDto: CreateSurveyAnswerDto,
   ): Promise<SurveyAnswer> {
@@ -40,7 +41,7 @@ export class SurveyAnswerController {
   @ApiOperation({ summary: 'Get survey answers or filter by userId and surveyId' })
   @ApiQuery({ name: 'userId', required: false, type: String, description: 'User ID' })
   @ApiQuery({ name: 'surveyId', required: false, type: String, description: 'Survey ID' })
-  @ApiResponse({ status: 200, description: 'Survey answers list or filtered result.' })
+  @ApiResponse({ status: 200, description: 'Survey answers list or filtered result.', type: SurveyAnswerResponseDto, isArray: true })
   async findAll(
     @Query('userId') userId: string,
     @Query('surveyId') surveyId: string,
@@ -61,7 +62,7 @@ export class SurveyAnswerController {
   @ApiOperation({ summary: 'Get survey answer by user and survey' })
   @ApiParam({ name: 'userId', type: String, description: 'User ID' })
   @ApiParam({ name: 'surveyId', type: String, description: 'Survey ID' })
-  @ApiResponse({ status: 200, description: 'Survey answer.' })
+  @ApiResponse({ status: 200, description: 'Survey answer.', type: SurveyAnswerResponseDto })
   async findByUserIdAndSurveyId(
     @Param('userId') userId: string,
     @Param('surveyId') surveyId: string,
@@ -76,7 +77,7 @@ export class SurveyAnswerController {
   @ApiOperation({ summary: 'Update survey answer' })
   @ApiParam({ name: 'id', type: String, description: 'SurveyAnswer ID' })
   @ApiBody({ type: UpdateSurveyAnswerDto })
-  @ApiResponse({ status: 200, description: 'Survey answer updated.' })
+  @ApiResponse({ status: 200, description: 'Survey answer updated.', type: SurveyAnswerResponseDto })
   async update(
     @Param('id') id: string,
     @Body() updateSurveyAnswerDto: UpdateSurveyAnswerDto,

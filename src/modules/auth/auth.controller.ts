@@ -7,6 +7,8 @@ import { Req, Controller, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { LoginResponseDto } from './dto/login-response.dto';
+import { ErrorResponseDto } from 'src/common/dto/api-responses.dto';
 
 @ApiTags('Auth')
 @Controller()
@@ -29,8 +31,12 @@ export class AuthController {
       required: ['username', 'password'],
     },
   })
-  @ApiResponse({ status: 201, description: 'Login successful with JWT token.' })
-  @ApiResponse({ status: 401, description: 'Invalid credentials.' })
+  @ApiResponse({
+    status: 201,
+    description: 'Login successful with JWT token.',
+    type: LoginResponseDto,
+  })
+  @ApiResponse({ status: 401, description: 'Invalid credentials.', type: ErrorResponseDto })
   async login(@Req() req: any) {
     return this.authService.loginWithCredentials(req.user);
   }

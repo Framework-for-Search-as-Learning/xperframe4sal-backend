@@ -157,7 +157,6 @@ export class TaskService {
     }
     const questionsInTask =
       await this.taskQuestionMapService.findQuestionsByTask(id);
-    //TODO verificar depois se essas duas listas vao ser passadas na mesma ordem
     if (questionsInTask !== updateTaskDto?.questionsId) {
       await this.taskQuestionMapService.updateTaskQuestionMap(
         id,

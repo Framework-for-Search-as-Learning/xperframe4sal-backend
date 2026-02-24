@@ -30,13 +30,12 @@ export class SurveyProps {
   required: boolean = false;
 }
 export class TaskProps {
-  //id: string;
   title: string;
   summary: string;
   description: string;
   search_source: string;
   SelectedSurvey: string;
-  RulesExperiment: string; //score || question
+  RulesExperiment: string; 
   ScoreThreshold: number;
   ScoreThresholdmx: number;
   selectedQuestionIds: string[];

@@ -40,14 +40,13 @@ export class CreateTaskDto {
   @ApiProperty({ description: 'Rule type used for task selection', example: 'score', required: false })
   @IsOptional()
   @IsString()
-  rule_type?: string; //score || question
+  rule_type?: string;
 
   @ApiProperty({ description: 'Question IDs used by rule selection', example: ['64d2f4a8e5f9b20b1c8a9f21'], required: false })
   @IsOptional()
   @IsArray()
   questionsId?: string[];
 
-  //TODO Voltar com @IsNumber apos corrigir no front
   @ApiProperty({ description: 'Minimum score to qualify', example: 10, required: false })
   @IsOptional()
   min_score?: number;

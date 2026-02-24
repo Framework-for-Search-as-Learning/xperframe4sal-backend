@@ -25,7 +25,6 @@ export class LlmSession {
   @ManyToOne(() => Task, (task) => task.llmSessions, { onDelete: 'CASCADE' })
   task: Task;
 
-  // Relacionamento renomeado para ser explícito
   @OneToMany(() => LlmMessage, (msg) => msg.session, { cascade: true })
   messages: LlmMessage[];
 }

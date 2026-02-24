@@ -3,7 +3,6 @@
  * Licensed under The MIT License [see LICENSE for details]
  */
 
-//import {UserProps} from 'src/model/experiment.entity';
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { TaskProps } from '../entity/experiment.entity';
 import { CreateSurveyDto } from 'src/modules/survey/dto/create-survey.dto';
@@ -35,15 +34,12 @@ export class CreateExperimentDto {
   @IsString()
   betweenExperimentType: string;
 
-  //Ver como fazer a relação
-  //tasks: Task[];
   @ApiProperty({
     description: 'Task definitions used in the experiment',
     type: 'array',
     items: { type: 'object' },
   })
   tasksProps: TaskProps[];
-  //;userProps: string[];
   @ApiProperty({
     description: 'Survey definitions used in the experiment',
     type: [CreateSurveyDto],

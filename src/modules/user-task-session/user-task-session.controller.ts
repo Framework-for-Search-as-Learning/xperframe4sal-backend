@@ -68,11 +68,7 @@ export class UserTaskSessionController {
     return await this.userTaskSessionService.create(createUserTaskSessionDto);
   }
 
-  //TODO removeByUserIdAndTaskId
 
-  //TODO remove
-
-  //TODO update
 
   @Patch(':id/open-page/:rank')
   @ApiOperation({ summary: 'Register opening a result page' })

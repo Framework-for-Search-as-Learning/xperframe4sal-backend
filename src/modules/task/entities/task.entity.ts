@@ -74,7 +74,6 @@ export class Task extends BaseEntity {
   @OneToMany(() => UserTask, (userTask) => userTask.task, { cascade: true })
   userTasks: UserTask[];
 
-  //TODO verificar a utilidade de colocar isso
   @OneToMany(() => UserTaskSession, (session) => session.task)
   sessions: UserTaskSession[];
 }

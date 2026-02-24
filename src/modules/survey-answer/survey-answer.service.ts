@@ -129,9 +129,6 @@ export class SurveyAnswerService {
           ) || 0;
       }
 
-      //TODO implementar para verificar as subquestoes
-      //if(answer.subAnswer && answer.subAnswer.length > 0)
-
       answer.score = questionScore;
       totalScore += questionScore;
     }

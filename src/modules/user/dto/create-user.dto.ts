@@ -32,5 +32,4 @@ export class CreateUserDto {
   @IsBoolean()
   researcher: boolean;
 
-  //birthDate: Date;
 }

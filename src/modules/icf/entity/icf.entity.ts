@@ -13,19 +13,6 @@ export class Icf extends BaseEntity {
   title: string;
   @Column()
   description: string;
-  /* 
-  @Column()
-  researchTitle: string;
-  @Column()
-  agreementStatement: string;
-  @Column()
-  description: string;
-  //TODO ver como fazer no postgres
-  //@Column()
-  //researchers: string[];
-  @Column()
-  contact: string;
-  */
   @ManyToOne(() => Experiment, (experiment) => experiment.icfs, {
     onDelete: 'CASCADE',
   })

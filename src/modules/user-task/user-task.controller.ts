@@ -152,16 +152,6 @@ export class UserTaskController {
     return await this.userTaskService.create(createUserTaskDto);
   }
 
-  /*
-  @Post('/random')
-  @ApiOperation({summary: 'Create a new user task using random method'})
-  //@ApiBody({type: CreateUserTaskDto})
-  async createRandom(
-    @Body() createUserTaskRandomDto: CreateUserTaskRandomDto,
-  ): Promise<UserTask> {
-    return await this.userTaskService.createRandom(createUserTaskRandomDto);
-  }
-  */
 
   @Delete()
   @ApiOperation({ summary: 'Remove a user task by userId and taskId' })

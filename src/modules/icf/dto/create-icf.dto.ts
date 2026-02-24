@@ -21,28 +21,4 @@ export class CreateIcfDto {
   @IsNotEmpty()
   @IsString()
   experimentId: string;
-  /*
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  researchTitle: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  agreementStatement: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  description: string;
-
-  //TODO esperar resolver no banco
-  //researchers
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  contact: string;
-  */
 }

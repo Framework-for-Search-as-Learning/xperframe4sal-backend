@@ -21,7 +21,7 @@ export class LlmMessage {
   content: string;
 
   @Column()
-  role: 'user' | 'model'; // Aqui fica claro que é IA
+  role: 'user' | 'model'; 
 
   @ManyToOne(() => LlmSession, (session) => session.messages, {
     onDelete: 'CASCADE',

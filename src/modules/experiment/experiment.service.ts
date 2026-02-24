@@ -59,7 +59,6 @@ export class ExperimentService {
     });
     const savedExperiment = await this.experimentRepository.save(experiment);
 
-    //Create Surveys
     const SurveysPromises = surveysProps.map((survey) => {
       return this.surveyService.create({
         description: survey.description,
@@ -73,7 +72,6 @@ export class ExperimentService {
     });
     await Promise.all(SurveysPromises);
 
-    //Create Task
     const TasksPromises = tasksProps.map((task) => {
       return this.taskService.create({
         title: task.title,
@@ -91,7 +89,6 @@ export class ExperimentService {
     });
     await Promise.all(TasksPromises);
 
-    //Create Icf
     await this.icfService.create({
       title: icf.title,
       description: icf.description,
@@ -232,7 +229,6 @@ export class ExperimentService {
   }
 
   async exportToYaml(id: string): Promise<string> {
-    // Buscar o experimento completo com todas as relações
     const experiment = await this.experimentRepository.findOne({
       where: { _id: id },
       relations: ['tasks', 'surveys', 'icfs'],
@@ -242,10 +238,8 @@ export class ExperimentService {
       throw new Error('Experiment not found');
     }
 
-    // Pegar o primeiro ICF (assumindo que há apenas um por experimento)
     const icf = experiment.icfs && experiment.icfs.length > 0 ? experiment.icfs[0] : null;
 
-    // Construir a estrutura do YAML com hierarquia
     const yamlData = {
       experiment: {
         name: experiment.name,
@@ -285,7 +279,6 @@ export class ExperimentService {
     try {
       const yamlData = yaml.load(yamlContent) as any;
 
-      // Validar estrutura completa
       const validationErrors = this.validateYamlObject(yamlData);
       if (validationErrors.length > 0) {
         return validationErrors;
@@ -293,7 +286,6 @@ export class ExperimentService {
 
       const owner = await this.userService.findOne(ownerId);
 
-      // Criar o experimento
       const experiment = await this.experimentRepository.create({
         name: yamlData.experiment.name,
         summary: yamlData.experiment.summary,
@@ -305,7 +297,6 @@ export class ExperimentService {
 
       const savedExperiment = await this.experimentRepository.save(experiment);
 
-      // Criar ICF se existir dentro de experiment
       if (yamlData.experiment.icf && yamlData.experiment.icf.title) {
         await this.icfService.create({
           title: yamlData.experiment.icf.title,
@@ -314,10 +305,8 @@ export class ExperimentService {
         });
       }
 
-      // Criar Surveys se existirem dentro de experiment
       if (yamlData.experiment.surveys && Array.isArray(yamlData.experiment.surveys)) {
         const surveysPromises = yamlData.experiment.surveys.map((survey) => {
-          // Gerar IDs automáticos para as questões se não existirem
           const questionsWithIds = (survey.questions || []).map(question => ({
             ...question,
             id: question.id || this.generateUuid()
@@ -336,7 +325,6 @@ export class ExperimentService {
         await Promise.all(surveysPromises);
       }
 
-      // Criar Tasks se existirem dentro de experiment
       if (yamlData.experiment.tasks && Array.isArray(yamlData.experiment.tasks)) {
         const tasksPromises = yamlData.experiment.tasks.map((task) => {
           return this.taskService.create({
@@ -373,162 +361,125 @@ export class ExperimentService {
   private validateYamlObject(yaml: any): string[] {
     const errors: string[] = [];
 
-    // Verificar se existe a estrutura principal 'experiment'
     if (!yaml.experiment) {
-      // errors.push('Missing required field: experiment');
       errors.push('yaml_error_missing_experiment');
-      return errors; // Se não existe experiment, não faz sentido continuar
+      return errors; 
     }
 
     const experiment = yaml.experiment;
 
-    // Validar campos obrigatórios do experimento
     if (!experiment.name || typeof experiment.name !== 'string' || experiment.name.trim() === '') {
-      // errors.push('Missing or invalid field: experiment.name');
       errors.push('yaml_error_missing_experiment_name');
     }
 
     if (!experiment.typeExperiment || typeof experiment.typeExperiment !== 'string') {
-      // errors.push('Missing or invalid field: experiment.typeExperiment');
       errors.push('yaml_error_missing_experiment_type');
     } else if (!['within-subject', 'between-subject'].includes(experiment.typeExperiment)) {
-      // errors.push('Invalid value for experiment.typeExperiment. Must be "within-subject" or "between-subject"');
       errors.push('yaml_error_invalid_experiment_type');
     } else if (experiment.typeExperiment == 'between-subject') {
       if (!experiment.betweenExperimentType || typeof experiment.betweenExperimentType !== 'string') {
-        // errors.push('Missing or invalid field: experiment.betweenExperimentType');
         errors.push('yaml_error_missing_experiment_between_type');
       } else if (!['random', 'rules_based', 'manual'].includes(experiment.betweenExperimentType)) {
-        // errors.push('Invalid value for experiment.betweenExperimentType. Must be "random", "rules_based" or "manual"');
         errors.push('yaml_error_invalid_experiment_between_type');
       }
     }
 
-    // Validar ICF
     if (!experiment.icf) {
-      // errors.push('Missing field: experiment.icf');
       errors.push('yaml_error_missing_icf');
     } else {
       if (!experiment.icf.title || typeof experiment.icf.title !== 'string' || experiment.icf.title.trim() === '') {
-        // errors.push('Missing or invalid field: experiment.icf.title');
         errors.push('yaml_error_missing_icf_title');
       }
     }
 
-    // Validar Surveys
     if (!experiment.surveys) {
-      // errors.push('Missing field: experiment.surveys');
       errors.push('yaml_error_missing_surveys');
     } else if (!Array.isArray(experiment.surveys)) {
-      // errors.push('Invalid field: experiment.surveys must be an array');
       errors.push('yaml_error_invalid_surveys');
     } else {
       experiment.surveys.forEach((survey, index) => {
 
         if (!survey.title || typeof survey.title !== 'string' || survey.title.trim() === '') {
-          // errors.push(`Missing or invalid field: experiment.surveys.title`);
           errors.push('yaml_error_missing_survey_title');
         }
 
         if (!survey.description || typeof survey.description !== 'string' || survey.description.trim() === '') {
-          // errors.push(`Missing or invalid field: experiment.surveys.description`);
           errors.push('yaml_error_missing_survey_description');
         }
 
         if (!survey.questions) {
-          // errors.push(`Missing field: experiment.surveys.questions`);
           errors.push('yaml_error_missing_surveys_questions');
         } else if (!Array.isArray(survey.questions)) {
-          // errors.push(`Invalid field: experiment.surveys.questions must be an array`);
           errors.push('yaml_error_invalid_survey_questions');
         } else {
           survey.questions.forEach((question, qIndex) => {
             if (!question.type || typeof question.type !== 'string') {
-              // errors.push(`Missing or invalid field: experiment.surveys.questions.type`);
               errors.push('yaml_error_missing_survey_question_type');
             } else if (!['open', 'multiple-choices', 'multiple-selection'].includes(question.type)) {
-              // errors.push(`Invalid value for experiment.surveys.questions.type`);
               errors.push('yaml_error_invalid_survey_question_type');
             } else if (question.type != 'open') {
 
               if (!Array.isArray(question.options)) {
-                // errors.push(`Missing or invalid field: experiment.surveys.questions.options (must be an array)`);
                 errors.push('yaml_error_missing_survey_question_options');
               }
             }
 
             if (typeof question.required !== 'boolean') {
-              // errors.push(`Missing or invalid field: experiment.surveys.questions.required (must be boolean)`);
               errors.push('yaml_error_missing_survey_question_required');
             }
 
             if (!question.statement || typeof question.statement !== 'string' || question.statement.trim() === '') {
-              // errors.push(`Missing or invalid field: experiment.surveys.questions.statement`);
               errors.push('yaml_error_missing_survey_question_statement');
             }
           });
         }
 
         if (!survey.type || typeof survey.type !== 'string') {
-          // errors.push(`Missing or invalid field: experiment.survey.type`);
           errors.push('yaml_error_missing_survey_type');
         } else if (!['pre', 'post', 'demo'].includes(survey.type)) {
-          // errors.push(`Invalid value for experiment.survey.type. Must be "pre", "post", or "demo"`);
           errors.push('yaml_error_invalid_survey_type');
         }
 
         if (typeof survey.uniqueAnswer !== 'boolean') {
-          // errors.push(`Missing or invalid field: experiment.survey.uniqueAnswer (must be boolean)`);
           errors.push('yaml_error_missing_survey_unique_answer');
         }
 
         if (typeof survey.required !== 'boolean') {
-          // errors.push(`Missing or invalid field: experiment.survey.required (must be boolean)`);
           errors.push('yaml_error_missing_survey_required');
         }
       });
     }
 
-    // Validar Tasks
     if (!experiment.tasks) {
-      // errors.push('Missing field: experiment.tasks');
       errors.push('yaml_error_missing_tasks');
     } else if (!Array.isArray(experiment.tasks)) {
-      // errors.push('Invalid field: experiment.tasks must be an array');
       errors.push('yaml_error_invalid_tasks');
 
     } else {
       experiment.tasks.forEach((task, index) => {
         if (!task.title || typeof task.title !== 'string' || task.title.trim() === '') {
-          // errors.push(`Missing or invalid field: experiments.tasks.title`);
           errors.push('yaml_error_missing_tasks_title');
         }
 
         if (!task.summary || typeof task.summary !== 'string' || task.summary.trim() === '') {
-          // errors.push(`Missing or invalid field: experiments.tasks.summary`);
           errors.push('yaml_error_missing_tasks_summary');
         }
 
         if (experiment.betweenExperimentType == 'rules_based') {
           if (!task.rule_type || typeof task.rule_type !== 'string') {
-            // errors.push(`Missing or invalid field: experiments.tasks.rule_type`);
             errors.push('yaml_error_missing_tasks_rule_type');
           } else if (!['score', 'question'].includes(task.rule_type)) {
-            // errors.push(`Invalid value for experiments.tasks.rule_type. Must be "score" or "question");
             errors.push('yaml_error_invalid_tasks_rule_type');
           }
 
           if (typeof task.max_score !== 'number') {
-            // errors.push(`Missing or invalid field: experiments.tasks.max_score (must be number)`);
             errors.push('yaml_error_missing_tasks_max_score');
           }
         }
 
         if (!task.search_source || typeof task.search_source !== 'string') {
-          // errors.push(`Missing or invalid field: experiments.tasks.search_source`);
           errors.push('yaml_error_missing_tasks_search_source');
         } else if (!['search-engine', 'llm'].includes(task.search_source)) {
-          // errors.push(`Invalid value for experiments.tasks.search_source. Must be "search-engine" or "llm"`);
           errors.push('yaml_error_invalid_tasks_search_source');
         }
 

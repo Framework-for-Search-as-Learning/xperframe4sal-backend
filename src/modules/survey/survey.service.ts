@@ -116,7 +116,7 @@ export class SurveyService {
 
     const questionStats: SurveyQuestionStatDto[] = [];
 
-    // Filter valid questions (not OPEN)
+
     const validQuestions = survey.questions.filter(q => q.type !== QuestionType.OPEN);
 
     for (const question of validQuestions) {
@@ -127,7 +127,7 @@ export class SurveyService {
         options: []
       };
 
-      // Initialize options
+     
       if (question.options) {
         qStat.options = question.options.map(opt => ({
           statement: opt.statement,
@@ -136,10 +136,9 @@ export class SurveyService {
         }));
       }
 
-      // Count answers
+     
       let answeredCount = 0;
       answers.forEach(ans => {
-        // Find answer for this question matching by statement
         const qAnswer = ans.answers.find(a => a.questionStatement === question.statement);
 
         if (qAnswer) {
@@ -158,7 +157,6 @@ export class SurveyService {
 
       qStat.totalAnswers = answeredCount;
 
-      // Calculate percentages
       if (answeredCount > 0) {
         qStat.options.forEach(opt => {
           opt.percentage = parseFloat(((opt.count / answeredCount) * 100).toFixed(2));

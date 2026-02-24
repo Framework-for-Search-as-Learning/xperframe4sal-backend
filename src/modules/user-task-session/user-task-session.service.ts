@@ -28,7 +28,6 @@ export class UserTaskSessionService {
       ...createUserTaskSessionDto,
       timestamp: new Date(),
     };
-    //TODO fazer verificação de userId e taskId
     return await this.userTaskSessionRepository.save(dataToSave);
   }
 
@@ -59,11 +58,7 @@ export class UserTaskSessionService {
     });
   }
 
-  //TODO removeByUserIdAndTaskId
 
-  //TODO remove
-
-  //TODO update
 
   async openPage(
     id: string,
@@ -78,8 +73,7 @@ export class UserTaskSessionService {
       if (!userTaskSession) {
         throw new NotFoundException('Session not found');
       }
-      //TODO verificar necessidade do attempt
-      //let attempt = 0
+     
 
       const page = this.pageRepository.create({
         title: openPageDto.title,
@@ -103,8 +97,7 @@ export class UserTaskSessionService {
     rank: number,
     closePageDto: HandlePageDto,
   ): Promise<UserTaskSession> {
-    //TODO verificar necessidade do attempt
-    //let attempt = 0
+   
     try {
       const userTaskSession = await this.userTaskSessionRepository.findOne({
         where: { _id: id },

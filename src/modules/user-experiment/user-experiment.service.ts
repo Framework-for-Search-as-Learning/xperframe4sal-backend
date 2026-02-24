@@ -65,7 +65,6 @@ export class UserExperimentService {
           tasks: experiment.tasks,
         });
 
-        //TODO retirar apos teste
         const taskIds = experiment.tasks.map((task) => task._id);
         const counts = await this.userTaskService.getTaskCounts(taskIds);
       }

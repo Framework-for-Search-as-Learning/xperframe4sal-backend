@@ -4,7 +4,7 @@
  */
 
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsNotEmpty, /*IsNumber,*/ IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsString } from 'class-validator';
 import { SurveyAnswer } from 'src/modules/survey-answer/entity/survey-answer.entity';
 
 export class CreateUserTaskScoreDto {
@@ -22,9 +22,4 @@ export class CreateUserTaskScoreDto {
   @ApiProperty({ description: 'Survey answer used to compute score' })
   @IsNotEmpty()
   surveyAnswer: SurveyAnswer;
-
-  /*@ApiProperty()
-  @IsNotEmpty()
-  @IsNumber()
-  score: number;*/
 }

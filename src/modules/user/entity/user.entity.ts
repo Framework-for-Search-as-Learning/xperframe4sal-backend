@@ -47,5 +47,4 @@ export class User extends BaseEntity {
   @OneToMany(() => LlmSession, (session) => session.user)
   llmSessions: LlmSession[];
 
-  //TODO role
 }

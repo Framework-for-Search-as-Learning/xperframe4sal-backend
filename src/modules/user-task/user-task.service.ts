@@ -96,49 +96,6 @@ export class UserTaskService {
     }
   }
 
-  /*
-  async createByQuestionScore(
-    createUserTaskQuestScore: CreateUserTaskQuestScoreDto,
-  ): Promise<UserTask> {
-    try {
-      const {userId, surveyId, taskIds, questionStatement} =
-        createUserTaskQuestScore;
-      const surveyAnswer =
-        await this.surveyAnswerService.findByUserIdAndSurveyId(
-          userId,
-          surveyId,
-        );
-      if (!surveyAnswer) {
-        throw new NotFoundException('SurveyAnswer nao foi encontrado');
-      }
-      const questionAnswer = surveyAnswer.answers.find(
-        (answer) => answer.questionStatement === questionStatement,
-      );
-      if (!questionAnswer) {
-        throw new NotFoundException('Questao não encontrada.');
-      }
-      const questionScore = questionAnswer.score;
-      const taskList = await this.taskService.findMany(taskIds);
-      let selectedTaskId;
-      for (const task of taskList) {
-        if (
-          questionScore >= task.min_score &&
-          questionScore <= task.max_score
-        ) {
-          selectedTaskId = task._id;
-          break;
-        }
-      }
-      if (!selectedTaskId) {
-        throw new Error('Nenhuma task encontrada para o score desse usuario');
-      }
-      return this.create({userId: userId, taskId: selectedTaskId});
-    } catch (error) {
-      throw error;
-    }
-  }
-  */
-
   async createByAverageQuestionsScore(
     createUserTaskAvgQuestScore: CreateUserTaskAvgQuestScoreDto,
   ): Promise<UserTask> {
@@ -182,7 +139,6 @@ export class UserTaskService {
     const { userId, surveyId, surveyAnswer } = createUserTaskByRule;
     const tasks = await this.taskService.findBySurveyId(surveyId);
     const surveyScoreTasks = tasks.filter((task) => task.rule_type === 'score');
-    //TODO ao inves de passar para Id passar o objeto Task na funcao de criacao de userTask
     const surveyScoreTasksIds = surveyScoreTasks.map((task) => task._id);
     const questionScoreTasks = tasks.filter(
       (task) => task.rule_type === 'question',
@@ -226,41 +182,6 @@ export class UserTaskService {
     }
   }
 
-  /*
-  async createRandom2(
-    createUserTaskRandomDto: CreateUserTaskRandomDto,
-  ): Promise<UserTask> {
-    try {
-      const {userId, tasks} = createUserTaskRandomDto;
-      const taskIds = tasks.map((task) => task._id);
-      const taskCounts = await this.getTaskCounts(taskIds);
-
-      const weights = taskIds.map((taskId) => {
-        const count = taskCounts[taskId];
-        return 1 / (count + 1);
-      });
-
-      const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
-      const cumulativeWeights = weights.map(
-        (w, i, arr) =>
-          arr.slice(0, i + 1).reduce((sum, weight) => sum + weight, 0) /
-          totalWeight,
-      );
-
-      const random = Math.random();
-      let selectTaskId;
-      for (let i = 0; i < cumulativeWeights.length; i++) {
-        if (random <= cumulativeWeights[i]) {
-          selectTaskId = taskIds[i];
-          break;
-        }
-      }
-      return await this.create({userId: userId, taskId: selectTaskId});
-    } catch (error) {
-      throw error;
-    }
-  }*/
-
   async createRandom(
     createUserTaksRandomDto: CreateUserTaskRandomDto,
   ): Promise<UserTask> {
@@ -268,8 +189,6 @@ export class UserTaskService {
       const { userId, tasks } = createUserTaksRandomDto;
       const taskIds = tasks.map((task) => task._id);
       const taskCounts = await this.getTaskCounts(taskIds);
-      //const taskCountList = Object.entries(taskCounts);
-      //const sortedTaskCount = taskCountList.sort((a, b) => a[1] - b[1]);
       const minTaskCount = Math.min(...Object.values(taskCounts));
       const tasksWithMinCount = Object.keys(taskCounts).filter(
         (taskId) => taskCounts[taskId] === minTaskCount,

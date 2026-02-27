@@ -42,10 +42,6 @@ import * as Joi from 'joi';
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: Joi.object({
-        DB_TYPE: Joi.string()
-          .required()
-          .valid('postgres', 'mysql', 'mariadb', 'mssql', 'oracle', 'sqlite')
-          .default('postgres'),
         DB_USER: Joi.string().required().default('pgadmin'),
         DB_PASSWORD: Joi.string().required().default('pgadmin'),
         DB_HOST: Joi.string().required().default('localhost'),
@@ -61,9 +57,7 @@ import * as Joi from 'joi';
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        type: configService.getOrThrow<
-          'postgres' | 'mysql' | 'mariadb' | 'mssql' | 'oracle' | 'sqlite'
-        >('DB_TYPE'),
+        type: 'postgres',
         host: configService.getOrThrow<string>('DB_HOST'),
         port: configService.getOrThrow<number>('DB_PORT'),
         username: configService.getOrThrow<string>('DB_USER'),

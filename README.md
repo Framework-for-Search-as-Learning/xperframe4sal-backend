@@ -62,7 +62,6 @@ cd xperframe4sal-backend
 The backend needs environment variables to connect to the database and
 manage authentication.
 
-- `PORT` -- The port on which the NestJS API will run (default: `3000`)
 - `DB_USER` -- PostgreSQL user (default: `postgres`)
 - `DB_PASSWORD` -- PostgreSQL password (default: `postgres`)
 - `DB_NAME` -- Database name (default: `sal`)

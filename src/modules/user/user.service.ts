@@ -9,15 +9,19 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './entity/user.entity';
-import { Repository } from 'typeorm';
+import {InjectRepository} from '@nestjs/typeorm';
+import {User} from './entity/user.entity';
+import {Repository} from 'typeorm';
 import * as bcrypt from 'bcryptjs';
-import { ForgotPasswordDto, ResetPasswordDto } from 'src/modules/user/dto/user.dto';
+import {
+  ForgotPasswordDto,
+  ResetPasswordDto,
+} from 'src/modules/user/dto/user.dto';
 import * as crypto from 'crypto';
-import { MailerService } from '@nestjs-modules/mailer';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import {MailerService} from '@nestjs-modules/mailer';
+import {CreateUserDto} from './dto/create-user.dto';
+import {UpdateUserDto} from './dto/update-user.dto';
+import {UpdatePasswordDto} from './dto/updatePassword.dto';
 
 const HOUR_1 = 3600000;
 @Injectable()
@@ -26,10 +30,10 @@ export class UserService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly mailerService: MailerService,
-  ) { }
+  ) {}
 
   async forgotPassword(forgotPasswordDto: ForgotPasswordDto): Promise<void> {
-    const { email } = forgotPasswordDto;
+    const {email} = forgotPasswordDto;
     let user = null;
     try {
       user = await this.findOneByEmail(email);
@@ -70,10 +74,12 @@ export class UserService {
       if (user.recoveryPasswordTokenExpirationDate < new Date()) {
         throw new Error('Token expirado');
       }
-      user.password = resetPasswordDto.password;
-      user.recoveryPasswordToken = null;
-      user.recoveryPasswordTokenExpirationDate = null;
-      await this.update(user._id, user);
+      const hashedPassword = await bcrypt.hash(resetPasswordDto.password, 10);
+      await this.userRepository.update(user._id, {
+        password: hashedPassword,
+        recoveryPasswordToken: null,
+        recoveryPasswordTokenExpirationDate: null,
+      });
     } catch (error) {
       console.error(error);
       throw error;
@@ -81,7 +87,7 @@ export class UserService {
   }
   async create(createUserDto: CreateUserDto): Promise<User> {
     try {
-      const { name, lastName, email, password, researcher } = createUserDto;
+      const {name, lastName, email, password, researcher} = createUserDto;
       const hashedPassword = await bcrypt.hash(password, 10);
       const userSaved = await this.userRepository.save({
         name,
@@ -107,7 +113,7 @@ export class UserService {
 
   async findOne(id: string): Promise<User> {
     try {
-      const user = await this.userRepository.findOne({ where: { _id: id } });
+      const user = await this.userRepository.findOne({where: {_id: id}});
       if (!user) {
         throw new NotFoundException(
           `Não foi possível encontrar usuário com id: ${id}`,
@@ -121,7 +127,7 @@ export class UserService {
   }
   async findOneByEmail(email: string): Promise<User> {
     try {
-      const user = await this.userRepository.findOne({ where: { email } });
+      const user = await this.userRepository.findOne({where: {email}});
       if (!user) {
         throw new NotFoundException(
           `Não foi possível encontrar usuário com email: ${email}`,
@@ -138,11 +144,13 @@ export class UserService {
     const token = crypto.randomBytes(32).toString('hex');
     const expirationDate = new Date();
     expirationDate.setMinutes(expirationDate.getMinutes() + 30);
-    user.recoveryPasswordToken = token;
-    user.recoveryPasswordTokenExpirationDate = expirationDate;
-    return await this.update(user._id, user);
+    await this.userRepository.update(user._id, {
+      recoveryPasswordToken: token,
+      recoveryPasswordTokenExpirationDate: expirationDate,
+    });
+    return await this.findOne(user._id);
   }
-  async findByEmailAndPassword({ email, password }): Promise<User> {
+  async findByEmailAndPassword({email, password}): Promise<User> {
     try {
       const user = await this.findOneByEmail(email);
       if (user && (await bcrypt.compare(password, user.password))) {
@@ -155,21 +163,34 @@ export class UserService {
   }
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     try {
-      if (updateUserDto.password?.length > 0) {
-        updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
-      } else {
-        updateUserDto.password = undefined;
-      }
-      await this.userRepository.update({ _id: id }, updateUserDto);
+      await this.userRepository.update({_id: id}, updateUserDto);
       const result = await this.findOne(id);
       return result;
     } catch (error) {
       throw new Error(error.message);
     }
   }
+
+  async updatePassword(
+    id: string,
+    updatePasswordDto: UpdatePasswordDto,
+  ): Promise<User> {
+    const user = await this.findOne(id);
+    const isPasswordValid = await bcrypt.compare(
+      updatePasswordDto.oldPassword,
+      user.password,
+    );
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Senha atual inválida');
+    }
+    const hashedPassword = await bcrypt.hash(updatePasswordDto.newPassword, 10);
+    await this.userRepository.update({_id: id}, {password: hashedPassword});
+    return await this.findOne(id);
+  }
+
   async remove(id: string) {
     const user = await this.findOne(id);
-    await this.userRepository.delete({ _id: id });
+    await this.userRepository.delete({_id: id});
     return user;
   }
   async removeAll() {
@@ -180,7 +201,7 @@ export class UserService {
         .from(User)
         .execute();
 
-      return { n: result.affected || 0 };
+      return {n: result.affected || 0};
     } catch (error) {
       console.error(error);
       throw error;

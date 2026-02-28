@@ -15,16 +15,17 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { UserService } from './user.service';
+import {UserService} from './user.service';
 import {
   ForgotPasswordDto,
   GetRecoveryPasswordDto,
   GetUserDto,
   ResetPasswordDto,
 } from 'src/modules/user/dto/user.dto';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { AuthGuard } from '@nestjs/passport';
+import {CreateUserDto} from './dto/create-user.dto';
+import {UpdateUserDto} from './dto/update-user.dto';
+import {UpdatePasswordDto} from './dto/updatePassword.dto';
+import {AuthGuard} from '@nestjs/passport';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -36,18 +37,25 @@ import {
   getSchemaPath,
   ApiTags,
 } from '@nestjs/swagger';
-import { ErrorResponseDto, MessageResponseDto } from 'src/common/dto/api-responses.dto';
+import {
+  ErrorResponseDto,
+  MessageResponseDto,
+} from 'src/common/dto/api-responses.dto';
 
 @ApiTags('User')
 @ApiExtraModels(GetUserDto, ErrorResponseDto, MessageResponseDto)
 @Controller('user')
 export class UserController {
-  constructor(private readonly _userService: UserService) { }
+  constructor(private readonly _userService: UserService) {}
 
   @Post('forgot-password')
-  @ApiOperation({ summary: 'Request password recovery' })
-  @ApiBody({ type: ForgotPasswordDto })
-  @ApiResponse({ status: 200, description: 'Recovery email sent if user exists.', type: MessageResponseDto })
+  @ApiOperation({summary: 'Request password recovery'})
+  @ApiBody({type: ForgotPasswordDto})
+  @ApiResponse({
+    status: 200,
+    description: 'Recovery email sent if user exists.',
+    type: MessageResponseDto,
+  })
   async forgotPassword(
     @Body() forgotPasswordDto: ForgotPasswordDto,
   ): Promise<void> {
@@ -59,10 +67,18 @@ export class UserController {
   }
 
   @Post('reset-password')
-  @ApiOperation({ summary: 'Reset a user’s password' })
-  @ApiBody({ type: ResetPasswordDto })
-  @ApiResponse({ status: 200, description: 'Password reset successfully.', type: MessageResponseDto })
-  @ApiResponse({ status: 400, description: 'Invalid token or expired.', type: ErrorResponseDto })
+  @ApiOperation({summary: 'Reset a user’s password'})
+  @ApiBody({type: ResetPasswordDto})
+  @ApiResponse({
+    status: 200,
+    description: 'Password reset successfully.',
+    type: MessageResponseDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid token or expired.',
+    type: ErrorResponseDto,
+  })
   async resetPassword(
     @Body() resetPasswordDto: ResetPasswordDto,
   ): Promise<void> {
@@ -74,9 +90,13 @@ export class UserController {
   }
 
   @Post()
-  @ApiOperation({ summary: 'Create a new user' })
-  @ApiBody({ type: CreateUserDto })
-  @ApiResponse({ status: 201, description: 'User created successfully.', type: GetUserDto })
+  @ApiOperation({summary: 'Create a new user'})
+  @ApiBody({type: CreateUserDto})
+  @ApiResponse({
+    status: 201,
+    description: 'User created successfully.',
+    type: GetUserDto,
+  })
   async create(@Body() createUserDto: CreateUserDto): Promise<GetUserDto> {
     try {
       createUserDto.name = createUserDto.name.trim();
@@ -97,7 +117,7 @@ export class UserController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get()
-  @ApiOperation({ summary: 'Get all users' })
+  @ApiOperation({summary: 'Get all users'})
   @ApiBearerAuth('jwt')
   @ApiQuery({
     name: 'email',
@@ -109,9 +129,9 @@ export class UserController {
     description: 'List of users or a single user when filtered by email.',
     schema: {
       oneOf: [
-        { type: 'array', items: { $ref: getSchemaPath(GetUserDto) } },
-        { $ref: getSchemaPath(GetUserDto) },
-        { $ref: getSchemaPath(ErrorResponseDto) },
+        {type: 'array', items: {$ref: getSchemaPath(GetUserDto)}},
+        {$ref: getSchemaPath(GetUserDto)},
+        {$ref: getSchemaPath(ErrorResponseDto)},
       ],
     },
   })
@@ -120,7 +140,7 @@ export class UserController {
   ): Promise<
     | GetUserDto[]
     | GetUserDto
-    | { data?: any; error?: string; statusCode?: number }
+    | {data?: any; error?: string; statusCode?: number}
   > {
     if (email) {
       try {
@@ -134,7 +154,7 @@ export class UserController {
         };
       } catch (error) {
         if (error instanceof NotFoundException) {
-          return { error: 'User not found', statusCode: 404 };
+          return {error: 'User not found', statusCode: 404};
         } else {
           throw error;
         }
@@ -158,11 +178,15 @@ export class UserController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get(':id')
-  @ApiOperation({ summary: 'Get a user by ID' })
+  @ApiOperation({summary: 'Get a user by ID'})
   @ApiBearerAuth('jwt')
-  @ApiParam({ name: 'id', type: String, description: 'User ID' })
-  @ApiResponse({ status: 200, description: 'User details.', type: GetUserDto })
-  @ApiResponse({ status: 404, description: 'User not found.', type: ErrorResponseDto })
+  @ApiParam({name: 'id', type: String, description: 'User ID'})
+  @ApiResponse({status: 200, description: 'User details.', type: GetUserDto})
+  @ApiResponse({
+    status: 404,
+    description: 'User not found.',
+    type: ErrorResponseDto,
+  })
   async findOne(@Param('id') id: string): Promise<GetUserDto> {
     const user = await this._userService.findOne(id);
     return {
@@ -176,11 +200,15 @@ export class UserController {
 
   @Patch(':id')
   @UseGuards(AuthGuard('jwt'))
-  @ApiOperation({ summary: "Update a user's data" })
+  @ApiOperation({summary: "Update a user's data"})
   @ApiBearerAuth('jwt')
-  @ApiParam({ name: 'id', type: String, description: 'User ID' })
-  @ApiBody({ type: UpdateUserDto })
-  @ApiResponse({ status: 200, description: 'User updated successfully.', type: GetUserDto })
+  @ApiParam({name: 'id', type: String, description: 'User ID'})
+  @ApiBody({type: UpdateUserDto})
+  @ApiResponse({
+    status: 200,
+    description: 'User updated successfully.',
+    type: GetUserDto,
+  })
   async update(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
@@ -195,24 +223,65 @@ export class UserController {
     };
   }
 
+  @Patch(':id/password')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({summary: "Update a user's password"})
+  @ApiBearerAuth('jwt')
+  @ApiParam({name: 'id', type: String, description: 'User ID'})
+  @ApiBody({type: UpdatePasswordDto})
+  @ApiResponse({
+    status: 200,
+    description: 'Password updated successfully.',
+    type: GetUserDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Current password is invalid.',
+    type: ErrorResponseDto,
+  })
+  async updatePassword(
+    @Param('id') id: string,
+    @Body() updatePasswordDto: UpdatePasswordDto,
+  ): Promise<GetUserDto> {
+    const userDto = await this._userService.updatePassword(
+      id,
+      updatePasswordDto,
+    );
+    return {
+      id: userDto._id,
+      name: userDto.name,
+      lastName: userDto.lastName,
+      email: userDto.email,
+      researcher: userDto.researcher,
+    };
+  }
+
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'))
-  @ApiOperation({ summary: 'Delete a user' })
+  @ApiOperation({summary: 'Delete a user'})
   @ApiBearerAuth('jwt')
-  @ApiParam({ name: 'id', type: String, description: 'User ID' })
-  @ApiResponse({ status: 200, description: 'User deleted successfully.', type: GetUserDto })
+  @ApiParam({name: 'id', type: String, description: 'User ID'})
+  @ApiResponse({
+    status: 200,
+    description: 'User deleted successfully.',
+    type: GetUserDto,
+  })
   async remove(@Param('id') id: string) {
     return await this._userService.remove(id);
   }
 
   @Patch()
-  @ApiOperation({ summary: 'Add password recovery token' })
+  @ApiOperation({summary: 'Add password recovery token'})
   @ApiQuery({
     name: 'email',
     required: true,
     description: 'User email to send the token',
   })
-  @ApiResponse({ status: 200, description: 'Recovery token created and stored.', type: GetRecoveryPasswordDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Recovery token created and stored.',
+    type: GetRecoveryPasswordDto,
+  })
   async addChangesPasswordToken(
     @Query('email') email: string,
   ): Promise<GetRecoveryPasswordDto> {

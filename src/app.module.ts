@@ -47,7 +47,7 @@ import * as Joi from 'joi';
         DB_HOST: Joi.string().required().default('localhost'),
         DB_PORT: Joi.number().required().default(5432),
         DB_NAME: Joi.string().required().default('sal'),
-        PORT: Joi.number().required().default(3000),
+        PORT: Joi.number().default(3000),
         SECRET: Joi.string().required(),
       }),
     }),

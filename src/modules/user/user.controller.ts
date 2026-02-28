@@ -237,7 +237,13 @@ export class UserController {
   @ApiResponse({
     status: 401,
     description: 'Current password is invalid.',
-    type: ErrorResponseDto,
+    schema: {
+      example: {
+        statusCode: 401,
+        message: 'Senha atual inválida',
+        error: 'Unauthorized',
+      },
+    },
   })
   async updatePassword(
     @Param('id') id: string,

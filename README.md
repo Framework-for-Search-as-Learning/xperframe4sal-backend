@@ -1,45 +1,157 @@
-# XperFrame4SAL Backend
+<p align="center">
+A standardized framework for capturing authentic human behavior in search and AI-chat experiments.
+</p>
+<p align="center">
+  <img src="https://img.shields.io/badge/version-1.0.0-004b8d" alt="Version">
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-2fb594" alt="License"></a>
+  <img src="https://img.shields.io/badge/Research-Tool-orange" alt="Tool">
+</p>
 
-Backend for the XperFrame4SAL framework.
+## 📖 Description
 
-## Requirements
+This repository contains the backend service for **Searchat Behavior**. It provides the API server that handles experiment
+management, business logic, authentication, and data persistence for
+both search-based and chat-based experimental tasks.
 
-- Node.js (v18+ recommended)
-- pnpm
-- (PostgreSQL and MongoDB)  OR (Docker)
+Built with **NestJS**, this API interacts with the database to manage
+configurations and experimental data.
 
-## Setup
+> **⚠️ Note:** If you want to run the full stack (Frontend + Backend +
+> Database) together, please refer to the [Searchat Behavior Parent
+> Repository](https://github.com/Framework-for-Search-as-Learning/xperframe4sal).
+> The instructions below are strictly for running the backend
+> **independently** for isolated development or testing.
 
-1. Clone this repository:
-    ```sh
-    git clone https://github.com/Framework-for-Search-as-Learning/xperframe4sal-backend.git
-    cd xperframe4sal-backend
-    ```
+------------------------------------------------------------------------
 
-2. Install dependencies:
-    ```sh
-    pnpm install
-    ```
+## 🛠️ Prerequisites
 
-3. Copy the example environment file and configure your variables:
-    ```sh
-    cp .env.example .env
-    # Edit .env with your database
-    ```
+The required tools depend on how you plan to run the application:
 
-4. Start databases using Docker:
-    ```sh
-    docker-compose up -d
-    ```
+### 🐳 Option A: Running with Docker (Recommended for quick start)
 
-## Running
+You only need: 
+- **Docker** and **Docker Compose**
 
-Start the server:
-```sh
-pnpm start
+### 💻 Option B: Running Locally
+
+If you want to run the NestJS application directly on your machine, you
+need: 
+- **Node.js** (v18+ recommended)
+- **pnpm** (Package manager)
+- **PostgreSQL** 
+
+------------------------------------------------------------------------
+
+## 1️⃣ Clone the Repository
+
+``` bash
+git clone https://github.com/Framework-for-Search-as-Learning/xperframe4sal-backend.git
+cd xperframe4sal-backend
 ```
 
-The API will be available at [http://localhost:3000/searching-as-learning](http://localhost:3000/searching-as-learning).
+------------------------------------------------------------------------
 
----
-For more details, see the code and comments in
+## 2️⃣ Configure Environment Variables
+
+The backend needs environment variables to connect to the database and
+manage authentication.
+
+-   `PORT` -- The port on which the NestJS API will run (default: `3000`) 
+-   `DB_USER` -- PostgreSQL user (default: `postgres`)
+-   `DB_PASSWORD` -- PostgreSQL password (default: `postgres`)
+-   `DB_NAME` -- Database name (default: `sal`)
+-   `DB_HOST` -- Database host, if running via Docker, use the service name (postgres-api).If running locally, use localhost (default: `localhost`)
+-   `SECRET` -- You need to configure yours manually.
+
+### ✅ Alternative A: Using a `.env` file (Recommended for custom setups)
+
+Linux/macOS:
+
+``` bash
+cp .env.example .env
+```
+
+Windows:
+
+``` bash
+copy .env.example .env
+```
+
+Edit the `.env` file with the values above.
+
+### 💻 Alternative B: Using the Command Line (CLI)
+
+You can skip creating a `.env` file and pass the variables directly via
+CLI when starting the containers (shown below).
+
+------------------------------------------------------------------------
+
+## 3️⃣ Run the Application
+
+### 🐳 Method A: Docker
+
+**Using `.env` file (All OS):**
+
+``` bash
+docker compose up --build
+```
+
+**Via CLI (Linux/macOS):**
+
+``` bash
+DB_USER=postgres DB_PASSWORD=postgres DB_NAME=sal SECRET=your_jwt_secret docker compose up --build
+```
+
+**Via CLI (Windows PowerShell):**
+
+``` powershell
+$env:DB_USER="postgres";
+$env:DB_PASSWORD="postgres";
+$env:DB_NAME="sal";
+$env:SECRET="your_jwt_secret";
+docker compose up --build
+```
+
+### 💻 Method B: Local Development
+
+1.  Start PostgreSQL.
+2.  Install dependencies:
+
+``` bash
+pnpm install
+```
+
+3.  Start development server:
+
+``` bash
+pnpm start:dev
+```
+
+------------------------------------------------------------------------
+
+## 4️⃣ Accessing the Services
+
+-   Backend API: http://localhost:3000/searching-as-learning\
+-   PostgreSQL: localhost:5432\
+-   pgAdmin (Docker only): http://localhost:5050
+
+------------------------------------------------------------------------
+
+## 5️⃣ Stopping the Application
+
+``` bash
+docker compose down
+```
+
+To wipe database volumes:
+
+``` bash
+docker compose down -v
+```
+
+------------------------------------------------------------------------
+
+## 📄 License
+
+Released under the MIT license.

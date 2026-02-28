@@ -25,7 +25,7 @@ configurations and experimental data.
 > The instructions below are strictly for running the backend
 > **independently** for isolated development or testing.
 
-------------------------------------------------------------------------
+---
 
 ## 🛠️ Prerequisites
 
@@ -33,51 +33,53 @@ The required tools depend on how you plan to run the application:
 
 ### 🐳 Option A: Running with Docker (Recommended for quick start)
 
-You only need: 
+You only need:
+
 - **Docker** and **Docker Compose**
 
 ### 💻 Option B: Running Locally
 
 If you want to run the NestJS application directly on your machine, you
-need: 
+need:
+
 - **Node.js** (v18+ recommended)
 - **pnpm** (Package manager)
-- **PostgreSQL** 
+- **PostgreSQL**
 
-------------------------------------------------------------------------
+---
 
 ## 1️⃣ Clone the Repository
 
-``` bash
+```bash
 git clone https://github.com/Framework-for-Search-as-Learning/xperframe4sal-backend.git
 cd xperframe4sal-backend
 ```
 
-------------------------------------------------------------------------
+---
 
 ## 2️⃣ Configure Environment Variables
 
 The backend needs environment variables to connect to the database and
 manage authentication.
 
--   `PORT` -- The port on which the NestJS API will run (default: `3000`) 
--   `DB_USER` -- PostgreSQL user (default: `postgres`)
--   `DB_PASSWORD` -- PostgreSQL password (default: `postgres`)
--   `DB_NAME` -- Database name (default: `sal`)
--   `DB_HOST` -- Database host, if running via Docker, use the service name (postgres-api).If running locally, use localhost (default: `localhost`)
--   `SECRET` -- You need to configure yours manually.
+- `PORT` -- The port on which the NestJS API will run (default: `3000`)
+- `DB_USER` -- PostgreSQL user (default: `postgres`)
+- `DB_PASSWORD` -- PostgreSQL password (default: `postgres`)
+- `DB_NAME` -- Database name (default: `sal`)
+- `DB_HOST` -- Database host, if running via Docker, use the service name (postgres-api).If running locally, use localhost (default: `localhost`)
+- `SECRET` -- You need to configure yours manually.
 
 ### ✅ Alternative A: Using a `.env` file (Recommended for custom setups)
 
 Linux/macOS:
 
-``` bash
+```bash
 cp .env.example .env
 ```
 
 Windows:
 
-``` bash
+```bash
 copy .env.example .env
 ```
 
@@ -88,7 +90,7 @@ Edit the `.env` file with the values above.
 You can skip creating a `.env` file and pass the variables directly via
 CLI when starting the containers (shown below).
 
-------------------------------------------------------------------------
+---
 
 ## 3️⃣ Run the Application
 
@@ -96,19 +98,19 @@ CLI when starting the containers (shown below).
 
 **Using `.env` file (All OS):**
 
-``` bash
+```bash
 docker compose up --build
 ```
 
 **Via CLI (Linux/macOS):**
 
-``` bash
+```bash
 DB_USER=postgres DB_PASSWORD=postgres DB_NAME=sal SECRET=your_jwt_secret docker compose up --build
 ```
 
 **Via CLI (Windows PowerShell):**
 
-``` powershell
+```powershell
 $env:DB_USER="postgres";
 $env:DB_PASSWORD="postgres";
 $env:DB_NAME="sal";
@@ -121,39 +123,38 @@ docker compose up --build
 1.  Start PostgreSQL.
 2.  Install dependencies:
 
-``` bash
+```bash
 pnpm install
 ```
 
 3.  Start development server:
 
-``` bash
+```bash
 pnpm start:dev
 ```
 
-------------------------------------------------------------------------
+---
 
 ## 4️⃣ Accessing the Services
 
--   Backend API: http://localhost:3000/searching-as-learning\
--   PostgreSQL: localhost:5432\
--   pgAdmin (Docker only): http://localhost:5050
+- Backend API: http://localhost:3000/searching-as-learning\
+- PostgreSQL: localhost:5432\
 
-------------------------------------------------------------------------
+---
 
 ## 5️⃣ Stopping the Application
 
-``` bash
+```bash
 docker compose down
 ```
 
 To wipe database volumes:
 
-``` bash
+```bash
 docker compose down -v
 ```
 
-------------------------------------------------------------------------
+---
 
 ## 📄 License
 

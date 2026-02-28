@@ -43,7 +43,7 @@ If you want to run the NestJS application directly on your machine, you
 need:
 
 - **Node.js** (v18+ recommended)
-- **pnpm** (Package manager)
+- **pnpm** (Or any equivalent package magager such as `npm` or `yarn`)
 - **PostgreSQL**
 
 ---

@@ -42,8 +42,8 @@ import * as Joi from 'joi';
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: Joi.object({
-        DB_USER: Joi.string().required().default('pgadmin'),
-        DB_PASSWORD: Joi.string().required().default('pgadmin'),
+        DB_USER: Joi.string().required().default('postgres'),
+        DB_PASSWORD: Joi.string().required().default('postgres'),
         DB_HOST: Joi.string().required().default('localhost'),
         DB_PORT: Joi.number().required().default(5432),
         DB_NAME: Joi.string().required().default('sal'),

@@ -14,16 +14,16 @@ services:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: ${DB_NAME}
-      DB_HOST: ${DB_HOST}
+      DB_HOST: ${DB_HOST:-postgres-api}
     depends_on:
       - postgres-api
   postgres-api:
     image: postgres:17-alpine
     restart: no
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-sal}
     ports:
       - '5432:5432'
     volumes:

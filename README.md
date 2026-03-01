@@ -21,7 +21,7 @@ configurations and experimental data.
 
 > **⚠️ Note:** If you want to run the full stack (Frontend + Backend +
 > Database) together, please refer to the [Searchat Behavior Parent
-> Repository](https://github.com/Framework-for-Search-as-Learning/xperframe4sal).
+> Repository](https://github.com/Framework-for-Search-as-Learning/searchat-behavior).
 > The instructions below are strictly for running the backend
 > **independently** for isolated development or testing.
 
@@ -51,8 +51,8 @@ need:
 ## 1️⃣ Clone the Repository
 
 ```bash
-git clone https://github.com/Framework-for-Search-as-Learning/xperframe4sal-backend.git
-cd xperframe4sal-backend
+git clone https://github.com/Framework-for-Search-as-Learning/searchat-behavior-backend.git
+cd searchat-behavior-backend
 ```
 
 ---

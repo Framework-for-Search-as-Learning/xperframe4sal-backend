@@ -51,7 +51,7 @@ need:
 ## 1️⃣ Clone the Repository
 
 ```bash
-git clone https://github.com/Framework-for-Search-as-Learning/searchat-behavior-backend.git
+git clone https://github.com/Framework-for-Search-as-Learning/searchat-behavior-api.git
 cd searchat-behavior-backend
 ```
 

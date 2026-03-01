@@ -57,6 +57,7 @@ export class SurveyService {
           type,
           questions,
           experiment,
+          uniqueAnswer,
         });
       } else {
         newSurvey = this.surveyRepository.create({

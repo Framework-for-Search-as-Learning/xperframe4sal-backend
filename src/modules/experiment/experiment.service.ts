@@ -48,6 +48,7 @@ export class ExperimentService {
       betweenExperimentType,
       icf,
     } = createExperimentDto;
+
     const owner = await this.userService.findOne(ownerId);
     const experiment = await this.experimentRepository.create({
       name,

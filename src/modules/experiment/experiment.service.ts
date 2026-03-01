@@ -3,23 +3,23 @@
  * Licensed under The MIT License [see LICENSE for details]
  */
 
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Experiment, StepsType } from './entity/experiment.entity';
-import { Repository } from 'typeorm';
-import { CreateExperimentDto } from './dto/create-experiment.dto';
-import { UserExperimentService } from '../user-experiment/user-experiment.service';
-import { UserTaskService } from '../user-task/user-task.service';
-import { UpdateExperimentDto } from './dto/update-experiment.dto';
-import { UserService } from '../user/user.service';
-import { TaskService } from '../task/task.service';
-import { SurveyService } from '../survey/survey.service';
-import { IcfService } from '../icf/icf.service';
+import {forwardRef, Inject, Injectable} from '@nestjs/common';
+import {InjectRepository} from '@nestjs/typeorm';
+import {Experiment, StepsType} from './entity/experiment.entity';
+import {Repository} from 'typeorm';
+import {CreateExperimentDto} from './dto/create-experiment.dto';
+import {UserExperimentService} from '../user-experiment/user-experiment.service';
+import {UserTaskService} from '../user-task/user-task.service';
+import {UpdateExperimentDto} from './dto/update-experiment.dto';
+import {UserService} from '../user/user.service';
+import {TaskService} from '../task/task.service';
+import {SurveyService} from '../survey/survey.service';
+import {IcfService} from '../icf/icf.service';
 import * as yaml from 'js-yaml';
-import { ExperimentStatsDto } from './dto/experiment-stats.dto';
-import { ExperimentParticipantDto } from './dto/experiment-participant.dto';
-import { ExperimentTaskExecutionDto } from './dto/experiment-tasks-execution.dto';
-import { ExperimentSurveyStatsDto } from './dto/experiment-surveys-stats.dto';
+import {ExperimentStatsDto} from './dto/experiment-stats.dto';
+import {ExperimentParticipantDto} from './dto/experiment-participant.dto';
+import {ExperimentTaskExecutionDto} from './dto/experiment-tasks-execution.dto';
+import {ExperimentSurveyStatsDto} from './dto/experiment-surveys-stats.dto';
 
 @Injectable()
 export class ExperimentService {
@@ -35,7 +35,7 @@ export class ExperimentService {
     private readonly surveyService: SurveyService,
     @Inject(forwardRef(() => IcfService))
     private readonly icfService: IcfService,
-  ) { }
+  ) {}
 
   async create(createExperimentDto: CreateExperimentDto): Promise<any> {
     const {
@@ -68,6 +68,7 @@ export class ExperimentService {
         type: survey.type,
         experimentId: savedExperiment._id,
         uuid: survey.uuid,
+        uniqueAnswer: survey.uniqueAnswer,
       });
     });
     await Promise.all(SurveysPromises);
@@ -97,13 +98,12 @@ export class ExperimentService {
     return savedExperiment;
   }
 
-
   async findAll(): Promise<Experiment[]> {
     return await this.experimentRepository.find();
   }
 
   async find(id: string): Promise<Experiment> {
-    return await this.experimentRepository.findOneBy({ _id: id });
+    return await this.experimentRepository.findOneBy({_id: id});
   }
 
   async getStats(id: string): Promise<ExperimentStatsDto> {
@@ -116,19 +116,22 @@ export class ExperimentService {
 
   async findWithTasks(id: string): Promise<Experiment> {
     return await this.experimentRepository.findOne({
-      where: { _id: id },
+      where: {_id: id},
       relations: ['tasks'],
     });
   }
 
-  async getTasksExecutionDetails(experimentId: string): Promise<ExperimentTaskExecutionDto[]> {
-    const userTasks = await this.userTaskService.findByExperimentId(experimentId);
+  async getTasksExecutionDetails(
+    experimentId: string,
+  ): Promise<ExperimentTaskExecutionDto[]> {
+    const userTasks =
+      await this.userTaskService.findByExperimentId(experimentId);
 
-    const grouped = new Map<string, { task: any, executions: any[] }>();
+    const grouped = new Map<string, {task: any; executions: any[]}>();
 
     for (const ut of userTasks) {
       if (!grouped.has(ut.task_id)) {
-        grouped.set(ut.task_id, { task: ut.task, executions: [] });
+        grouped.set(ut.task_id, {task: ut.task, executions: []});
       }
       grouped.get(ut.task_id).executions.push(ut);
     }
@@ -137,37 +140,41 @@ export class ExperimentService {
 
     for (const [taskId, data] of grouped) {
       const executionsDetails = await Promise.all(
-        data.executions.map(ut => this.userTaskService.getExecutionDetailsFromEntity(ut))
+        data.executions.map((ut) =>
+          this.userTaskService.getExecutionDetailsFromEntity(ut),
+        ),
       );
 
       result.push({
         taskId: taskId,
         taskTitle: data.task.title,
-        executions: executionsDetails
+        executions: executionsDetails,
       });
     }
 
     return result;
   }
 
-  async getSurveysStats(experimentId: string): Promise<ExperimentSurveyStatsDto> {
+  async getSurveysStats(
+    experimentId: string,
+  ): Promise<ExperimentSurveyStatsDto> {
     const surveys = await this.surveyService.findByExperimentId(experimentId);
 
     const surveysStats = await Promise.all(
-      surveys.map(survey => this.surveyService.getStats(survey._id))
+      surveys.map((survey) => this.surveyService.getStats(survey._id)),
     );
 
     return {
-      surveys: surveysStats
+      surveys: surveysStats,
     };
   }
 
   async findOneByName(name: string): Promise<Experiment> {
-    return await this.experimentRepository.findOneBy({ name });
+    return await this.experimentRepository.findOneBy({name});
   }
 
   async findByOwnerId(ownerId: string): Promise<Experiment[]> {
-    return await this.experimentRepository.find({ where: { owner_id: ownerId } });
+    return await this.experimentRepository.find({where: {owner_id: ownerId}});
   }
 
   async update(
@@ -175,7 +182,7 @@ export class ExperimentService {
     updateExperimentDto: UpdateExperimentDto,
   ): Promise<Experiment> {
     try {
-      await this.experimentRepository.update({ _id: id }, updateExperimentDto);
+      await this.experimentRepository.update({_id: id}, updateExperimentDto);
       const result = await this.find(id);
       return result;
     } catch (error) {
@@ -185,13 +192,13 @@ export class ExperimentService {
 
   async remove(id: string) {
     const experiment = await this.find(id);
-    await this.experimentRepository.delete({ _id: id });
+    await this.experimentRepository.delete({_id: id});
     return experiment;
   }
 
   async buildStep(experimentId: string): Promise<Record<StepsType, any>> {
     const experiment = await this.experimentRepository.findOne({
-      where: { _id: experimentId },
+      where: {_id: experimentId},
       relations: ['tasks', 'surveys', 'icfs'],
     });
     const step: Record<StepsType, any> = {
@@ -201,11 +208,11 @@ export class ExperimentService {
       [StepsType.TASK]: undefined,
     };
     if (experiment.icfs && experiment.icfs.length > 0) {
-      step[StepsType.ICF] = { label: 'accept_icf', order: 1 };
+      step[StepsType.ICF] = {label: 'accept_icf', order: 1};
     }
 
     if (experiment.tasks && experiment.tasks.length > 0) {
-      step[StepsType.TASK] = { label: 'end_task', order: 3 };
+      step[StepsType.TASK] = {label: 'end_task', order: 3};
     }
     if (experiment.surveys.length > 0) {
       let hasPre = false;
@@ -219,10 +226,10 @@ export class ExperimentService {
         }
       }
       if (hasPre) {
-        step[StepsType.PRE] = { label: 'answer_pre_survey', order: 2 };
+        step[StepsType.PRE] = {label: 'answer_pre_survey', order: 2};
       }
       if (hasPost) {
-        step[StepsType.POST] = { label: 'answer_post_survey', order: 4 };
+        step[StepsType.POST] = {label: 'answer_post_survey', order: 4};
       }
     }
     return step;
@@ -230,7 +237,7 @@ export class ExperimentService {
 
   async exportToYaml(id: string): Promise<string> {
     const experiment = await this.experimentRepository.findOne({
-      where: { _id: id },
+      where: {_id: id},
       relations: ['tasks', 'surveys', 'icfs'],
     });
 
@@ -238,7 +245,8 @@ export class ExperimentService {
       throw new Error('Experiment not found');
     }
 
-    const icf = experiment.icfs && experiment.icfs.length > 0 ? experiment.icfs[0] : null;
+    const icf =
+      experiment.icfs && experiment.icfs.length > 0 ? experiment.icfs[0] : null;
 
     const yamlData = {
       experiment: {
@@ -246,36 +254,43 @@ export class ExperimentService {
         summary: experiment.summary,
         typeExperiment: experiment.typeExperiment,
         betweenExperimentType: experiment.betweenExperimentType,
-        icf: icf ? {
-          title: icf.title,
-          description: icf.description,
-        } : null,
-        surveys: experiment.surveys?.map(survey => ({
-          name: survey.name,
-          title: survey.title,
-          description: survey.description,
-          questions: survey.questions,
-          type: survey.type,
-          uniqueAnswer: survey.uniqueAnswer,
-          required: survey.required,
-        })) || [],
-        tasks: experiment.tasks?.map(task => ({
-          title: task.title,
-          summary: task.summary,
-          description: task.description,
-          rule_type: task.rule_type,
-          max_score: task.max_score,
-          min_score: task.min_score,
-          search_source: task.search_source,
-          survey_id: task.survey_id,
-        })) || [],
-      }
+        icf: icf
+          ? {
+              title: icf.title,
+              description: icf.description,
+            }
+          : null,
+        surveys:
+          experiment.surveys?.map((survey) => ({
+            name: survey.name,
+            title: survey.title,
+            description: survey.description,
+            questions: survey.questions,
+            type: survey.type,
+            uniqueAnswer: survey.uniqueAnswer,
+            required: survey.required,
+          })) || [],
+        tasks:
+          experiment.tasks?.map((task) => ({
+            title: task.title,
+            summary: task.summary,
+            description: task.description,
+            rule_type: task.rule_type,
+            max_score: task.max_score,
+            min_score: task.min_score,
+            search_source: task.search_source,
+            survey_id: task.survey_id,
+          })) || [],
+      },
     };
 
-    return yaml.dump(yamlData)
+    return yaml.dump(yamlData);
   }
 
-  async importFromYaml(yamlContent: string, ownerId: string): Promise<string[]> {
+  async importFromYaml(
+    yamlContent: string,
+    ownerId: string,
+  ): Promise<string[]> {
     try {
       const yamlData = yaml.load(yamlContent) as any;
 
@@ -300,16 +315,19 @@ export class ExperimentService {
       if (yamlData.experiment.icf && yamlData.experiment.icf.title) {
         await this.icfService.create({
           title: yamlData.experiment.icf.title,
-          description: yamlData.experiment.icf.description || "",
+          description: yamlData.experiment.icf.description || '',
           experimentId: savedExperiment._id,
         });
       }
 
-      if (yamlData.experiment.surveys && Array.isArray(yamlData.experiment.surveys)) {
+      if (
+        yamlData.experiment.surveys &&
+        Array.isArray(yamlData.experiment.surveys)
+      ) {
         const surveysPromises = yamlData.experiment.surveys.map((survey) => {
-          const questionsWithIds = (survey.questions || []).map(question => ({
+          const questionsWithIds = (survey.questions || []).map((question) => ({
             ...question,
-            id: question.id || this.generateUuid()
+            id: question.id || this.generateUuid(),
           }));
 
           return this.surveyService.create({
@@ -320,12 +338,16 @@ export class ExperimentService {
             type: survey.type || 'demo',
             experimentId: savedExperiment._id,
             uuid: this.generateUuid(),
+            uniqueAnswer: survey.uniqueAnswer,
           });
         });
         await Promise.all(surveysPromises);
       }
 
-      if (yamlData.experiment.tasks && Array.isArray(yamlData.experiment.tasks)) {
+      if (
+        yamlData.experiment.tasks &&
+        Array.isArray(yamlData.experiment.tasks)
+      ) {
         const tasksPromises = yamlData.experiment.tasks.map((task) => {
           return this.taskService.create({
             title: task.title,
@@ -351,11 +373,14 @@ export class ExperimentService {
   }
 
   private generateUuid(): string {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-      const r = Math.random() * 16 | 0;
-      const v = c === 'x' ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
-    });
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(
+      /[xy]/g,
+      function (c) {
+        const r = (Math.random() * 16) | 0;
+        const v = c === 'x' ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      },
+    );
   }
 
   private validateYamlObject(yaml: any): string[] {
@@ -363,23 +388,39 @@ export class ExperimentService {
 
     if (!yaml.experiment) {
       errors.push('yaml_error_missing_experiment');
-      return errors; 
+      return errors;
     }
 
     const experiment = yaml.experiment;
 
-    if (!experiment.name || typeof experiment.name !== 'string' || experiment.name.trim() === '') {
+    if (
+      !experiment.name ||
+      typeof experiment.name !== 'string' ||
+      experiment.name.trim() === ''
+    ) {
       errors.push('yaml_error_missing_experiment_name');
     }
 
-    if (!experiment.typeExperiment || typeof experiment.typeExperiment !== 'string') {
+    if (
+      !experiment.typeExperiment ||
+      typeof experiment.typeExperiment !== 'string'
+    ) {
       errors.push('yaml_error_missing_experiment_type');
-    } else if (!['within-subject', 'between-subject'].includes(experiment.typeExperiment)) {
+    } else if (
+      !['within-subject', 'between-subject'].includes(experiment.typeExperiment)
+    ) {
       errors.push('yaml_error_invalid_experiment_type');
     } else if (experiment.typeExperiment == 'between-subject') {
-      if (!experiment.betweenExperimentType || typeof experiment.betweenExperimentType !== 'string') {
+      if (
+        !experiment.betweenExperimentType ||
+        typeof experiment.betweenExperimentType !== 'string'
+      ) {
         errors.push('yaml_error_missing_experiment_between_type');
-      } else if (!['random', 'rules_based', 'manual'].includes(experiment.betweenExperimentType)) {
+      } else if (
+        !['random', 'rules_based', 'manual'].includes(
+          experiment.betweenExperimentType,
+        )
+      ) {
         errors.push('yaml_error_invalid_experiment_between_type');
       }
     }
@@ -387,7 +428,11 @@ export class ExperimentService {
     if (!experiment.icf) {
       errors.push('yaml_error_missing_icf');
     } else {
-      if (!experiment.icf.title || typeof experiment.icf.title !== 'string' || experiment.icf.title.trim() === '') {
+      if (
+        !experiment.icf.title ||
+        typeof experiment.icf.title !== 'string' ||
+        experiment.icf.title.trim() === ''
+      ) {
         errors.push('yaml_error_missing_icf_title');
       }
     }
@@ -398,12 +443,19 @@ export class ExperimentService {
       errors.push('yaml_error_invalid_surveys');
     } else {
       experiment.surveys.forEach((survey, index) => {
-
-        if (!survey.title || typeof survey.title !== 'string' || survey.title.trim() === '') {
+        if (
+          !survey.title ||
+          typeof survey.title !== 'string' ||
+          survey.title.trim() === ''
+        ) {
           errors.push('yaml_error_missing_survey_title');
         }
 
-        if (!survey.description || typeof survey.description !== 'string' || survey.description.trim() === '') {
+        if (
+          !survey.description ||
+          typeof survey.description !== 'string' ||
+          survey.description.trim() === ''
+        ) {
           errors.push('yaml_error_missing_survey_description');
         }
 
@@ -415,10 +467,13 @@ export class ExperimentService {
           survey.questions.forEach((question, qIndex) => {
             if (!question.type || typeof question.type !== 'string') {
               errors.push('yaml_error_missing_survey_question_type');
-            } else if (!['open', 'multiple-choices', 'multiple-selection'].includes(question.type)) {
+            } else if (
+              !['open', 'multiple-choices', 'multiple-selection'].includes(
+                question.type,
+              )
+            ) {
               errors.push('yaml_error_invalid_survey_question_type');
             } else if (question.type != 'open') {
-
               if (!Array.isArray(question.options)) {
                 errors.push('yaml_error_missing_survey_question_options');
               }
@@ -428,7 +483,11 @@ export class ExperimentService {
               errors.push('yaml_error_missing_survey_question_required');
             }
 
-            if (!question.statement || typeof question.statement !== 'string' || question.statement.trim() === '') {
+            if (
+              !question.statement ||
+              typeof question.statement !== 'string' ||
+              question.statement.trim() === ''
+            ) {
               errors.push('yaml_error_missing_survey_question_statement');
             }
           });
@@ -454,14 +513,21 @@ export class ExperimentService {
       errors.push('yaml_error_missing_tasks');
     } else if (!Array.isArray(experiment.tasks)) {
       errors.push('yaml_error_invalid_tasks');
-
     } else {
       experiment.tasks.forEach((task, index) => {
-        if (!task.title || typeof task.title !== 'string' || task.title.trim() === '') {
+        if (
+          !task.title ||
+          typeof task.title !== 'string' ||
+          task.title.trim() === ''
+        ) {
           errors.push('yaml_error_missing_tasks_title');
         }
 
-        if (!task.summary || typeof task.summary !== 'string' || task.summary.trim() === '') {
+        if (
+          !task.summary ||
+          typeof task.summary !== 'string' ||
+          task.summary.trim() === ''
+        ) {
           errors.push('yaml_error_missing_tasks_summary');
         }
 
@@ -482,20 +548,21 @@ export class ExperimentService {
         } else if (!['search-engine', 'llm'].includes(task.search_source)) {
           errors.push('yaml_error_invalid_tasks_search_source');
         }
-
       });
     }
 
     return errors;
   }
 
-
   async getGeneralExpirementInfos(experiment_id: string) {
-    const experiment = await this.experimentRepository.findOneBy({ _id: experiment_id });
-    const userExperimentInfos = await this.userExperimentService.countUsersByExperimentId(experiment_id);
+    const experiment = await this.experimentRepository.findOneBy({
+      _id: experiment_id,
+    });
+    const userExperimentInfos =
+      await this.userExperimentService.countUsersByExperimentId(experiment_id);
     return {
       experimentStatus: experiment.status,
-      userExperimentInfos
+      userExperimentInfos,
     };
   }
 }

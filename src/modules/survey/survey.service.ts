@@ -10,15 +10,15 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Survey } from './entity/survey.entity';
-import { Repository } from 'typeorm';
-import { CreateSurveyDto } from './dto/create-survey.dto';
-import { UpdateSurveyDto } from './dto/update-survey.dto';
-import { ExperimentService } from '../experiment/experiment.service';
-import { SurveyAnswerService } from '../survey-answer/survey-answer.service';
-import { SurveyStatsDto, SurveyQuestionStatDto, SurveyQuestionStatOptionDto } from './dto/survey-stats.dto';
-import { QuestionType } from './dto/question.dto';
+import {InjectRepository} from '@nestjs/typeorm';
+import {Survey} from './entity/survey.entity';
+import {Repository} from 'typeorm';
+import {CreateSurveyDto} from './dto/create-survey.dto';
+import {UpdateSurveyDto} from './dto/update-survey.dto';
+import {ExperimentService} from '../experiment/experiment.service';
+import {SurveyAnswerService} from '../survey-answer/survey-answer.service';
+import {SurveyStatsDto, SurveyQuestionStatDto} from './dto/survey-stats.dto';
+import {QuestionType} from './dto/question.dto';
 
 @Injectable()
 export class SurveyService {
@@ -29,12 +29,20 @@ export class SurveyService {
     private readonly experimentService: ExperimentService,
     @Inject(forwardRef(() => SurveyAnswerService))
     private readonly surveyAnswerService: SurveyAnswerService,
-  ) { }
+  ) {}
 
   async create(createSurveyDto: CreateSurveyDto): Promise<Survey> {
     try {
-      const { name, title, description, type, questions, experimentId, uuid } =
-        createSurveyDto;
+      const {
+        name,
+        title,
+        description,
+        type,
+        questions,
+        experimentId,
+        uuid,
+        uniqueAnswer,
+      } = createSurveyDto;
       const experiment = await this.experimentService.find(experimentId);
       if (!experiment) {
         throw new NotFoundException('Experimento não encontrado');
@@ -58,6 +66,7 @@ export class SurveyService {
           type,
           questions,
           experiment,
+          uniqueAnswer,
         });
       }
       return await this.surveyRepository.save(newSurvey);
@@ -72,13 +81,13 @@ export class SurveyService {
   }
   async findOne(id: string): Promise<Survey> {
     return await this.surveyRepository.findOne({
-      where: { _id: id },
+      where: {_id: id},
     });
   }
 
   async findOneWithExperiment(id: string): Promise<Survey> {
     return await this.surveyRepository.findOne({
-      where: { _id: id },
+      where: {_id: id},
       relations: ['experiment'],
     });
   }
@@ -86,14 +95,14 @@ export class SurveyService {
   async findByExperimentId(experimentId: string): Promise<Survey[]> {
     return await this.surveyRepository.find({
       where: {
-        experiment: { _id: experimentId },
+        experiment: {_id: experimentId},
       },
-      relations: ['experiment']
+      relations: ['experiment'],
     });
   }
   async update(id: string, updateSurveyDto: UpdateSurveyDto): Promise<Survey> {
     try {
-      await this.surveyRepository.update({ _id: id }, updateSurveyDto);
+      await this.surveyRepository.update({_id: id}, updateSurveyDto);
       return await this.findOne(id);
     } catch (error) {
       console.error(error);
@@ -102,7 +111,7 @@ export class SurveyService {
   }
   async remove(id: string) {
     const survey = await this.findOne(id);
-    await this.surveyRepository.delete({ _id: id });
+    await this.surveyRepository.delete({_id: id});
     return survey;
   }
 
@@ -116,37 +125,40 @@ export class SurveyService {
 
     const questionStats: SurveyQuestionStatDto[] = [];
 
-
-    const validQuestions = survey.questions.filter(q => q.type !== QuestionType.OPEN);
+    const validQuestions = survey.questions.filter(
+      (q) => q.type !== QuestionType.OPEN,
+    );
 
     for (const question of validQuestions) {
       const qStat: SurveyQuestionStatDto = {
         statement: question.statement,
         type: question.type,
         totalAnswers: 0,
-        options: []
+        options: [],
       };
 
-     
       if (question.options) {
-        qStat.options = question.options.map(opt => ({
+        qStat.options = question.options.map((opt) => ({
           statement: opt.statement,
           count: 0,
-          percentage: 0
+          percentage: 0,
         }));
       }
 
-     
       let answeredCount = 0;
-      answers.forEach(ans => {
-        const qAnswer = ans.answers.find(a => a.questionStatement === question.statement);
+      answers.forEach((ans) => {
+        const qAnswer = ans.answers.find(
+          (a) => a.questionStatement === question.statement,
+        );
 
         if (qAnswer) {
           answeredCount++;
 
           if (qAnswer.selectedOptions) {
-            qAnswer.selectedOptions.forEach(selOpt => {
-              const statOpt = qStat.options.find(o => o.statement === selOpt.statement);
+            qAnswer.selectedOptions.forEach((selOpt) => {
+              const statOpt = qStat.options.find(
+                (o) => o.statement === selOpt.statement,
+              );
               if (statOpt) {
                 statOpt.count++;
               }
@@ -158,8 +170,10 @@ export class SurveyService {
       qStat.totalAnswers = answeredCount;
 
       if (answeredCount > 0) {
-        qStat.options.forEach(opt => {
-          opt.percentage = parseFloat(((opt.count / answeredCount) * 100).toFixed(2));
+        qStat.options.forEach((opt) => {
+          opt.percentage = parseFloat(
+            ((opt.count / answeredCount) * 100).toFixed(2),
+          );
         });
       }
 
@@ -172,7 +186,7 @@ export class SurveyService {
       title: survey.title,
       description: survey.description,
       type: survey.type,
-      questions: questionStats
+      questions: questionStats,
     };
   }
 }

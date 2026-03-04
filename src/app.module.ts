@@ -42,11 +42,11 @@ import * as Joi from 'joi';
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: Joi.object({
-        DB_USER: Joi.string().default('postgres'),
-        DB_PASSWORD: Joi.string().default('postgres'),
-        DB_HOST: Joi.string().default('localhost'),
-        DB_PORT: Joi.number().default(5432),
-        DB_NAME: Joi.string().default('sal'),
+        DB_USER: Joi.string().empty('').default('postgres'),
+        DB_PASSWORD: Joi.string().empty('').default('postgres'),
+        DB_HOST: Joi.string().empty('').default('localhost'),
+        DB_PORT: Joi.number().empty('').default(5432),
+        DB_NAME: Joi.string().empty('').default('sal'),
         PORT: Joi.number().default(3000),
         SECRET: Joi.string().required(),
       }),

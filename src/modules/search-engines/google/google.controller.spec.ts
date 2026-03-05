@@ -9,14 +9,23 @@ import { GoogleService } from './google.service';
 
 describe('GoogleController', () => {
   let controller: GoogleController;
+  let service: GoogleService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [GoogleController],
-      providers: [GoogleService],
+      providers: [
+        {
+          provide: GoogleService,
+          useValue: {
+            query: jest.fn(),
+          },
+        },
+      ],
     }).compile();
 
     controller = module.get<GoogleController>(GoogleController);
+    service = module.get<GoogleService>(GoogleService);
   });
 
   it('should be defined', () => {

@@ -12,7 +12,6 @@ import { UserService } from '../user/user.service';
 import { ExperimentService } from '../experiment/experiment.service';
 import { UpdateUserExperimentDto } from './dto/update-userExperiment.dto';
 import { User } from '../user/entity/user.entity';
-import { Experiment } from '../experiment/entity/experiment.entity';
 import { UserTaskService } from '../user-task/user-task.service';
 import { TaskService } from '../task/task.service';
 import { ExperimentStatsDto } from '../experiment/dto/experiment-stats.dto';
@@ -65,8 +64,6 @@ export class UserExperimentService {
           tasks: experiment.tasks,
         });
 
-        const taskIds = experiment.tasks.map((task) => task._id);
-        const counts = await this.userTaskService.getTaskCounts(taskIds);
       }
       return savedUserExperiment;
     } catch (error) {

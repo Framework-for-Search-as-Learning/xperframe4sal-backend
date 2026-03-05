@@ -6,14 +6,13 @@
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { GoogleService } from './google.service';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiExcludeController } from '@nestjs/swagger';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 
 @ApiBearerAuth('jwt')
 @UseGuards(AuthGuard('jwt'))
 @Controller('search-engine')
 export class GoogleController {
-  private cache: Record<string, any> = {};
 
   constructor(private readonly googleService: GoogleService) { }
 

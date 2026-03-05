@@ -9,7 +9,6 @@ import { HttpService } from 'src/modules/http/http.service';
 import { GOOGLE } from './google-constants';
 import { SearchResultDto } from '../search-result.dto';
 import { CanceledError } from 'axios';
-import { ExperimentService } from 'src/modules/experiment/experiment.service';
 import { TaskService } from 'src/modules/task/task.service';
 
 

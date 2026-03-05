@@ -21,7 +21,7 @@ import { CreateUserTaskByRule } from './dto/create-userTaskByRule.dto';
 import { Task } from '../task/entities/task.entity';
 import { UserTaskSessionService } from '../user-task-session/user-task-session.service';
 import { LlmSessionService } from 'src/modules/llm-session/llm-session.service';
-import { TaskExecutionDetailsDto, SearchTaskDetailsDto, LlmTaskDetailsDto, ResourceAccessDto } from './dto/task-execution-details.dto';
+import { TaskExecutionDetailsDto } from './dto/task-execution-details.dto';
 
 @Injectable()
 export class UserTaskService {

@@ -20,6 +20,8 @@ import {ExperimentStatsDto} from './dto/experiment-stats.dto';
 import {ExperimentParticipantDto} from './dto/experiment-participant.dto';
 import {ExperimentTaskExecutionDto} from './dto/experiment-tasks-execution.dto';
 import {ExperimentSurveyStatsDto} from './dto/experiment-surveys-stats.dto';
+import { Survey } from '../survey/entity/survey.entity';
+import { Task } from '../task/entities/task.entity';
 
 @Injectable()
 export class ExperimentService {
@@ -443,7 +445,7 @@ export class ExperimentService {
     } else if (!Array.isArray(experiment.surveys)) {
       errors.push('yaml_error_invalid_surveys');
     } else {
-      experiment.surveys.forEach((survey, index) => {
+      experiment.surveys.forEach((survey: Survey) => {
         if (
           !survey.title ||
           typeof survey.title !== 'string' ||
@@ -465,7 +467,7 @@ export class ExperimentService {
         } else if (!Array.isArray(survey.questions)) {
           errors.push('yaml_error_invalid_survey_questions');
         } else {
-          survey.questions.forEach((question, qIndex) => {
+          survey.questions.forEach((question) => {
             if (!question.type || typeof question.type !== 'string') {
               errors.push('yaml_error_missing_survey_question_type');
             } else if (
@@ -515,7 +517,7 @@ export class ExperimentService {
     } else if (!Array.isArray(experiment.tasks)) {
       errors.push('yaml_error_invalid_tasks');
     } else {
-      experiment.tasks.forEach((task, index) => {
+      experiment.tasks.forEach((task: Task) => {
         if (
           !task.title ||
           typeof task.title !== 'string' ||

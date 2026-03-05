@@ -136,7 +136,7 @@ pnpm start:dev
 
 ## 4️⃣ Accessing the Services
 
-- Backend API: http://localhost:3000/searching-as-learning\
+- Backend API: http://localhost:3000/searchat-behavior\
 - PostgreSQL: localhost:5432\
 
 ---

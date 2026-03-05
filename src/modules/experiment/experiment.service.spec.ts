@@ -4,20 +4,500 @@
  */
 
 import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import { ExperimentService } from './experiment.service';
+import { Experiment, StepsType, ExperimentStatus } from './entity/experiment.entity';
+import { SurveyType } from '../survey/entity/survey.entity';
+import { UserExperimentService } from '../user-experiment/user-experiment.service';
+import { UserTaskService } from '../user-task/user-task.service';
+import { UserService } from '../user/user.service';
+import { TaskService } from '../task/task.service';
+import { SurveyService } from '../survey/survey.service';
+import { IcfService } from '../icf/icf.service';
+import { CreateExperimentDto } from './dto/create-experiment.dto';
 
 describe('ExperimentService', () => {
   let service: ExperimentService;
+  let mockExperimentRepository: any;
+  let mockUserExperimentService: any;
+  let mockUserTaskService: any;
+  let mockUserService: any;
+  let mockTaskService: any;
+  let mockSurveyService: any;
+  let mockIcfService: any;
 
   beforeEach(async () => {
+    mockExperimentRepository = {
+      find: jest.fn(),
+      findOneBy: jest.fn(),
+      findOne: jest.fn(),
+      create: jest.fn(),
+      save: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+    };
+
+    mockUserExperimentService = {
+      getDetailedStats: jest.fn(),
+      getParticipantsDetails: jest.fn(),
+      countUsersByExperimentId: jest.fn(),
+    };
+
+    mockUserTaskService = {
+      findByExperimentId: jest.fn(),
+      getExecutionDetailsFromEntity: jest.fn(),
+    };
+
+    mockUserService = {
+      findOne: jest.fn(),
+    };
+
+    mockTaskService = {
+      create: jest.fn(),
+    };
+
+    mockSurveyService = {
+      create: jest.fn(),
+      findByExperimentId: jest.fn(),
+      getStats: jest.fn(),
+    };
+
+    mockIcfService = {
+      create: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
-      providers: [ExperimentService],
+      providers: [
+        ExperimentService,
+        {
+          provide: getRepositoryToken(Experiment),
+          useValue: mockExperimentRepository,
+        },
+        {
+          provide: UserExperimentService,
+          useValue: mockUserExperimentService,
+        },
+        {
+          provide: UserTaskService,
+          useValue: mockUserTaskService,
+        },
+        {
+          provide: UserService,
+          useValue: mockUserService,
+        },
+        {
+          provide: TaskService,
+          useValue: mockTaskService,
+        },
+        {
+          provide: SurveyService,
+          useValue: mockSurveyService,
+        },
+        {
+          provide: IcfService,
+          useValue: mockIcfService,
+        },
+      ],
     }).compile();
 
     service = module.get<ExperimentService>(ExperimentService);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  describe('create', () => {
+    it('should create an experiment with surveys, tasks, and icf', async () => {
+      const createExperimentDto: CreateExperimentDto = {
+        name: 'Test Experiment',
+        ownerId: 'owner-1',
+        summary: 'Test Summary',
+        tasksProps: [
+          {
+            title: 'Task 1',
+            summary: 'Task Summary',
+            description: 'Task Description',
+            search_source: 'search-engine',
+            SelectedSurvey: 'survey-1',
+            RulesExperiment: 'score',
+            ScoreThreshold: 0,
+            ScoreThresholdmx: 100,
+            selectedQuestionIds: [],
+            provider_config: {},
+          },
+        ],
+        surveysProps: [
+          {
+            name: 'Survey 1',
+            title: 'Survey Title',
+            description: 'Survey Description',
+            questions: [],
+            type: SurveyType.PRE,
+            uuid: 'uuid-1',
+            uniqueAnswer: false,
+            experimentId: 'exp-1',
+          },
+        ],
+        typeExperiment: 'within-subject',
+        betweenExperimentType: null,
+        icf: { title: 'ICF Title', description: 'ICF Description' },
+      };
+
+      const mockUser = { _id: 'owner-1', name: 'Owner' };
+      const savedExperiment = { _id: 'exp-1', ...createExperimentDto };
+
+      mockUserService.findOne.mockResolvedValue(mockUser);
+      mockExperimentRepository.create.mockReturnValue(savedExperiment);
+      mockExperimentRepository.save.mockResolvedValue(savedExperiment);
+      mockSurveyService.create.mockResolvedValue({ _id: 'survey-1' });
+      mockTaskService.create.mockResolvedValue({ _id: 'task-1' });
+      mockIcfService.create.mockResolvedValue({ _id: 'icf-1' });
+
+      const result = await service.create(createExperimentDto);
+
+      expect(mockUserService.findOne).toHaveBeenCalledWith('owner-1');
+      expect(mockExperimentRepository.save).toHaveBeenCalled();
+      expect(mockSurveyService.create).toHaveBeenCalled();
+      expect(mockTaskService.create).toHaveBeenCalled();
+      expect(mockIcfService.create).toHaveBeenCalled();
+      expect(result).toEqual(savedExperiment);
+    });
+  });
+
+  describe('findAll', () => {
+    it('should return all experiments', async () => {
+      const experiments = [
+        { _id: 'exp-1', name: 'Experiment 1' },
+        { _id: 'exp-2', name: 'Experiment 2' },
+      ];
+
+      mockExperimentRepository.find.mockResolvedValue(experiments);
+
+      const result = await service.findAll();
+
+      expect(mockExperimentRepository.find).toHaveBeenCalled();
+      expect(result).toEqual(experiments);
+    });
+  });
+
+  describe('find', () => {
+    it('should find an experiment by id', async () => {
+      const experiment = { _id: 'exp-1', name: 'Experiment 1' };
+      mockExperimentRepository.findOneBy.mockResolvedValue(experiment);
+
+      const result = await service.find('exp-1');
+
+      expect(mockExperimentRepository.findOneBy).toHaveBeenCalledWith({
+        _id: 'exp-1',
+      });
+      expect(result).toEqual(experiment);
+    });
+  });
+
+  describe('getStats', () => {
+    it('should return experiment stats', async () => {
+      const stats = { totalParticipants: 10, completedTasks: 8 };
+      mockUserExperimentService.getDetailedStats.mockResolvedValue(stats);
+
+      const result = await service.getStats('exp-1');
+
+      expect(mockUserExperimentService.getDetailedStats).toHaveBeenCalledWith(
+        'exp-1',
+      );
+      expect(result).toEqual(stats);
+    });
+  });
+
+  describe('getParticipants', () => {
+    it('should return experiment participants', async () => {
+      const participants = [
+        { userId: 'user-1', status: 'completed' },
+        { userId: 'user-2', status: 'pending' },
+      ];
+      mockUserExperimentService.getParticipantsDetails.mockResolvedValue(
+        participants,
+      );
+
+      const result = await service.getParticipants('exp-1');
+
+      expect(
+        mockUserExperimentService.getParticipantsDetails,
+      ).toHaveBeenCalledWith('exp-1');
+      expect(result).toEqual(participants);
+    });
+  });
+
+  describe('findWithTasks', () => {
+    it('should find an experiment with its tasks', async () => {
+      const experiment = {
+        _id: 'exp-1',
+        name: 'Experiment 1',
+        tasks: [{ _id: 'task-1', title: 'Task 1' }],
+      };
+      mockExperimentRepository.findOne.mockResolvedValue(experiment);
+
+      const result = await service.findWithTasks('exp-1');
+
+      expect(mockExperimentRepository.findOne).toHaveBeenCalledWith({
+        where: { _id: 'exp-1' },
+        relations: ['tasks'],
+      });
+      expect(result).toEqual(experiment);
+    });
+  });
+
+  describe('getTasksExecutionDetails', () => {
+    it('should return tasks execution details grouped by task', async () => {
+      const userTasks = [
+        { task_id: 'task-1', task: { title: 'Task 1' }, execution: 'data-1' },
+        { task_id: 'task-1', task: { title: 'Task 1' }, execution: 'data-2' },
+      ];
+
+      mockUserTaskService.findByExperimentId.mockResolvedValue(userTasks);
+      mockUserTaskService.getExecutionDetailsFromEntity
+        .mockResolvedValueOnce({ details: 'execution-1' })
+        .mockResolvedValueOnce({ details: 'execution-2' });
+
+      const result = await service.getTasksExecutionDetails('exp-1');
+
+      expect(mockUserTaskService.findByExperimentId).toHaveBeenCalledWith(
+        'exp-1',
+      );
+      expect(result).toHaveLength(1);
+      expect(result[0].taskId).toBe('task-1');
+      expect(result[0].executions).toHaveLength(2);
+    });
+  });
+
+  describe('getSurveysStats', () => {
+    it('should return surveys statistics', async () => {
+      const surveys = [
+        { _id: 'survey-1', title: 'Survey 1' },
+        { _id: 'survey-2', title: 'Survey 2' },
+      ];
+
+      mockSurveyService.findByExperimentId.mockResolvedValue(surveys);
+      mockSurveyService.getStats
+        .mockResolvedValueOnce({ responses: 10 })
+        .mockResolvedValueOnce({ responses: 8 });
+
+      const result = await service.getSurveysStats('exp-1');
+
+      expect(mockSurveyService.findByExperimentId).toHaveBeenCalledWith(
+        'exp-1',
+      );
+      expect(result.surveys).toHaveLength(2);
+    });
+  });
+
+  describe('update', () => {
+    it('should update an experiment', async () => {
+      const updateDto = { name: 'Updated Experiment', status: ExperimentStatus.IN_PROGRESS };
+      const updatedExperiment = { _id: 'exp-1', ...updateDto };
+
+      mockExperimentRepository.update.mockResolvedValue({ affected: 1 });
+      mockExperimentRepository.findOneBy.mockResolvedValue(updatedExperiment);
+
+      const result = await service.update('exp-1', updateDto);
+
+      expect(mockExperimentRepository.update).toHaveBeenCalledWith(
+        { _id: 'exp-1' },
+        updateDto,
+      );
+      expect(result).toEqual(updatedExperiment);
+    });
+  });
+
+  describe('remove', () => {
+    it('should remove an experiment', async () => {
+      const experiment = { _id: 'exp-1', name: 'Experiment 1' };
+      mockExperimentRepository.findOneBy.mockResolvedValue(experiment);
+      mockExperimentRepository.delete.mockResolvedValue({ affected: 1 });
+
+      const result = await service.remove('exp-1');
+
+      expect(mockExperimentRepository.delete).toHaveBeenCalledWith({
+        _id: 'exp-1',
+      });
+      expect(result).toEqual(experiment);
+    });
+  });
+
+  describe('buildStep', () => {
+    it('should build experiment steps correctly', async () => {
+      const experiment = {
+        _id: 'exp-1',
+        icfs: [{ _id: 'icf-1' }],
+        tasks: [{ _id: 'task-1' }],
+        surveys: [
+          { _id: 'survey-1', type: SurveyType.PRE },
+          { _id: 'survey-2', type: SurveyType.POST },
+        ],
+      };
+
+      mockExperimentRepository.findOne.mockResolvedValue(experiment);
+
+      const result = await service.buildStep('exp-1');
+
+      expect(result[StepsType.ICF]).toBeDefined();
+      expect(result[StepsType.PRE]).toBeDefined();
+      expect(result[StepsType.TASK]).toBeDefined();
+      expect(result[StepsType.POST]).toBeDefined();
+    });
+  });
+
+  describe('exportToYaml', () => {
+    it('should export experiment to YAML format', async () => {
+      const experiment = {
+        _id: 'exp-1',
+        name: 'Test Experiment',
+        summary: 'Test Summary',
+        typeExperiment: 'within-subject',
+        betweenExperimentType: null,
+        icfs: [{ title: 'ICF Title', description: 'ICF Description' }],
+        surveys: [
+          {
+            name: 'Survey 1',
+            title: 'Survey Title',
+            description: 'Description',
+            questions: [],
+            type: 'pre',
+            uniqueAnswer: false,
+            required: true,
+          },
+        ],
+        tasks: [
+          {
+            title: 'Task 1',
+            summary: 'Summary',
+            description: 'Description',
+            rule_type: 'score',
+            max_score: 100,
+            min_score: 0,
+            search_source: 'search-engine',
+            survey_id: 'survey-1',
+          },
+        ],
+      };
+
+      mockExperimentRepository.findOne.mockResolvedValue(experiment);
+
+      const result = await service.exportToYaml('exp-1');
+
+      expect(typeof result).toBe('string');
+      expect(result).toContain('Test Experiment');
+    });
+
+    it('should throw error if experiment not found', async () => {
+      mockExperimentRepository.findOne.mockResolvedValue(null);
+
+      await expect(service.exportToYaml('exp-1')).rejects.toThrow(
+        'Experiment not found',
+      );
+    });
+  });
+
+  describe('importFromYaml', () => {
+    it('should import experiment from YAML', async () => {
+      const yamlContent = `
+        experiment:
+          name: Test Import
+          summary: Test Summary
+          typeExperiment: within-subject
+          betweenExperimentType: null
+          icf:
+            title: ICF Title
+            description: ICF Description
+          surveys:
+            - name: Survey 1
+              title: Survey Title
+              description: Survey Description
+              type: pre
+              uniqueAnswer: false
+              required: true
+              questions:
+                - statement: Question 1
+                  type: open
+                  required: true
+          tasks:
+            - title: Task 1
+              summary: Task Summary
+              description: Task Description
+              search_source: search-engine
+              rule_type: score
+              min_score: 0
+              max_score: 100
+      `;
+
+      const mockUser = { _id: 'owner-1' };
+      const savedExperiment = { _id: 'exp-1', name: 'Test Import' };
+
+      mockUserService.findOne.mockResolvedValue(mockUser);
+      mockExperimentRepository.create.mockReturnValue(savedExperiment);
+      mockExperimentRepository.save.mockResolvedValue(savedExperiment);
+      mockIcfService.create.mockResolvedValue({});
+      mockSurveyService.create.mockResolvedValue({});
+      mockTaskService.create.mockResolvedValue({});
+
+      const result = await service.importFromYaml(yamlContent, 'owner-1');
+
+      expect(result).toEqual([]);
+      expect(mockExperimentRepository.save).toHaveBeenCalled();
+    });
+
+    it('should return validation errors for invalid YAML', async () => {
+      const invalidYaml = `
+        experiment:
+          name: Test
+      `;
+
+      const result = await service.importFromYaml(invalidYaml, 'owner-1');
+
+      expect(Array.isArray(result)).toBe(true);
+      expect(result.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('getGeneralExpirementInfos', () => {
+    it('should return general experiment information', async () => {
+      const experiment = { _id: 'exp-1', status: 'active' };
+      const userInfos = { total: 10, completed: 8 };
+
+      mockExperimentRepository.findOneBy.mockResolvedValue(experiment);
+      mockUserExperimentService.countUsersByExperimentId.mockResolvedValue(
+        userInfos,
+      );
+
+      const result = await service.getGeneralExpirementInfos('exp-1');
+
+      expect(result.experimentStatus).toBe('active');
+      expect(result.userExperimentInfos).toEqual(userInfos);
+    });
+  });
+
+  describe('findOneByName', () => {
+    it('should find experiment by name', async () => {
+      const experiment = { _id: 'exp-1', name: 'Test Experiment' };
+      mockExperimentRepository.findOneBy.mockResolvedValue(experiment);
+
+      const result = await service.findOneByName('Test Experiment');
+
+      expect(mockExperimentRepository.findOneBy).toHaveBeenCalledWith({
+        name: 'Test Experiment',
+      });
+      expect(result).toEqual(experiment);
+    });
+  });
+
+  describe('findByOwnerId', () => {
+    it('should find experiments by owner id', async () => {
+      const experiments = [{ _id: 'exp-1', owner_id: 'owner-1' }];
+      mockExperimentRepository.find.mockResolvedValue(experiments);
+
+      const result = await service.findByOwnerId('owner-1');
+
+      expect(mockExperimentRepository.find).toHaveBeenCalledWith({
+        where: { owner_id: 'owner-1' },
+      });
+      expect(result).toEqual(experiments);
+    });
   });
 });
+

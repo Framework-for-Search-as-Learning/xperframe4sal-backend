@@ -5,6 +5,7 @@
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserTaskSessionController } from './user-task-session.controller';
+import { UserTaskSessionService } from './user-task-session.service';
 
 describe('UserTaskSessionController', () => {
   let controller: UserTaskSessionController;
@@ -12,6 +13,12 @@ describe('UserTaskSessionController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UserTaskSessionController],
+      providers: [
+        {
+          provide: UserTaskSessionService,
+          useValue: {},
+        },
+      ],
     }).compile();
 
     controller = module.get<UserTaskSessionController>(UserTaskSessionController);

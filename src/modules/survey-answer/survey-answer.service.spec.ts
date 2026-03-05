@@ -4,14 +4,43 @@
  */
 
 import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import { SurveyAnswerService } from './survey-answer.service';
+import { SurveyAnswer } from './entity/survey-answer.entity';
+import { UserService } from '../user/user.service';
+import { SurveyService } from '../survey/survey.service';
+import { UserTaskService } from '../user-task/user-task.service';
 
 describe('SurveyAnswerService', () => {
   let service: SurveyAnswerService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [SurveyAnswerService],
+      providers: [
+        SurveyAnswerService,
+        {
+          provide: getRepositoryToken(SurveyAnswer),
+          useValue: {
+            find: jest.fn(),
+            findOne: jest.fn(),
+            save: jest.fn(),
+            update: jest.fn(),
+            delete: jest.fn(),
+          },
+        },
+        {
+          provide: UserService,
+          useValue: { findOne: jest.fn() },
+        },
+        {
+          provide: SurveyService,
+          useValue: { find: jest.fn() },
+        },
+        {
+          provide: UserTaskService,
+          useValue: { findOne: jest.fn() },
+        },
+      ],
     }).compile();
 
     service = module.get<SurveyAnswerService>(SurveyAnswerService);

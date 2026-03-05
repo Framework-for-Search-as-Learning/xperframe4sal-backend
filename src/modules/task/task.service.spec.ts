@@ -4,14 +4,49 @@
  */
 
 import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import { TaskService } from './task.service';
+import { Task } from './entities/task.entity';
+import { ExperimentService } from '../experiment/experiment.service';
+import { SurveyService } from '../survey/survey.service';
+import { TaskQuestionMapService } from '../task-question-map/task-question-map.service';
 
 describe('TaskService', () => {
   let service: TaskService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TaskService],
+      providers: [
+        TaskService,
+        {
+          provide: getRepositoryToken(Task),
+          useValue: {
+            find: jest.fn(),
+            findOne: jest.fn(),
+            save: jest.fn(),
+            update: jest.fn(),
+            delete: jest.fn(),
+          },
+        },
+        {
+          provide: ExperimentService,
+          useValue: {
+            find: jest.fn(),
+          },
+        },
+        {
+          provide: SurveyService,
+          useValue: {
+            find: jest.fn(),
+          },
+        },
+        {
+          provide: TaskQuestionMapService,
+          useValue: {
+            findQuestionsByTask: jest.fn(),
+          },
+        },
+      ],
     }).compile();
 
     service = module.get<TaskService>(TaskService);

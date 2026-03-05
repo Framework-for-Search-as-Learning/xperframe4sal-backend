@@ -5,6 +5,7 @@
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { IcfController } from './icf.controller';
+import { IcfService } from './icf.service';
 
 describe('IcfController', () => {
   let controller: IcfController;
@@ -12,6 +13,12 @@ describe('IcfController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [IcfController],
+      providers: [
+        {
+          provide: IcfService,
+          useValue: {},
+        },
+      ],
     }).compile();
 
     controller = module.get<IcfController>(IcfController);

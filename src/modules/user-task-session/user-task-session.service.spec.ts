@@ -4,14 +4,37 @@
  */
 
 import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import { UserTaskSessionService } from './user-task-session.service';
+import { UserTaskSession } from './entities/user-task-session.entity';
+import { Page } from './entities/page.entity';
 
 describe('UserTaskSessionService', () => {
   let service: UserTaskSessionService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [UserTaskSessionService],
+      providers: [
+        UserTaskSessionService,
+        {
+          provide: getRepositoryToken(UserTaskSession),
+          useValue: {
+            find: jest.fn(),
+            findOne: jest.fn(),
+            save: jest.fn(),
+            update: jest.fn(),
+            delete: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(Page),
+          useValue: {
+            find: jest.fn(),
+            findOne: jest.fn(),
+            save: jest.fn(),
+          },
+        },
+      ],
     }).compile();
 
     service = module.get<UserTaskSessionService>(UserTaskSessionService);

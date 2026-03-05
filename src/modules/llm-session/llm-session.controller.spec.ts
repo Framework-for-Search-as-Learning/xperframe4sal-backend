@@ -5,6 +5,7 @@
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { LlmSessionController } from './llm-session.controller';
+import { LlmSessionService } from './llm-session.service';
 
 describe('LlmSessionController', () => {
   let controller: LlmSessionController;
@@ -12,6 +13,12 @@ describe('LlmSessionController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [LlmSessionController],
+      providers: [
+        {
+          provide: LlmSessionService,
+          useValue: {},
+        },
+      ],
     }).compile();
 
     controller = module.get<LlmSessionController>(LlmSessionController);

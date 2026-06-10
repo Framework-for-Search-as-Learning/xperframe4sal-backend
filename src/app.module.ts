@@ -7,7 +7,6 @@ import {Module} from '@nestjs/common';
 import {ConfigModule} from '@nestjs/config';
 import {ConfigService} from '@nestjs/config';
 import {TypeOrmModule} from '@nestjs/typeorm';
-import {MailerModule} from '@nestjs-modules/mailer';
 import * as Joi from 'joi';
 
 import {AppController} from './app.controller';
@@ -52,6 +51,13 @@ import {UserTaskSessionModule} from './modules/user-task-session/user-task-sessi
         DB_NAME: Joi.string().empty('').default('sal'),
         PORT: Joi.number().default(3000),
         SECRET: Joi.string().required(),
+        MAIL_HOST: Joi.string().empty('').optional(),
+        MAIL_PORT: Joi.number().empty('').default(587),
+        MAIL_SECURE: Joi.boolean().empty('').default(false),
+        MAIL_USER: Joi.string().empty('').optional(),
+        MAIL_PASS: Joi.string().empty('').optional(),
+        MAIL_FROM: Joi.string().empty('').default('noreply@searchat-behavior.com'),
+        FRONTEND_URL: Joi.string().empty('').optional(),
       }),
     }),
     AuthModule,
@@ -84,14 +90,6 @@ import {UserTaskSessionModule} from './modules/user-task-session/user-task-sessi
         ],
         synchronize: true,
       }),
-    }),
-    MailerModule.forRoot({
-      transport: {
-        service: 'gmail',
-        auth: {
-          type: 'OAuth2',
-        },
-      },
     }),
     UserModule,
     ExperimentModule,

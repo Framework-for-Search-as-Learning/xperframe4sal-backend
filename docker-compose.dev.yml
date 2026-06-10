@@ -1,0 +1,16 @@
+services:
+  api:
+    environment:
+      MAIL_HOST: mailpit
+      MAIL_PORT: 1025
+      MAIL_SECURE: false
+      MAIL_FROM: noreply@searchat-behavior.com
+      FRONTEND_URL: http://localhost:3001
+    depends_on:
+      - mailpit
+  mailpit:
+    image: axllent/mailpit
+    restart: no
+    ports:
+      - '1025:1025'
+      - '8025:8025'

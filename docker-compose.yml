@@ -1,6 +1,6 @@
 services:
   api:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile.dev
     container_name: nestjs-dev
@@ -15,6 +15,13 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:-postgres}
       DB_NAME: ${DB_NAME:-sal}
       DB_HOST: ${DB_HOST:-postgres-api}
+      MAIL_HOST: ${MAIL_HOST:-}
+      MAIL_PORT: ${MAIL_PORT:-587}
+      MAIL_SECURE: ${MAIL_SECURE:-false}
+      MAIL_USER: ${MAIL_USER:-}
+      MAIL_PASS: ${MAIL_PASS:-}
+      MAIL_FROM: ${MAIL_FROM:-noreply@searchat-behavior.com}
+      FRONTEND_URL: ${FRONTEND_URL:-}
     depends_on:
       - postgres-api
   postgres-api:

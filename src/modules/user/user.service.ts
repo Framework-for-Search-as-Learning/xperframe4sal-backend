@@ -10,9 +10,10 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MailerService } from '@nestjs-modules/mailer';
+import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcryptjs';
 import * as crypto from 'crypto';
+import * as nodemailer from 'nodemailer';
 import {
   ForgotPasswordDto,
   ResetPasswordDto,
@@ -30,7 +31,7 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    private readonly mailerService: MailerService,
+    private readonly configService: ConfigService,
   ) { }
 
   async forgotPassword(forgotPasswordDto: ForgotPasswordDto): Promise<void> {
@@ -193,12 +194,58 @@ export class UserService {
     email: string,
     token: string,
   ): Promise<void> {
-    await this.mailerService.sendMail({
+    const frontendUrl = this.configService.get<string>('FRONTEND_URL');
+    if (!frontendUrl) {
+      console.warn(
+        '[Searchat Behavior] FRONTEND_URL is not set. Password reset emails will contain an incomplete link.',
+      );
+    }
+    const resetLink = `${frontendUrl ?? ''}/reset-password?token=${token}&email=${email}`;
+
+    const mailHost = this.configService.get<string>('MAIL_HOST');
+    if (!mailHost) {
+      console.log(
+        `[Searchat Behavior] Password reset requested for ${email}. Reset link: ${resetLink}`,
+      );
+      return;
+    }
+
+    const from =
+      this.configService.get<string>('MAIL_FROM') ??
+      'noreply@searchat-behavior.com';
+
+    const transporter = nodemailer.createTransport({
+      host: mailHost,
+      port: this.configService.get<number>('MAIL_PORT') ?? 587,
+      secure: this.configService.get<boolean>('MAIL_SECURE') ?? false,
+      auth: this.configService.get<string>('MAIL_USER')
+        ? {
+            user: this.configService.get<string>('MAIL_USER'),
+            pass: this.configService.get<string>('MAIL_PASS'),
+          }
+        : undefined,
+    });
+
+    await transporter.sendMail({
       to: email,
-      from: process.env.MY_GMAIL_EMAIL,
-      subject: 'Alteração de Senha plataforma Searchat Behavior',
-      text: `Por favor, acesse o link a seguir para restaurar sua senha: https://buscandoeaprendendo.onrender.com/reset-password?token=${token}&email=${email}`,
-      html: `Por favor, acesse o link a seguir para restaurar sua senha: <a href='https://buscandoeaprendendo.onrender.com/reset-password?token=${token}&email=${email}'>https://buscandoeaprendendo.onrender.com/reset-password?token=${token}</a>`,
+      from,
+      subject: 'Searchat Behavior - Password Reset',
+      text: [
+        'You requested a password reset for your Searchat Behavior account.',
+        '',
+        `Please click the link below to reset your password:\n${resetLink}`,
+        '',
+        'This link expires in 1 hour.',
+        '',
+        'If you did not request a password reset, please ignore this email.',
+      ].join('\n'),
+      html: `
+        <p>You requested a password reset for your <strong>Searchat Behavior</strong> account.</p>
+        <p>Please click the link below to reset your password:</p>
+        <p><a href="${resetLink}">${resetLink}</a></p>
+        <p>This link expires in 1 hour.</p>
+        <p>If you did not request a password reset, please ignore this email.</p>
+      `,
     });
   }
 }

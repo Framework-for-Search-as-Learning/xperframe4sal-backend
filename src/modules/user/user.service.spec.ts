@@ -5,8 +5,8 @@
 
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
+import { ConfigService } from '@nestjs/config';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { MailerService } from '@nestjs-modules/mailer';
 
 import { User } from './entity/user.entity';
 import { UserService } from './user.service';
@@ -29,9 +29,9 @@ describe('UserService', () => {
           },
         },
         {
-          provide: MailerService,
+          provide: ConfigService,
           useValue: {
-            sendMail: jest.fn(),
+            get: jest.fn(),
           },
         },
       ],

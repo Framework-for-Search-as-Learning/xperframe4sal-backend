@@ -4,10 +4,9 @@
   "description": "",
   "author": "",
   "private": true,
-  "packageManager": "pnpm@10.34.3",
   "license": "MIT",
   "engines": {
-    "node": ">=22"
+    "node": ">=24"
   },
   "scripts": {
     "build": "nest build",

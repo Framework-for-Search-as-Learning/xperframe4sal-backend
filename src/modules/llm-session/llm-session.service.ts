@@ -202,7 +202,23 @@ export class LlmSessionService {
       };
     } catch (error) {
       console.error('Error LangChain:', error);
-      throw new Error('Error processing LLM response', {cause: error});
+      const cause = error?.cause ?? error;
+      const status = cause?.status ?? cause?.statusCode;
+
+      if (status === 401 || cause?.code === 'invalid_api_key') {
+        throw new ForbiddenException('Invalid or missing API key for the LLM provider');
+      }
+      if (status === 404) {
+        throw new NotFoundException(
+          `Model not found: ${String(providerConfig.model || provider.defaultModel)}`,
+        );
+      }
+      if (status === 429) {
+        throw new BadRequestException('LLM provider rate limit exceeded. Try again later');
+      }
+      throw new BadRequestException(
+        cause?.message ?? 'Unexpected error while generating LLM response',
+      );
     }
   }
 

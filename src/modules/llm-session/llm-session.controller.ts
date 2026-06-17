@@ -159,10 +159,11 @@ export class LlmSessionController {
 
       await saveBotResponse(fullBotResponse);
     } catch (error) {
-      console.error('Error processing chat message:', error.message);
+      console.error('Error processing chat message:', (error as Error)?.message);
+      const err = error as {response?: {message?: string}; message?: string};
       const message =
-        (typeof error?.response === 'object' ? error.response?.message : null) ??
-        error?.message ??
+        (typeof err?.response === 'object' ? err.response?.message : null) ??
+        err?.message ??
         'Error to generate response';
       res.write(`\n[ERROR: ${message}]`);
     } finally {

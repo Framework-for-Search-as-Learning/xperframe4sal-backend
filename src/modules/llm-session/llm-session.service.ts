@@ -206,19 +206,21 @@ export class LlmSessionService {
       const status = cause?.status ?? cause?.statusCode;
 
       if (status === 401 || cause?.code === 'invalid_api_key') {
-        throw new ForbiddenException('Invalid or missing API key for the LLM provider');
+        throw new ForbiddenException('llm_error_invalid_api_key');
       }
       if (status === 404) {
-        throw new NotFoundException(
-          `Model not found: ${String(providerConfig.model || provider.defaultModel)}`,
-        );
+        throw new NotFoundException({
+          message: 'llm_error_model_not_found',
+          model: String(providerConfig.model || provider.defaultModel),
+        });
       }
       if (status === 429) {
-        throw new BadRequestException('LLM provider rate limit exceeded. Try again later');
+        throw new BadRequestException('llm_error_rate_limit');
       }
-      throw new BadRequestException(
-        cause?.message ?? 'Unexpected error while generating LLM response',
-      );
+      throw new BadRequestException({
+        message: 'llm_error_unexpected',
+        detail: cause?.message,
+      });
     }
   }
 

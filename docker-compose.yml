@@ -6,7 +6,7 @@ services:
     container_name: nestjs-dev
     restart: no
     ports:
-      - "3000:3000"
+      - "${API_PORT:-3000}:3000"
     volumes:
       - .:/app
       - /app/node_modules

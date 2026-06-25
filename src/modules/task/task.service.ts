@@ -153,6 +153,23 @@ export class TaskService {
     return this.applyProviderConfigMask(task) as TaskWithProviderMask;
   }
 
+  async findOneForDuplication(id: string): Promise<Task> {
+    const task = await this.taskRepository
+      .createQueryBuilder('task')
+      .addSelect('task.provider_config')
+      .where('task._id = :id', { id })
+      .getOne();
+    if (!task) {
+      throw new NotFoundException('Tarefa não encontrada');
+    }
+    return {
+      ...task,
+      provider_config: this.normalizeProviderConfigForOutput(
+        task.provider_config as TaskProviderConfig,
+      ) as Record<string, unknown>,
+    } as Task;
+  }
+
   async findMany(ids: string[]): Promise<Task[]> {
     return await this.taskRepository.find({
       where: {

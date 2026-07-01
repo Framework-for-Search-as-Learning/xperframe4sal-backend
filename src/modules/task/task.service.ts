@@ -13,10 +13,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 
 import { ExperimentService } from '../experiment/experiment.service';
+import { getDisplayProviderValue } from '../llm-session/constants/llm-provider-registry.constants';
 import { SurveyService } from '../survey/survey.service';
 import { TaskQuestionMapService } from '../task-question-map/task-question-map.service';
 import { TaskSurveyService } from '../task-survey/task-survey.service';
-import { getDisplayProviderValue } from '../llm-session/constants/llm-provider-registry.constants';
 import { PROVIDER_CONFIG_SECRET_KEYS } from './constants/provider-config.constants';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
@@ -195,7 +195,7 @@ export class TaskService {
   }
 
   async update(id: string, updateTaskDto: UpdateTaskDto): Promise<TaskWithProviderMask> {
-    const dto = updateTaskDto as any;
+    const dto = updateTaskDto as UpdateTaskDto & { linkedSurveyRefs?: string[] };
     const hasLinkedSurveyRefs = 'linkedSurveyRefs' in dto;
     const linkedSurveyRefs: string[] = dto.linkedSurveyRefs ?? [];
     delete dto.linkedSurveyRefs;

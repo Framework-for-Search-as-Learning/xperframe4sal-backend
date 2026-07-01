@@ -251,8 +251,8 @@ export class UserTaskService {
       (userTask) => userTask.task.experiment_id === experimentId,
     );
     return userTaskByExperiment.map((ut) => {
-      const {taskSurveys, ...taskRest} = ut.task as any;
-      const surveyIds: string[] = (taskSurveys ?? []).map((ts: any) => ts.survey_id);
+      const {taskSurveys, ...taskRest} = ut.task;
+      const surveyIds: string[] = (taskSurveys ?? []).map((ts) => ts.survey_id);
       return {
         ...ut,
         task: {

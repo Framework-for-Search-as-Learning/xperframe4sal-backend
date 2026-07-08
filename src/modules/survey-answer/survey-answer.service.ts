@@ -54,6 +54,17 @@ export class SurveyAnswerService {
         surveyId: newSurveyAnswer.survey_id,
         surveyAnswer: newSurveyAnswer,
       });
+    } else if (experiment?.betweenExperimentType === 'balanced') {
+      const allSurveyAnswers = await this.findBySurveyId(
+        newSurveyAnswer.survey_id,
+      );
+      await this.userTaskService.createBalanced({
+        userId,
+        experimentId: experiment._id,
+        tasks: experiment.tasks,
+        surveyAnswer: newSurveyAnswer,
+        allSurveyAnswers,
+      });
     }
     return newSurveyAnswer;
   }

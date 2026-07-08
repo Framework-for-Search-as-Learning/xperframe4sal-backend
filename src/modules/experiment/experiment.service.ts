@@ -738,7 +738,7 @@ export class ExperimentService {
       ) {
         errors.push('yaml_error_missing_experiment_between_type');
       } else if (
-        !['random', 'rules_based', 'manual'].includes(
+        !['random', 'rules_based', 'manual', 'balanced'].includes(
           experiment.betweenExperimentType,
         )
       ) {

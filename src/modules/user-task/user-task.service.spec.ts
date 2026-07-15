@@ -148,5 +148,109 @@ describe('UserTaskService', () => {
       expect(createSpy).not.toHaveBeenCalled();
       expect(result).toBeUndefined();
     });
+
+    it('balances using the average score of the configured question when the experiment rule is "question"', async () => {
+      jest
+        .spyOn(service, 'findTasksByUserIdAndExperimentId')
+        .mockResolvedValue([]);
+      jest
+        .spyOn(service, 'findUsersByTaskId')
+        .mockImplementation(async (taskId: string) =>
+          (taskId === 'task-a' ? [{ _id: 'u1' }] : []) as User[],
+        );
+      const createSpy = jest
+        .spyOn(service, 'create')
+        .mockResolvedValue({} as UserTask);
+
+      // u1 total score is 100 (would push task-a average way up), but the
+      // configured question q1 only scored 10 for u1, so balancing should
+      // use that narrower score instead of the survey total.
+      const allSurveyAnswers = [
+        {
+          user_id: 'u1',
+          score: 100,
+          answers: [
+            { id: 'q1', score: 10 },
+            { id: 'q2', score: 90 },
+          ],
+        },
+      ] as SurveyAnswer[];
+
+      await service.createBalanced({
+        userId,
+        experimentId,
+        tasks,
+        surveyAnswer: {
+          score: 100,
+          answers: [
+            { id: 'q1', score: 12 },
+            { id: 'q2', score: 88 },
+          ],
+        } as SurveyAnswer,
+        allSurveyAnswers,
+        ruleType: 'question',
+        questionIds: ['q1'],
+      });
+
+      // task-a avg(q1)=10, adding u_new(q1=12) -> avg 11 vs task-b avg 0 (spread 11)
+      // task-b (empty) + u_new(q1=12) -> avg 12 vs task-a avg 10 (spread 2)
+      expect(createSpy).toHaveBeenCalledWith({ userId, taskId: 'task-b' });
+    });
+
+    it('ignores survey answers from users who did not answer the configured question', async () => {
+      jest
+        .spyOn(service, 'findTasksByUserIdAndExperimentId')
+        .mockResolvedValue([]);
+      jest
+        .spyOn(service, 'findUsersByTaskId')
+        .mockImplementation(async (taskId: string) =>
+          (taskId === 'task-a' ? [{ _id: 'u1' }] : []) as User[],
+        );
+      const createSpy = jest
+        .spyOn(service, 'create')
+        .mockResolvedValue({} as UserTask);
+
+      const allSurveyAnswers = [
+        { user_id: 'u1', score: 5, answers: [{ id: 'q2', score: 5 }] },
+      ] as SurveyAnswer[];
+
+      await service.createBalanced({
+        userId,
+        experimentId,
+        tasks,
+        surveyAnswer: {
+          score: 12,
+          answers: [{ id: 'q1', score: 12 }],
+        } as SurveyAnswer,
+        allSurveyAnswers,
+        ruleType: 'question',
+        questionIds: ['q1'],
+      });
+
+      // u1 has no answer for q1, so task-a is treated as an empty group (avg 0).
+      expect(createSpy).toHaveBeenCalledWith({ userId, taskId: 'task-a' });
+    });
+
+    it('throws when the new participant has no answer for the configured question', async () => {
+      jest
+        .spyOn(service, 'findTasksByUserIdAndExperimentId')
+        .mockResolvedValue([]);
+      jest.spyOn(service, 'findUsersByTaskId').mockResolvedValue([]);
+
+      await expect(
+        service.createBalanced({
+          userId,
+          experimentId,
+          tasks,
+          surveyAnswer: {
+            score: 12,
+            answers: [{ id: 'q2', score: 12 }],
+          } as SurveyAnswer,
+          allSurveyAnswers: [],
+          ruleType: 'question',
+          questionIds: ['q1'],
+        }),
+      ).rejects.toThrow();
+    });
   });
 });

@@ -101,6 +101,75 @@ describe('SurveyAnswerService', () => {
       expect(userTaskService.createBySurveyRule).not.toHaveBeenCalled();
     });
 
+    it('forwards the experiment-level balancing rule to createBalanced', async () => {
+      const userId = 'user-1';
+      const surveyId = 'survey-1';
+      const experiment = {
+        _id: 'exp-1',
+        betweenExperimentType: 'balanced',
+        balancedRuleType: 'question',
+        balancedSurveyId: surveyId,
+        balancedQuestionIds: ['q1'],
+        tasks: [{ _id: 'task-a' }, { _id: 'task-b' }],
+      };
+      const savedAnswer = {
+        _id: 'answer-1',
+        user_id: userId,
+        survey_id: surveyId,
+        score: 4,
+      };
+      const allAnswers = [savedAnswer];
+
+      userService.findOne.mockResolvedValue({ _id: userId });
+      surveyService.findOneWithExperiment.mockResolvedValue({
+        _id: surveyId,
+        experiment,
+      });
+      surveyAnswerRepository.save.mockResolvedValue(savedAnswer);
+      surveyAnswerRepository.find.mockResolvedValue(allAnswers);
+
+      await service.create({ userId, surveyId, answers: [] });
+
+      expect(userTaskService.createBalanced).toHaveBeenCalledWith({
+        userId,
+        experimentId: experiment._id,
+        tasks: experiment.tasks,
+        surveyAnswer: savedAnswer,
+        allSurveyAnswers: allAnswers,
+        ruleType: 'question',
+        questionIds: ['q1'],
+      });
+    });
+
+    it('does not trigger balanced assignment when the answered survey is not the configured balancing survey', async () => {
+      const userId = 'user-1';
+      const surveyId = 'survey-other';
+      const experiment = {
+        _id: 'exp-1',
+        betweenExperimentType: 'balanced',
+        balancedRuleType: 'score',
+        balancedSurveyId: 'survey-pre',
+        tasks: [{ _id: 'task-a' }, { _id: 'task-b' }],
+      };
+      const savedAnswer = {
+        _id: 'answer-1',
+        user_id: userId,
+        survey_id: surveyId,
+        score: 4,
+      };
+
+      userService.findOne.mockResolvedValue({ _id: userId });
+      surveyService.findOneWithExperiment.mockResolvedValue({
+        _id: surveyId,
+        experiment,
+      });
+      surveyAnswerRepository.save.mockResolvedValue(savedAnswer);
+
+      await service.create({ userId, surveyId, answers: [] });
+
+      expect(userTaskService.createBalanced).not.toHaveBeenCalled();
+    });
+
     it('does not trigger balanced assignment for other betweenExperimentType values', async () => {
       const userId = 'user-1';
       const surveyId = 'survey-1';

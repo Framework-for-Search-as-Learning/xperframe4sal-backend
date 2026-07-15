@@ -8,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { LlmSessionService } from 'src/modules/llm-session/llm-session.service';
 import { In, Repository } from 'typeorm';
 
+import { SurveyAnswer } from '../survey-answer/entity/survey-answer.entity';
 import { Task, type TaskProviderConfig } from '../task/entities/task.entity';
 import { TaskService } from '../task/task.service';
 import { TaskQuestionMapService } from '../task-question-map/task-question-map.service';
@@ -208,8 +209,15 @@ export class UserTaskService {
     createUserTaskBalancedDto: CreateUserTaskBalancedDto,
   ): Promise<UserTask | void> {
     try {
-      const { userId, experimentId, tasks, surveyAnswer, allSurveyAnswers } =
-        createUserTaskBalancedDto;
+      const {
+        userId,
+        experimentId,
+        tasks,
+        surveyAnswer,
+        allSurveyAnswers,
+        ruleType,
+        questionIds: configuredQuestionIds,
+      } = createUserTaskBalancedDto;
 
       const existingAssignments = await this.findTasksByUserIdAndExperimentId(
         userId,
@@ -219,8 +227,20 @@ export class UserTaskService {
         return;
       }
 
+      const questionIds =
+        ruleType === 'question' ? configuredQuestionIds || [] : [];
+
       const scoreByUserId = new Map<string, number>(
-        allSurveyAnswers.map((answer) => [answer.user_id, answer.score]),
+        allSurveyAnswers
+          .map(
+            (answer): [string, number | undefined] => [
+              answer.user_id,
+              this.getBalancedScore(answer, questionIds),
+            ],
+          )
+          .filter(
+            (entry): entry is [string, number] => typeof entry[1] === 'number',
+          ),
       );
 
       const groupStats = await Promise.all(
@@ -234,7 +254,12 @@ export class UserTaskService {
         }),
       );
 
-      const userScore = surveyAnswer.score;
+      const userScore = this.getBalancedScore(surveyAnswer, questionIds);
+      if (typeof userScore !== 'number') {
+        throw new Error(
+          'Nao foi possivel calcular o score balanceado para o usuario',
+        );
+      }
       let selectedTaskId: string;
       let bestSpread = Infinity;
       let bestCount = Infinity;
@@ -265,6 +290,26 @@ export class UserTaskService {
       console.error('Error ao criar tarefa balanceada', error);
       throw error;
     }
+  }
+
+  private getBalancedScore(
+    answer: SurveyAnswer,
+    questionIds: string[],
+  ): number | undefined {
+    if (questionIds.length === 0) {
+      return answer.score;
+    }
+    const selectedAnswers = answer.answers.filter((selected) =>
+      questionIds.includes(selected.id),
+    );
+    if (selectedAnswers.length === 0) {
+      return undefined;
+    }
+    const total = selectedAnswers.reduce(
+      (acc, selected) => acc + (selected.score || 0),
+      0,
+    );
+    return total / selectedAnswers.length;
   }
 
   async createMany(userTasks: UserTask[]): Promise<UserTask[]> {

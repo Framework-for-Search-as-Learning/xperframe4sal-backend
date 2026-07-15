@@ -4,7 +4,7 @@
  */
 
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsNotEmpty, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { SurveyAnswer } from 'src/modules/survey-answer/entity/survey-answer.entity';
 import { Task } from 'src/modules/task/entities/task.entity';
 
@@ -34,4 +34,20 @@ export class CreateUserTaskBalancedDto {
   })
   @IsArray()
   allSurveyAnswers: SurveyAnswer[];
+
+  @ApiProperty({
+    description: 'Experiment-level balancing rule: "score" (whole survey) or "question" (specific question)',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  ruleType?: string;
+
+  @ApiProperty({
+    description: 'Question ids used to compute the balancing score when ruleType is "question"',
+    required: false,
+  })
+  @IsOptional()
+  @IsArray()
+  questionIds?: string[];
 }

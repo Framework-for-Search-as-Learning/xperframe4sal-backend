@@ -54,7 +54,11 @@ export class SurveyAnswerService {
         surveyId: newSurveyAnswer.survey_id,
         surveyAnswer: newSurveyAnswer,
       });
-    } else if (experiment?.betweenExperimentType === 'balanced') {
+    } else if (
+      experiment?.betweenExperimentType === 'balanced' &&
+      (!experiment.balancedSurveyId ||
+        experiment.balancedSurveyId === newSurveyAnswer.survey_id)
+    ) {
       const allSurveyAnswers = await this.findBySurveyId(
         newSurveyAnswer.survey_id,
       );
@@ -64,6 +68,8 @@ export class SurveyAnswerService {
         tasks: experiment.tasks,
         surveyAnswer: newSurveyAnswer,
         allSurveyAnswers,
+        ruleType: experiment.balancedRuleType,
+        questionIds: experiment.balancedQuestionIds,
       });
     }
     return newSurveyAnswer;

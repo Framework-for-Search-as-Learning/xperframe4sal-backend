@@ -86,6 +86,9 @@ type YamlExperimentData = {
   summary?: string;
   typeExperiment?: string;
   betweenExperimentType?: string;
+  balancedRuleType?: string;
+  balancedSurveyId?: string;
+  balancedQuestionIds?: string[];
   icf?: YamlIcf | null;
   surveys?: YamlSurvey[];
   tasks?: YamlTask[];
@@ -130,6 +133,9 @@ export class ExperimentService {
       surveysProps = [],
       typeExperiment,
       betweenExperimentType,
+      balancedRuleType,
+      balancedSurveyId,
+      balancedQuestionIds,
       icf,
     } = createExperimentDto;
 
@@ -179,6 +185,24 @@ export class ExperimentService {
               surveyRefToId.set(originalRef, survey._id);
             }
           });
+
+          if (balancedRuleType || balancedSurveyId || balancedQuestionIds?.length) {
+            const resolvedBalancedSurveyId = balancedSurveyId
+              ? surveyRefToId.get(balancedSurveyId) || balancedSurveyId
+              : null;
+            await manager.update(
+              Experiment,
+              {_id: savedExperiment._id},
+              {
+                balancedRuleType: balancedRuleType || null,
+                balancedSurveyId: resolvedBalancedSurveyId,
+                balancedQuestionIds: balancedQuestionIds || [],
+              },
+            );
+            savedExperiment.balancedRuleType = balancedRuleType || null;
+            savedExperiment.balancedSurveyId = resolvedBalancedSurveyId;
+            savedExperiment.balancedQuestionIds = balancedQuestionIds || [];
+          }
 
           const createdTasks = await Promise.all(
             tasksProps.map(async (task) => {
@@ -488,6 +512,9 @@ export class ExperimentService {
         summary: experiment.summary,
         typeExperiment: experiment.typeExperiment,
         betweenExperimentType: experiment.betweenExperimentType,
+        balancedRuleType: experiment.balancedRuleType,
+        balancedSurveyId: experiment.balancedSurveyId,
+        balancedQuestionIds: experiment.balancedQuestionIds,
         icf: icf
           ? {
               title: icf.title,
@@ -615,6 +642,9 @@ export class ExperimentService {
         owner,
         typeExperiment: yamlData.experiment.typeExperiment,
         betweenExperimentType: yamlData.experiment.betweenExperimentType,
+        balancedRuleType: yamlData.experiment.balancedRuleType || null,
+        balancedSurveyId: yamlData.experiment.balancedSurveyId || null,
+        balancedQuestionIds: yamlData.experiment.balancedQuestionIds || [],
       });
 
       const savedExperiment = await this.experimentRepository.save(experiment);
@@ -743,6 +773,20 @@ export class ExperimentService {
         )
       ) {
         errors.push('yaml_error_invalid_experiment_between_type');
+      } else if (experiment.betweenExperimentType == 'balanced') {
+        if (
+          experiment.balancedRuleType &&
+          !['score', 'question'].includes(experiment.balancedRuleType)
+        ) {
+          errors.push('yaml_error_invalid_balanced_rule_type');
+        }
+        if (
+          experiment.balancedRuleType === 'question' &&
+          (!Array.isArray(experiment.balancedQuestionIds) ||
+            experiment.balancedQuestionIds.length === 0)
+        ) {
+          errors.push('yaml_error_missing_balanced_question_ids');
+        }
       }
     }
 

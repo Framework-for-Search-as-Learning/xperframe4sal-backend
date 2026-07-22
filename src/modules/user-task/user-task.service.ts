@@ -8,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { LlmSessionService } from 'src/modules/llm-session/llm-session.service';
 import { In, Repository } from 'typeorm';
 
+import { SurveyAnswer } from '../survey-answer/entity/survey-answer.entity';
 import { Task, type TaskProviderConfig } from '../task/entities/task.entity';
 import { TaskService } from '../task/task.service';
 import { TaskQuestionMapService } from '../task-question-map/task-question-map.service';
@@ -16,6 +17,7 @@ import { UserService } from '../user/user.service';
 import { UserTaskSessionService } from '../user-task-session/user-task-session.service';
 import { CreateUserTaskDto } from './dto/create-userTask.dto';
 import { CreateUserTaskAvgQuestScoreDto } from './dto/create-userTaskAvgQuestScore.dto';
+import { CreateUserTaskBalancedDto } from './dto/create-userTaskBalanced.dto';
 import { CreateUserTaskByRule } from './dto/create-userTaskByRule.dto';
 import { CreateUserTaskRandomDto } from './dto/create-userTaskRandom.dto';
 import { CreateUserTaskScoreDto } from './dto/create-userTaskScore.dto';
@@ -201,6 +203,113 @@ export class UserTaskService {
       console.error('Error ao criar tarefa aleatória', error);
       throw error;
     }
+  }
+
+  async createBalanced(
+    createUserTaskBalancedDto: CreateUserTaskBalancedDto,
+  ): Promise<UserTask | void> {
+    try {
+      const {
+        userId,
+        experimentId,
+        tasks,
+        surveyAnswer,
+        allSurveyAnswers,
+        ruleType,
+        questionIds: configuredQuestionIds,
+      } = createUserTaskBalancedDto;
+
+      const existingAssignments = await this.findTasksByUserIdAndExperimentId(
+        userId,
+        experimentId,
+      );
+      if (existingAssignments.length > 0) {
+        return;
+      }
+
+      const questionIds =
+        ruleType === 'question' ? configuredQuestionIds || [] : [];
+
+      const scoreByUserId = new Map<string, number>(
+        allSurveyAnswers
+          .map(
+            (answer): [string, number | undefined] => [
+              answer.user_id,
+              this.getBalancedScore(answer, questionIds),
+            ],
+          )
+          .filter(
+            (entry): entry is [string, number] => typeof entry[1] === 'number',
+          ),
+      );
+
+      const groupStats = await Promise.all(
+        tasks.map(async (task) => {
+          const members = await this.findUsersByTaskId(task._id);
+          const scores = members
+            .map((member) => scoreByUserId.get(member._id))
+            .filter((score): score is number => typeof score === 'number');
+          const sum = scores.reduce((acc, score) => acc + score, 0);
+          return { taskId: task._id, count: scores.length, sum };
+        }),
+      );
+
+      const userScore = this.getBalancedScore(surveyAnswer, questionIds);
+      if (typeof userScore !== 'number') {
+        throw new Error(
+          'Nao foi possivel calcular o score balanceado para o usuario',
+        );
+      }
+      let selectedTaskId: string;
+      let bestSpread = Infinity;
+      let bestCount = Infinity;
+
+      for (const candidate of groupStats) {
+        const simulated = groupStats.map((group) =>
+          group.taskId === candidate.taskId
+            ? { ...group, count: group.count + 1, sum: group.sum + userScore }
+            : group,
+        );
+        const averages = simulated.map((group) =>
+          group.count > 0 ? group.sum / group.count : 0,
+        );
+        const spread = Math.max(...averages) - Math.min(...averages);
+
+        if (
+          spread < bestSpread ||
+          (spread === bestSpread && candidate.count < bestCount)
+        ) {
+          bestSpread = spread;
+          bestCount = candidate.count;
+          selectedTaskId = candidate.taskId;
+        }
+      }
+
+      return await this.create({ userId, taskId: selectedTaskId });
+    } catch (error) {
+      console.error('Error ao criar tarefa balanceada', error);
+      throw error;
+    }
+  }
+
+  private getBalancedScore(
+    answer: SurveyAnswer,
+    questionIds: string[],
+  ): number | undefined {
+    if (questionIds.length === 0) {
+      return answer.score;
+    }
+    const selectedAnswers = answer.answers.filter((selected) =>
+      questionIds.includes(selected.id),
+    );
+    if (selectedAnswers.length === 0) {
+      return undefined;
+    }
+    const total = selectedAnswers.reduce(
+      (acc, selected) => acc + (selected.score || 0),
+      0,
+    );
+    return total / selectedAnswers.length;
   }
 
   async createMany(userTasks: UserTask[]): Promise<UserTask[]> {

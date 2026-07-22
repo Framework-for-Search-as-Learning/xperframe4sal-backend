@@ -90,7 +90,7 @@ export class SurveyService {
   async findOneWithExperiment(id: string): Promise<Survey> {
     return await this.surveyRepository.findOne({
       where: {_id: id},
-      relations: ['experiment'],
+      relations: ['experiment', 'experiment.tasks'],
     });
   }
 

@@ -168,6 +168,31 @@ export class CreateExperimentDto {
   betweenExperimentType: string;
 
   @ApiProperty({
+    description: 'Balanced assignment rule type: "score" (whole survey) or "question" (specific question)',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  balancedRuleType?: string;
+
+  @ApiProperty({
+    description: 'Survey (real id or temp uuid) used as the balanced assignment signal',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  balancedSurveyId?: string;
+
+  @ApiProperty({
+    description: 'Specific question ids used when balancedRuleType is "question"',
+    required: false,
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({each: true})
+  balancedQuestionIds?: string[];
+
+  @ApiProperty({
     description: 'Task definitions used in the experiment',
     type: [CreateExperimentTaskPropsDto],
     example: [

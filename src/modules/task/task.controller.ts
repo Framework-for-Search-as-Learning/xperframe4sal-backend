@@ -54,6 +54,15 @@ export class TaskController {
     return await this.taskService.findOne(id);
   }
 
+  @Get(':id/duplicate-source')
+  @ApiOperation({ summary: 'Get a task by id with the real (unmasked) provider config, for duplication purposes' })
+  @ApiParam({ name: 'id', type: String, description: 'Task ID' })
+  @ApiResponse({ status: 200, description: 'Task details with unmasked secrets.', type: TaskResponseDto })
+  @ApiResponse({ status: 404, description: 'Task not found.', type: ErrorResponseDto })
+  async findOneForDuplication(@Param('id') id: string): Promise<Task> {
+    return await this.taskService.findOneForDuplication(id);
+  }
+
   @Get('/experiment/:experimentId')
   @ApiOperation({ summary: 'Get tasks by experiment id' })
   @ApiParam({ name: 'experimentId', type: String, description: 'Experiment ID' })

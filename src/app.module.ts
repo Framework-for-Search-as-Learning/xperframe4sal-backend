@@ -14,6 +14,8 @@ import {AppController} from './app.controller';
 import {AuthModule} from './modules/auth/auth.module';
 import {Experiment} from './modules/experiment/entity/experiment.entity';
 import {ExperimentModule} from './modules/experiment/experiment.module';
+import {ExperimentDraft} from './modules/experiment-draft/entity/experiment-draft.entity';
+import {ExperimentDraftModule} from './modules/experiment-draft/experiment-draft.module';
 import {HttpModule} from './modules/http/http.module';
 import {Icf} from './modules/icf/entity/icf.entity';
 import {IcfModule} from './modules/icf/icf.module';
@@ -69,6 +71,7 @@ import {UserTaskSessionModule} from './modules/user-task-session/user-task-sessi
         entities: [
           User,
           Experiment,
+          ExperimentDraft,
           Task,
           Survey,
           UserExperiment,
@@ -95,6 +98,7 @@ import {UserTaskSessionModule} from './modules/user-task-session/user-task-sessi
     }),
     UserModule,
     ExperimentModule,
+    ExperimentDraftModule,
     TaskModule,
     UserExperimentModule,
     UserTaskModule,

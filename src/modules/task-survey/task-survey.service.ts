@@ -13,8 +13,8 @@ import {
 import {InjectRepository} from '@nestjs/typeorm';
 import {Repository} from 'typeorm';
 
-import {SurveyService} from '../survey/survey.service';
 import {Survey} from '../survey/entity/survey.entity';
+import {SurveyService} from '../survey/survey.service';
 import {TaskService} from '../task/task.service';
 import {TaskSurvey} from './entity/taskSurvey.entity';
 

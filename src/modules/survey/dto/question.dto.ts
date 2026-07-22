@@ -20,6 +20,7 @@ export enum QuestionType {
   MULTIPLE_CHOICES = 'multiple-choices',
   OPEN = 'open',
   MULTIPLE_SELECTION = 'multiple-selection',
+  SHORT_ANSWER = 'short-answer',
 }
 
 export class QuestionDTO {

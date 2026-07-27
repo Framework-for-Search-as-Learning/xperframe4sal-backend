@@ -14,6 +14,8 @@ import {AppController} from './app.controller';
 import {AuthModule} from './modules/auth/auth.module';
 import {Experiment} from './modules/experiment/entity/experiment.entity';
 import {ExperimentModule} from './modules/experiment/experiment.module';
+import {ExperimentDraft} from './modules/experiment-draft/entity/experiment-draft.entity';
+import {ExperimentDraftModule} from './modules/experiment-draft/experiment-draft.module';
 import {HttpModule} from './modules/http/http.module';
 import {Icf} from './modules/icf/entity/icf.entity';
 import {IcfModule} from './modules/icf/icf.module';
@@ -29,6 +31,8 @@ import {Task} from './modules/task/entities/task.entity';
 import {TaskModule} from './modules/task/task.module';
 import {TaskQuestionMap} from './modules/task-question-map/entity/taskQuestionMap.entity';
 import {TaskQuestionMapModule} from './modules/task-question-map/task-question-map.module';
+import {TaskSurvey} from './modules/task-survey/entity/taskSurvey.entity';
+import {TaskSurveyModule} from './modules/task-survey/task-survey.module';
 import {User} from './modules/user/entity/user.entity';
 import {UserModule} from './modules/user/user.module';
 import {UserExperiment} from './modules/user-experiment/entities/user-experiments.entity';
@@ -67,12 +71,14 @@ import {UserTaskSessionModule} from './modules/user-task-session/user-task-sessi
         entities: [
           User,
           Experiment,
+          ExperimentDraft,
           Task,
           Survey,
           UserExperiment,
           UserTask,
           SurveyAnswer,
           TaskQuestionMap,
+          TaskSurvey,
           Icf,
           UserTaskSession,
           Page,
@@ -92,12 +98,14 @@ import {UserTaskSessionModule} from './modules/user-task-session/user-task-sessi
     }),
     UserModule,
     ExperimentModule,
+    ExperimentDraftModule,
     TaskModule,
     UserExperimentModule,
     UserTaskModule,
     SurveyModule,
     SurveyAnswerModule,
     TaskQuestionMapModule,
+    TaskSurveyModule,
     IcfModule,
     UserTaskSessionModule,
     LlmSessionModule,

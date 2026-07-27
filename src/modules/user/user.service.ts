@@ -4,6 +4,7 @@
  */
 
 import {
+  ConflictException,
   HttpException,
   Injectable,
   NotFoundException,
@@ -87,6 +88,9 @@ export class UserService {
       return userSaved;
     } catch (error) {
       console.error(error);
+      if ((error as {code?: string})?.code === '23505') {
+        throw new ConflictException('This email is already registered');
+      }
       throw error;
     }
   }

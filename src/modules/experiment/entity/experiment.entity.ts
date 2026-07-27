@@ -69,6 +69,13 @@ export class Experiment extends BaseEntity {
   @Column()
   betweenExperimentType: string;
 
+  @Column({ nullable: true })
+  balancedRuleType: string;
+  @Column({ nullable: true })
+  balancedSurveyId: string;
+  @Column({ type: 'jsonb', nullable: true })
+  balancedQuestionIds: string[];
+
   @Column({ default: ExperimentStatus.NOT_STARTED })
   status: ExperimentStatus;
 

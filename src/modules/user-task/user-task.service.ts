@@ -8,7 +8,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { LlmSessionService } from 'src/modules/llm-session/llm-session.service';
 import { In, Repository } from 'typeorm';
 
-import { Task } from '../task/entities/task.entity';
+import { SurveyAnswer } from '../survey-answer/entity/survey-answer.entity';
+import { Task, type TaskProviderConfig } from '../task/entities/task.entity';
 import { TaskService } from '../task/task.service';
 import { TaskQuestionMapService } from '../task-question-map/task-question-map.service';
 import { User } from '../user/entity/user.entity';
@@ -16,6 +17,7 @@ import { UserService } from '../user/user.service';
 import { UserTaskSessionService } from '../user-task-session/user-task-session.service';
 import { CreateUserTaskDto } from './dto/create-userTask.dto';
 import { CreateUserTaskAvgQuestScoreDto } from './dto/create-userTaskAvgQuestScore.dto';
+import { CreateUserTaskBalancedDto } from './dto/create-userTaskBalanced.dto';
 import { CreateUserTaskByRule } from './dto/create-userTaskByRule.dto';
 import { CreateUserTaskRandomDto } from './dto/create-userTaskRandom.dto';
 import { CreateUserTaskScoreDto } from './dto/create-userTaskScore.dto';
@@ -203,6 +205,113 @@ export class UserTaskService {
     }
   }
 
+  async createBalanced(
+    createUserTaskBalancedDto: CreateUserTaskBalancedDto,
+  ): Promise<UserTask | void> {
+    try {
+      const {
+        userId,
+        experimentId,
+        tasks,
+        surveyAnswer,
+        allSurveyAnswers,
+        ruleType,
+        questionIds: configuredQuestionIds,
+      } = createUserTaskBalancedDto;
+
+      const existingAssignments = await this.findTasksByUserIdAndExperimentId(
+        userId,
+        experimentId,
+      );
+      if (existingAssignments.length > 0) {
+        return;
+      }
+
+      const questionIds =
+        ruleType === 'question' ? configuredQuestionIds || [] : [];
+
+      const scoreByUserId = new Map<string, number>(
+        allSurveyAnswers
+          .map(
+            (answer): [string, number | undefined] => [
+              answer.user_id,
+              this.getBalancedScore(answer, questionIds),
+            ],
+          )
+          .filter(
+            (entry): entry is [string, number] => typeof entry[1] === 'number',
+          ),
+      );
+
+      const groupStats = await Promise.all(
+        tasks.map(async (task) => {
+          const members = await this.findUsersByTaskId(task._id);
+          const scores = members
+            .map((member) => scoreByUserId.get(member._id))
+            .filter((score): score is number => typeof score === 'number');
+          const sum = scores.reduce((acc, score) => acc + score, 0);
+          return { taskId: task._id, count: scores.length, sum };
+        }),
+      );
+
+      const userScore = this.getBalancedScore(surveyAnswer, questionIds);
+      if (typeof userScore !== 'number') {
+        throw new Error(
+          'Nao foi possivel calcular o score balanceado para o usuario',
+        );
+      }
+      let selectedTaskId: string;
+      let bestSpread = Infinity;
+      let bestCount = Infinity;
+
+      for (const candidate of groupStats) {
+        const simulated = groupStats.map((group) =>
+          group.taskId === candidate.taskId
+            ? { ...group, count: group.count + 1, sum: group.sum + userScore }
+            : group,
+        );
+        const averages = simulated.map((group) =>
+          group.count > 0 ? group.sum / group.count : 0,
+        );
+        const spread = Math.max(...averages) - Math.min(...averages);
+
+        if (
+          spread < bestSpread ||
+          (spread === bestSpread && candidate.count < bestCount)
+        ) {
+          bestSpread = spread;
+          bestCount = candidate.count;
+          selectedTaskId = candidate.taskId;
+        }
+      }
+
+      return await this.create({ userId, taskId: selectedTaskId });
+    } catch (error) {
+      console.error('Error ao criar tarefa balanceada', error);
+      throw error;
+    }
+  }
+
+  private getBalancedScore(
+    answer: SurveyAnswer,
+    questionIds: string[],
+  ): number | undefined {
+    if (questionIds.length === 0) {
+      return answer.score;
+    }
+    const selectedAnswers = answer.answers.filter((selected) =>
+      questionIds.includes(selected.id),
+    );
+    if (selectedAnswers.length === 0) {
+      return undefined;
+    }
+    const total = selectedAnswers.reduce(
+      (acc, selected) => acc + (selected.score || 0),
+      0,
+    );
+    return total / selectedAnswers.length;
+  }
+
   async createMany(userTasks: UserTask[]): Promise<UserTask[]> {
     const savedUserTasks = await this.userTaskRepository.save(userTasks);
     return savedUserTasks;
@@ -245,12 +354,23 @@ export class UserTaskService {
   ): Promise<UserTask[]> {
     const userTasks = await this.userTaskRepository.find({
       where: { user_id: userId },
-      relations: ['task'],
+      relations: ['task', 'task.taskSurveys'],
     });
     const userTaskByExperiment = userTasks.filter(
       (userTask) => userTask.task.experiment_id === experimentId,
     );
-    return userTaskByExperiment;
+    return userTaskByExperiment.map((ut) => {
+      const {taskSurveys, ...taskRest} = ut.task;
+      const surveyIds: string[] = (taskSurveys ?? []).map((ts) => ts.survey_id);
+      return {
+        ...ut,
+        task: {
+          ...taskRest,
+          // undefined when no linked surveys → frontend shows all surveys (backward compat)
+          ...(surveyIds.length > 0 && {linkedSurveyRefs: surveyIds}),
+        },
+      };
+    }) as unknown as UserTask[];
   }
 
   async findUsersByTaskId(taskId: string): Promise<User[]> {
@@ -384,11 +504,26 @@ export class UserTaskService {
     return tasks.length;
   }
 
+  private getSystemInstruction(
+    sessionSystemInstruction: string | null | undefined,
+    task: Task,
+  ): string | null {
+    return (
+      sessionSystemInstruction ??
+      (task.provider_config as TaskProviderConfig | undefined)
+        ?.systemInstruction ??
+      null
+    );
+  }
+
   async getExecutionDetails(userTaskId: string): Promise<TaskExecutionDetailsDto> {
-    const userTask = await this.userTaskRepository.findOne({
-      where: { _id: userTaskId },
-      relations: ['task', 'user']
-    });
+    const userTask = await this.userTaskRepository
+      .createQueryBuilder('userTask')
+      .leftJoinAndSelect('userTask.task', 'task')
+      .leftJoinAndSelect('userTask.user', 'user')
+      .addSelect('task.provider_config')
+      .where('userTask._id = :userTaskId', { userTaskId })
+      .getOne();
 
     if (!userTask) {
       throw new NotFoundException('UserTask not found');
@@ -457,6 +592,10 @@ export class UserTaskService {
 
       const messages = llmSession ? llmSession.messages : [];
       details.llmDetails = {
+        systemInstruction: this.getSystemInstruction(
+          llmSession?.systemInstruction,
+          task,
+        ),
         messages: messages.map(m => ({
           content: m.content,
           role: m.role,
@@ -471,14 +610,13 @@ export class UserTaskService {
   }
 
   async findByExperimentId(experimentId: string): Promise<UserTask[]> {
-    return await this.userTaskRepository.find({
-      relations: ['task', 'user'],
-      where: {
-        task: {
-          experiment_id: experimentId
-        }
-      }
-    });
+    return await this.userTaskRepository
+      .createQueryBuilder('userTask')
+      .leftJoinAndSelect('userTask.task', 'task')
+      .leftJoinAndSelect('userTask.user', 'user')
+      .addSelect('task.provider_config')
+      .where('task.experiment_id = :experimentId', { experimentId })
+      .getMany();
   }
 
   async getExecutionDetailsFromEntity(userTask: UserTask): Promise<TaskExecutionDetailsDto> {
@@ -545,6 +683,10 @@ export class UserTaskService {
 
       const messages = llmSession ? llmSession.messages : [];
       details.llmDetails = {
+        systemInstruction: this.getSystemInstruction(
+          llmSession?.systemInstruction,
+          task,
+        ),
         messages: messages.map(m => ({
           content: m.content,
           role: m.role,
@@ -559,12 +701,13 @@ export class UserTaskService {
   }
 
   async findByUserAndTask(userId: string, taskId: string): Promise<UserTask[]> {
-    return await this.userTaskRepository.find({
-      relations: ['task', 'user'],
-      where: {
-        user: { _id: userId },
-        task: { _id: taskId }
-      }
-    });
+    return await this.userTaskRepository
+      .createQueryBuilder('userTask')
+      .leftJoinAndSelect('userTask.task', 'task')
+      .leftJoinAndSelect('userTask.user', 'user')
+      .addSelect('task.provider_config')
+      .where('user._id = :userId', { userId })
+      .andWhere('task._id = :taskId', { taskId })
+      .getMany();
   }
 }

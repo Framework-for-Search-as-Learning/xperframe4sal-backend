@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026, lapic-ufjf
+ * Licensed under The MIT License [see LICENSE for details]
+ */
+
 import js from "@eslint/js";
 import tseslint from "typescript-eslint";
 import unusedImports from "eslint-plugin-unused-imports";
